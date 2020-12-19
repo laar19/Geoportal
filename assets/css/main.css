@@ -1,0 +1,85 @@
+body {
+    /*max-height: 100%;
+    max-width : 100%;*/
+    margin    : 0 auto;
+    padding   : 0;
+    box-sizing: border-box;
+}
+
+.super,
+.map {
+    width : 100%;
+    height: 100%;
+    top   : 0;
+    position: fixed;
+}
+
+/* ######################################### */
+
+/* Search bar */
+.search-bar {
+    width   : 330px;
+    height  : 40px;
+    top     : 20px;
+    position: fixed;
+    border-radius: 5px;
+    margin-left: 20px;
+    background-color: #333;
+}
+
+.search-bar a {
+    color: white;
+}
+
+/* ######################################### */
+
+/* Left controls */
+.left-controls {
+    width   : 50px;
+    margin-top: 200px;
+    position: fixed;
+    border-radius: 5px;
+    margin-left: 20px;
+}
+
+.left-controls a {
+    color: white;
+}
+
+.tools-1 {
+    height: 50px;
+    border-radius: 5px;
+    background-color: #333;
+}
+
+.tools-2 {
+    height: 200px;
+    margin-top: 30px;
+    border-radius: 5px;
+    background-color: #333;
+}
+
+.tools-3 {
+    height: 50px;
+    margin-top: 30px;
+    border-radius: 5px;
+    background-color: #333;
+}
+
+/* ######################################### */
+
+/* Right controls */
+.right-controls {
+    right   : 0;
+    width   : 100px;
+    height  : 100%;
+    /*top     : 10%;*/
+    position: fixed;
+    /*border-radius: 10px;*/
+    margin-right: 1px;
+    background-color: #333;
+}
+
+.right-controls a {
+    color: white;
+}
