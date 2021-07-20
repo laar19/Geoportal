@@ -19,7 +19,10 @@ def index():
     folium_map.add_child(minimap)                  # Add minimap
     plugins.ScrollZoomToggler().add_to(folium_map) # Add zoom scroll
     plugins.Fullscreen(position='topright').add_to(folium_map) # Add fullscreen buttons
+    draw = plugins.Draw()
+    draw.add_to(folium_map)
 
+    """
     Draw(
         export=True,
         filename='my_data.geojson',
@@ -27,6 +30,7 @@ def index():
         draw_options={'polyline': {'allowIntersection': False}},
         edit_options={'poly': {'allowIntersection': False}}
     ).add_to(folium_map)
+    """
 
     return folium_map._repr_html_()
 
