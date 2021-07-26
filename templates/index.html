@@ -20,14 +20,38 @@
     </div>
 
     <script>
-        //var fields = { { fields|tojson } };
-        var fields = {{ fields }};
-        console.log(fields);
+        var centros = {{ data[0] }};
+        var estados = {{ data[1]|safe }};
+        //var display_on_map = { { display_on_map|tojson } };
+        //var display_on_map = { { display_on_map|safe } };
+        //var display_on_map = { { flask.json.dupms(polygon)|safe } };
+        //console.log(centros);
+        console.log(estados);
     </script>
 
     <script src="{{ url_for('static', filename='js/map.js') }}"></script>
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
 
-    <script> display_points(fields); </script>
+    <script>
+        //display_points(centros);
+        //display_geojson(geojsonObject);
+        //display_geojson(estados);
+
+        var vectorSource = new ol.source.Vector({
+          features: new ol.format.GeoJSON().readFeatures(estados),
+        });
+
+        vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
+
+        var vectorLayer = new ol.layer.Vector({
+          source: vectorSource,
+          style: styleFunction,
+        });
+
+        map.addLayer(vectorLayer);
+
+        
+        alert("fix projection??");
+    </script>
 </body>
 </html>
