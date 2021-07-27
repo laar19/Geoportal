@@ -9,21 +9,21 @@ import pandas as pd
 #import geopandas as gpd
 
 class DbConnection:
-    def get_credentials(self, path):
+    def get_credentials(self, path, position):
         credentials = pd.read_csv(path)
 
         db_credentials = {}
 
-        db_credentials["database"] = credentials["database"][0]
-        db_credentials["host"]     = credentials["host"][0]
-        db_credentials["db_name"]  = credentials["db_name"][0]
-        db_credentials["user"]     = credentials["user"][0]
-        db_credentials["password"] = credentials["password"][0]
+        db_credentials["database"] = credentials["database"][position]
+        db_credentials["host"]     = credentials["host"][position]
+        db_credentials["db_name"]  = credentials["db_name"][position]
+        db_credentials["user"]     = credentials["user"][position]
+        db_credentials["password"] = credentials["password"][position]
 
         return db_credentials
 
-    def connection(self, path):
-        credentials = self.get_credentials(path)
+    def connection(self, path, position):
+        credentials = self.get_credentials(path, position)
         database    = credentials["database"]
         host        = credentials["host"]
         db_name     = credentials["db_name"]
