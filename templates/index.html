@@ -19,39 +19,25 @@
         <div id="map" class="map"></div>
     </div>
 
-    <script>
-        var centros = {{ data[0] }};
-        var estados = {{ data[1]|safe }};
-        //var display_on_map = { { display_on_map|tojson } };
-        //var display_on_map = { { display_on_map|safe } };
-        //var display_on_map = { { flask.json.dupms(polygon)|safe } };
-        //console.log(centros);
-        console.log(estados);
-    </script>
-
     <script src="{{ url_for('static', filename='js/map.js') }}"></script>
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
 
     <script>
-        //display_points(centros);
-        //display_geojson(geojsonObject);
-        //display_geojson(estados);
+        var centros  = {{ data[0]|safe }};
+        var estados  = {{ data[1]|safe }};
+        var vialidad = {{ data[2]|safe }};
+        var img      = {{ data[3]|safe }};
+        /*
+        var display_on_map = { { display_on_map|tojson } };
+        var display_on_map = { { display_on_map|safe } };
+        var display_on_map = { { flask.json.dupms(polygon)|safe } };
+        */
+        display_layer(centros, map);
+        display_layer(estados, map);
+        display_layer(vialidad, map);
 
-        var vectorSource = new ol.source.Vector({
-          features: new ol.format.GeoJSON().readFeatures(estados),
-        });
-
-        vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
-
-        var vectorLayer = new ol.layer.Vector({
-          source: vectorSource,
-          style: styleFunction,
-        });
-
-        map.addLayer(vectorLayer);
-
-        
-        alert("fix projection??");
+        console.log(img);
     </script>
 </body>
 </html>

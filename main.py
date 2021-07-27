@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 import json
 
@@ -6,6 +6,7 @@ import pandas as pd
 import geopandas as gpd
 
 from app.db_config import DbConnection
+from app.functions import *
 
 app = Flask(__name__)
 
@@ -13,48 +14,46 @@ db_credentials_path = "db_credentials.csv"
 
 @app.route("/")
 def index():
-    #fields_df = pd.read_csv("testing/data/fields.csv")
-    #fields    = fields_df.to_json()
-    #fields    = fields_df.to_json(orient="values")
-    #fields    = fields_df.to_json(orient="columns")
-    #fields    = fields_df.to_json(orient="index")
-    #fields    = fields_df.to_json(orient="table")
 
-    DbConn   = DbConnection()
-    conn, engine = DbConn.connection(db_credentials_path)
-    """
-    centros  = DbConn.select_table("centros_pob_wgs84", conn)
-    estados  = DbConn.select_table("estados", conn)
-    vialidad = DbConn.select_table("vialidad_troncal", conn)
-    """
+    DbConn         = DbConnection()
+    conn, engine   = DbConn.connection(db_credentials_path, 0)
+    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
 
-    """
-    data["centros"]  = gpd.read_postgis("centros_pob_wgs84", con=engine).to_json()
-    data["estados"]  = gpd.read_postgis("estados", con=engine).to_json()
-    data["vialidad"] = gpd.read_postgis("vialidad_troncal", con=engine).to_json()
-    display_on_map = json.dumps(data)
-    """
+    query   = DbConn.select_table("centros_pob_wgs84", conn, engine)
+    centros = gpd.read_postgis(query, con=engine)
 
-    #data["centros"] = DbConn.select_table("centros_pob_wgs84", conn, engine)
-    #data["estados"] = DbConn.select_table("estados", conn, engine)
-    #data["vialidad"] = DbConn.select_table("vialidad_troncal", conn, engine)
-
-    #data = dict()
-    """
-    data = DbConn.select_table("centros_pob_wgs84",
-        conn,
-        engine)[["latitud", "longitud"]].copy().to_json(orient="values")
-    """
-
-    query = DbConn.select_table("centros_pob_wgs84", conn, engine)
-    centros = pd.read_sql(query, conn)[["latitud", "longitud"]].copy().to_json(orient="values")
-
-    query = DbConn.select_table("estados", conn, engine)
-    estados = gpd.read_postgis(query, con=engine)#.to_crs(epsg=4326)
+    query   = DbConn.select_table("estados", conn, engine)
+    estados = gpd.read_postgis(query, con=engine)
+    
+    query    = DbConn.select_table("vialidad_troncal", conn, engine)
+    vialidad = gpd.read_postgis(query, con=engine)
 
     conn.close()
 
-    return render_template("index.html", data=[centros, estados.to_json()])
+    # Add image to map
+    query     = DbConn.select_table("images", conn2, engine2)
+    dataframe = pd.read_sql(query, con=engine2)
+    conn2.close()
+
+    # importing modules
+    import requests
+    from io import BytesIO
+    url = dataframe.loc[0, "path"]
+    response = requests.get(url)
+    image = Image.open(BytesIO(response.content))
+    
+    image = black_to_transparency(image)
+    #image = np.array(image)
+
+    upperllat=dataframe.loc[0, "ullat"]
+    upperllon=dataframe.loc[0, "ullon"]
+    lowerrlat=dataframe.loc[0, "lrlat"]
+    lowerrlon=dataframe.loc[0, "lrlon"]
+
+    #img = folium.raster_layers.ImageOverlay(image=image, bounds=[[upperllat, upperllon], [lowerrlat, lowerrlon]])
+    #img.add_to(folium_map)
+
+    return render_template("index.html", data=[centros.to_json(), estados.to_json(), vialidad.to_json(), image])
 
 if __name__ == "__main__":
     app.run(debug=True)
