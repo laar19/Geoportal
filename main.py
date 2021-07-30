@@ -5,6 +5,8 @@ import json
 import pandas as pd
 import geopandas as gpd
 
+import base64
+
 from app.db_config import DbConnection
 from app.functions import *
 
@@ -50,10 +52,17 @@ def index():
     lowerrlat=dataframe.loc[0, "lrlat"]
     lowerrlon=dataframe.loc[0, "lrlon"]
 
+    buffer = BytesIO()
+    image.save(buffer,format="PNG")
+    img = buffer.getvalue()
+    
+    image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
+    raw_data = {"image": image}
+
     #img = folium.raster_layers.ImageOverlay(image=image, bounds=[[upperllat, upperllon], [lowerrlat, lowerrlon]])
     #img.add_to(folium_map)
 
-    return render_template("index.html", data=[centros.to_json(), estados.to_json(), vialidad.to_json(), image])
+    return render_template("index.html", data=[centros.to_json(), estados.to_json(), vialidad.to_json()], image=raw_data)
 
 if __name__ == "__main__":
     app.run(debug=True)

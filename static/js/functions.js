@@ -13,3 +13,12 @@ function display_layer(data, map) {
 
     map.addLayer(vectorLayer);
 }
+
+function displayBase64Image(placeholder, base64Image) {
+    var image = document.createElement("img");
+    image.onload = function() {
+        placeholder.innerHTML = '';
+        placeholder.appendChild(this);
+    }
+    image.src = base64Image;
+}
