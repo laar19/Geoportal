@@ -30,9 +30,9 @@
         var vialidad = {{ data[2]|safe }};
 
         var img      = {{ image|tojson }};
-        //display_layer(centros, map);
-        //display_layer(estados, map);
-        //display_layer(vialidad, map);
+        display_layer(centros, map);
+        display_layer(estados, map);
+        display_layer(vialidad, map);
 
         // image placeholder where the image will be displayed
         var imagePlaceholder = document.getElementById('placeholder');
@@ -41,23 +41,67 @@
         displayBase64Image(imagePlaceholder, img["image"]);
 
 
+        var image = new Image();
+        image.src = img["image"];
+
+
         
 
         var extent = [-1, -1, 1, 1];
 
+    
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             attributions: [
-                new ol.Attribution({
-                    html: '&copy; <a href="http://xkcd.com/license.html">xkcd</a>'
-                })
+                //new ol.control.Attribution({
+                    //html: '&copy; <a href="http://xkcd.com/license.html">xkcd</a>'
+                //})
+            
             ],
-            url: 'http://localhost/geoabae/testing/data/image.png',
-            imageSize: [1024, 684],  // Don't forget the image size here
+            //url: 'http://localhost/geoabae/testing/data/image.png',
+            url: image,
+            //imageSize: [1024, 684],  // Don't forget the image size here
             imageExtent: extent
         })
     });
 
+    /*
+
+    var minLon = -40.145761184967;
+    var minLat = -12.838585358413;
+    var maxLon = -40.13793299178;
+    var maxLat = -12.830532582642;
+    var extent = new ol.extent.applyTransform([minLon, minLat, maxLon, maxLat], ol.proj.getTransform("EPSG:4326","EPSG:3857"));
+
+    /*
+    var layer = new ol.layer.Image({
+            source : new ol.source.ImageStatic({
+                imageExtent : extent,
+                size : [150, 150],
+                imageLoadFunction : function(img){
+                    img.getImage().src = image.src;
+                },
+                projection : view.getProjection(),
+                url : "http://localhost/geoabae/testing/data/image.png"
+            })
+        });
+        *
+
+        var imageExtent = [0, 0, 700000, 1300000];
+        var imageLayer = new ol.layer.Image();
+
+        var source = new ol.source.ImageStatic({
+    url:
+      "http://localhost/geoabae/testing/data/image.png",
+    crossOrigin: '',
+    projection: 'EPSG:4326',
+    imageExtent: imageExtent,
+  });
+  imageLayer.setSource(source);
+  */
+
     map.addLayer(image);
+    //map.addLayer(imageLayer);
+    </script>
 </body>
 </html>
