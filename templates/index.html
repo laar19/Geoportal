@@ -16,6 +16,7 @@
 </head>
 <body>
     <div class="super">
+         <div id="placeholder"></div>
         <div id="map" class="map"></div>
     </div>
 
@@ -27,17 +28,36 @@
         var centros  = {{ data[0]|safe }};
         var estados  = {{ data[1]|safe }};
         var vialidad = {{ data[2]|safe }};
-        var img      = {{ data[3]|safe }};
-        /*
-        var display_on_map = { { display_on_map|tojson } };
-        var display_on_map = { { display_on_map|safe } };
-        var display_on_map = { { flask.json.dupms(polygon)|safe } };
-        */
-        display_layer(centros, map);
-        display_layer(estados, map);
-        display_layer(vialidad, map);
 
-        console.log(img);
-    </script>
+        var img      = {{ image|tojson }};
+        //display_layer(centros, map);
+        //display_layer(estados, map);
+        //display_layer(vialidad, map);
+
+        // image placeholder where the image will be displayed
+        var imagePlaceholder = document.getElementById('placeholder');
+
+        // display the image in placeholder
+        displayBase64Image(imagePlaceholder, img["image"]);
+
+
+        
+
+        var extent = [-1, -1, 1, 1];
+
+    image = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+            attributions: [
+                new ol.Attribution({
+                    html: '&copy; <a href="http://xkcd.com/license.html">xkcd</a>'
+                })
+            ],
+            url: 'http://localhost/geoabae/testing/data/image.png',
+            imageSize: [1024, 684],  // Don't forget the image size here
+            imageExtent: extent
+        })
+    });
+
+    map.addLayer(image);
 </body>
 </html>
