@@ -14,11 +14,28 @@ function display_layer(data, map) {
     map.addLayer(vectorLayer);
 }
 
-function displayBase64Image(placeholder, base64Image) {
+// Show base 64 image on the map
+function display_base64_image(base64_image, extent, map) {
+    image = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+            imageLoadFunction : function(img){
+                img.getImage().src = base64_image.src;
+            },
+            projection: "EPSG:4326",
+            //size : [150, 150], // 150x150px
+            imageExtent: extent
+        })
+    });
+
+    map.addLayer(image);
+}
+
+// Show base 64 image on div
+function display_base64_image_div(div, base64_image) {
     var image = document.createElement("img");
     image.onload = function() {
-        placeholder.innerHTML = '';
-        placeholder.appendChild(this);
+        div.innerHTML = "";
+        div.appendChild(this);
     }
-    image.src = base64Image;
+    image.src = base64_image;
 }
