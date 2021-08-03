@@ -15,7 +15,7 @@ var map = new ol.Map({
         zoom: false,
     }),
     
-    target: "map",
+    target: "mapDiv",
     layers: [basemap],
     view  : view
 });
