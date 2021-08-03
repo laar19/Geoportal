@@ -59,7 +59,7 @@ def index():
     image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
     raw_data = {"image": image}
 
-    return render_template("index.html", data=[centros.to_json(), estados.to_json(), vialidad.to_json()], image=raw_data, extent=extent)
+    return render_template("index2.html", data=[centros.to_json(), estados.to_json(), vialidad.to_json()], image=raw_data, extent=extent)
 
 if __name__ == "__main__":
     app.run(debug=True)

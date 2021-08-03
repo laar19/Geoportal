@@ -1,5 +1,5 @@
 // Show coordinate points on the map
-function display_layer(data, map) {
+function display_layer(data, mapDiv) {
     var vectorSource = new ol.source.Vector({
         features: new ol.format.GeoJSON().readFeatures(data)
     });
@@ -11,11 +11,11 @@ function display_layer(data, map) {
         style : styleFunction
     });
 
-    map.addLayer(vectorLayer);
+    mapDiv.addLayer(vectorLayer);
 }
 
 // Show base 64 image on the map
-function display_base64_image(base64_image, extent, map) {
+function display_base64_image(base64_image, extent, mapDiv) {
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             imageLoadFunction : function(img){
@@ -27,7 +27,7 @@ function display_base64_image(base64_image, extent, map) {
         })
     });
 
-    map.addLayer(image);
+    mapDiv.addLayer(image);
 }
 
 // Show base 64 image on div
