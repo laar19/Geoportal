@@ -32,6 +32,7 @@
     <header>
         <!-- Fixed navbar -->
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <!-- nav class="navbar navbar-expand-md navbar-dark bg-dark" -->
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Fixed navbar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,11 +64,8 @@
 
     <!-- Begin page content -->
     <main class="flex-shrink-0">
-        <div class="container border border-danger">
-            
-        </div>
 
-        <div id="placeholder"></div>
+        <!-- div id="placeholder"></div -->
 
         <!-- Star of sidebar div -->
         <div id="sidebar" class="sidebar collapsed">
@@ -132,9 +130,9 @@
             </div>
         </div>
         <!-- End of sidebar div -->
-        
-        <div id="mapDiv" class="mapDiv sidebar-map"></div>
     </main>
+
+    <div id="mapDiv" class="mapDiv sidebar-map"></div>
 
     <!-- footer class="footer mt-auto py-3 bg-light">
         <div class="container">
@@ -160,7 +158,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-72WD92hLs7T5FAXn3vkNZflWG6pglUDDpm87TeQmfSg8KnrymL2G30R7as4FmTwhgu9H7eSzDCX3mjitSecKnw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
 
@@ -170,7 +168,6 @@
         var vialidad = {{ data[2]|safe }};
         var img      = {{ image|tojson }};
         var extent   = {{ extent }};
-        console.log(extent);
         //extent = new ol.extent.applyTransform(extent, ol.proj.getTransform("EPSG:4326", "EPSG:3857"));
         //console.log(extent);
         
@@ -183,9 +180,7 @@
 
         // image div where the image will be displayed
         var imagePlaceholder = document.getElementById("placeholder");
-        // display the image in div
-        display_base64_image_div(imagePlaceholder, base64_image.src);
-
+        //display_base64_image_div(imagePlaceholder, base64_image.src);
         display_base64_image(base64_image, extent, map);
     </script>
 </body>

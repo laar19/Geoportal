@@ -1,4 +1,4 @@
-(function () {
+//(function () {
   var map = new ol.Map({
     target: 'mapDiv',
     layers: [
@@ -99,8 +99,10 @@
       })
     ],
     view: new ol.View({
-      center: ol.proj.transform([-0.92, 52.96], 'EPSG:4326', 'EPSG:3857'),
-      zoom: 6
+projection: "EPSG:4326",
+    //center: ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"),
+    center    : [0, 0],
+    zoom      : 2
     })
   });
 
@@ -115,4 +117,4 @@
   var toc = document.getElementById('layers');
   ol.control.LayerSwitcher.renderPanel(map, toc, { reverse: true });
   map.addControl(sidebar);
-})();
+//})();
