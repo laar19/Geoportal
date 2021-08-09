@@ -1,5 +1,5 @@
 // Show coordinate points on the map
-function display_layer(data, mapDiv) {
+function display_layer(data, title, mapDiv) {
     var vectorSource = new ol.source.Vector({
         features: new ol.format.GeoJSON().readFeatures(data)
     });
@@ -7,11 +7,13 @@ function display_layer(data, mapDiv) {
     vectorSource.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
 
     var vectorLayer = new ol.layer.Vector({
+        title : title,
         source: vectorSource,
         style : styleFunction
     });
 
-    mapDiv.addLayer(vectorLayer);
+    //mapDiv.addLayer(vectorLayer);
+    return vectorLayer;
 }
 
 // Show base 64 image on the map
