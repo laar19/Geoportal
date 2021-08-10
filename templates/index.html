@@ -83,7 +83,7 @@
                     </li>
 
                     <li>
-                        <a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank">
+                        <a href="#" role="tab" target="_blank">
                             <i class="fab fa-github"></i>
                         </a>
                     </li>
@@ -127,6 +127,49 @@
                     <h1 class="sidebar-header">
                         Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <h6> Mouse Position: </h6>
+                                    </div>
+                                    <div class="col">
+                                        <div id="mouse-position"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <form>
+                                    <label for="projection"> Projection </label>
+                                    <select id="projection">
+                                        <option value="EPSG:4326"> EPSG:4326 </option>
+                                        <option value="EPSG:3857"> EPSG:3857 </option>
+                                    </select>
+                                    <label for="precision"> Precision </label>
+                                    <input id="precision" class="precision" type="number" min="0" max="12" value="4" size="3"/>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <label for="enable_draw"><a>Enable</a></label>
+                                <input type="checkbox" name="enable_draw" id="enable_draw">
+                                <form class="form-inline">
+                                    <label><a>Geometry type</a> &nbsp;</label>
+                                    <select id="draw_type">
+                                        <option value="Point">Point</option>
+                                        <option value="LineString">LineString</option>
+                                        <option value="Polygon">Polygon</option>
+                                        <option value="Circle">Circle</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,7 +186,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-72WD92hLs7T5FAXn3vkNZflWG6pglUDDpm87TeQmfSg8KnrymL2G30R7as4FmTwhgu9H7eSzDCX3mjitSecKnw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,Object.assign,Event,URL"></script -->
+    <!-- Start sidebar -->
     <script>
         // TEMP sidebar-v2 requires ol.inherits which was removed in ol v6.0
         if (window.ol && !window.ol.inherits) {
@@ -156,6 +199,12 @@
     <script src="{{ url_for('static', filename='js/sidebar/ol3-sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidebar/ol-layerswitcher.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidebar/sidebar.js') }}"></script>
+    <!-- End sidebar -->
+
+    <!-- Start features -->
+    <script src="{{ url_for('static', filename='js/features/mouse_position_control.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/features/draw_and_modify_features.js') }}"></script>
+    <!-- End features -->
     
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
