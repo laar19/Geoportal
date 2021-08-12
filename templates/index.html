@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol3-sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol-layerswitcher.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/features/features.css') }}">
 
     <title>Geo Abae</title>
 </head>
@@ -73,6 +74,10 @@
                     <li>
                         <a href="#home" role="tab"><i class="fa fa-bars"></i></a>
                     </li>
+                    
+                    <li>
+                        <a href="#tools" role="tab"><i class="fas fa-drafting-compass"></i></a>
+                    </li>
 
                     <li>
                         <a href="#profile" role="tab"><i class="fa fa-user"></i></a>
@@ -81,17 +86,11 @@
                     <li class="disabled">
                         <a href="#messages" role="tab"><i class="fa fa-envelope"></i></a>
                     </li>
-
-                    <li>
-                        <a href="#" role="tab" target="_blank">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </li>
                 </ul>
 
                 <ul role="tablist">
                     <li>
-                        <a href="#settings" role="tab"><i class="fas fa-cog"></i></i></a>
+                        <a href="#settings" role="tab"><i class="fas fa-cog"></i></a>
                     </li>
                 </ul>
             </div>
@@ -111,21 +110,9 @@
                     <div id="placeholder"></div>
                 </div>
 
-                <div class="sidebar-pane" id="profile">
+                <div class="sidebar-pane" id="tools">
                     <h1 class="sidebar-header">
-                        Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-                </div>
-
-                <div class="sidebar-pane" id="messages">
-                    <h1 class="sidebar-header">
-                        Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-                </div>
-
-                <div class="sidebar-pane" id="settings">
-                    <h1 class="sidebar-header">
-                        Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                        Tools<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
                     <div class="container">
@@ -155,9 +142,21 @@
                             </div>
                         </div>
                         <div class="row border-bottom">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <h6> Zoom Level: </h6>
+                                    </div>
+                                    <div class="col">
+                                        <div id="zoom-level"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
                             <div class="col">
                                 <label for="enable_draw"><a>Enable</a></label>
-                                <input type="checkbox" name="enable_draw" id="enable_draw">
+                                <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enableInteraction()">
                                 <form class="form-inline">
                                     <label><a>Geometry type</a> &nbsp;</label>
                                     <select id="draw_type">
@@ -171,12 +170,36 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="sidebar-pane" id="profile">
+                    <h1 class="sidebar-header">
+                        Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                </div>
+
+                <div class="sidebar-pane" id="messages">
+                    <h1 class="sidebar-header">
+                        Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+                </div>
+
+                <div class="sidebar-pane" id="settings">
+                    <h1 class="sidebar-header">
+                        Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+
+                </div>
             </div>
         </div>
         <!-- End of sidebar div -->
     </main>
 
     <div id="mapDiv" class="mapDiv sidebar-map"></div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
+    
 
     <!-- footer class="footer mt-auto py-3 bg-light">
         <div class="container">
@@ -204,6 +227,7 @@
     <!-- Start features -->
     <script src="{{ url_for('static', filename='js/features/mouse_position_control.js') }}"></script>
     <script src="{{ url_for('static', filename='js/features/draw_and_modify_features.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/features/marker_popup.js') }}"></script>
     <!-- End features -->
     
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
@@ -240,7 +264,8 @@
             // Adding a "fold" property set to either "open" or "close" makes the group layer
             // collapsible
             fold: "open",
-            layers: [uk_layers, ven_layers]
+            //layers: [uk_layers, ven_layers]
+            layers: [ven_layers]
         });
         mapDiv.addLayer(my_data);
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
