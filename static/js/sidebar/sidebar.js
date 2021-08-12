@@ -23,8 +23,8 @@ var satelite = new ol.layer.Tile({
 var view = new ol.View({
     projection: "EPSG:4326",
     //center: ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"),
-    center    : [0, 0],
-    zoom      : 2
+    center    : [-65.89003678746177, 8.016859315038008],
+    zoom      : 5.5
 });
 
 var mapDiv = new ol.Map({
@@ -39,6 +39,7 @@ var mapDiv = new ol.Map({
 });
 
 /* Start sample data */
+/*
 var uk_layers = new ol.layer.Group({
     // A layer must have a title to appear in the layerswitcher
     title: "Sample_data",
@@ -83,6 +84,7 @@ var uk_layers = new ol.layer.Group({
         })
     ]
 });
+*/
 //mapDiv.addLayer(uk_layers);
 /* End sample data */
 
@@ -95,3 +97,9 @@ var sidebar = new ol.control.Sidebar({
     position: "left"
 });
 var toc = document.getElementById("layers");
+
+mapDiv.on("rendercomplete",function(e) {
+    var zoomLevel   = mapDiv.getView().getZoom();
+    var zoomRounded = Math.round(zoomLevel*10)/10;
+    document.getElementById("zoom-level").innerHTML = zoomRounded;
+});
