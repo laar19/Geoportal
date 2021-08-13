@@ -2,11 +2,15 @@ var source = new ol.source.Vector({
     wrapX: false
 });
 
-var typeSelect = document.getElementById("draw_type");
-
 var draw; // global so we can remove it later
+var value; // global so we can remove it later
+
+var typeSelect = document.getElementById("draw_type");
+value          = typeSelect.value;
+
 function addInteraction() {
-    var value = typeSelect.value;
+    //var value = typeSelect.value;
+    value = typeSelect.value;
 
     if(value !== "None") {
         var geometryFunction, maxPoints;
@@ -45,22 +49,27 @@ function addInteraction() {
     }
 }
 
-/**
- * Handle change event.
- */
-typeSelect.onchange = function() {
-    mapDiv.removeInteraction(draw);
-    addInteraction();
-};
-
 //addInteraction();
 
 var enable_draw = document.getElementById("enable_draw");
 function enableInteraction() {
     if(enable_draw.checked) {
+        typeSelect.disabled = false;
+        mapDiv.removeInteraction(draw);
         addInteraction();
     }
     else {
+        typeSelect.disabled = true;
         mapDiv.removeInteraction(draw);
     }
 }
+
+/**
+ * Handle change event.
+ *
+ */
+typeSelect.onchange = function() {
+    mapDiv.removeInteraction(draw);
+    addInteraction();
+    //value = typeSelect.value;
+};
