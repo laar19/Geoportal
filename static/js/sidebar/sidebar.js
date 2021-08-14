@@ -21,9 +21,9 @@ var satelite = new ol.layer.Tile({
 /* End basemaps */
 
 var view = new ol.View({
-    projection: "EPSG:4326",
-    //center: ol.proj.transform([0, 0], "EPSG:4326", "EPSG:3857"),
-    center    : [-65.89003678746177, 8.016859315038008],
+    //projection: "EPSG:4326",
+    center: ol.proj.transform([-65.89003678746177, 8.016859315038008], "EPSG:4326", "EPSG:3857"),
+    //center    : [-65.89003678746177, 8.016859315038008],
     zoom      : 5.5
 });
 

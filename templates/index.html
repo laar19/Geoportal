@@ -168,17 +168,6 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <form class="form-inline">
-                                    <label for="measure_type">Measurement type &nbsp;</label>
-                                    <select id="measure_type">
-                                        <option value="length">Length (LineString)</option>
-                                        <option value="area">Area (Polygon)</option>
-                                    </select>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -206,6 +195,11 @@
     </main>
 
     <div id="mapDiv" class="mapDiv sidebar-map"></div>
+    <!-- div id="popup" title="myproject" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div -->
+
     <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
@@ -239,7 +233,6 @@
     <script src="{{ url_for('static', filename='js/features/mouse_position_control.js') }}"></script>
     <script src="{{ url_for('static', filename='js/features/draw_and_modify_features.js') }}"></script>
     <script src="{{ url_for('static', filename='js/features/marker_popup.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/features/measure.js') }}"></script>
     <!-- End features -->
     
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
@@ -283,15 +276,25 @@
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
         mapDiv.addControl(sidebar);
 
-
-        
-
         var base64_image = new Image();
         base64_image.src = img["image"];
 
         var imagePlaceholder = document.getElementById("placeholder"); // image div where the image will be displayed
         display_base64_image_div(imagePlaceholder, base64_image.src);
-        display_base64_image(base64_image, extent, mapDiv);
+        //display_base64_image(base64_image, extent, mapDiv);
+
+
+        
+        var a = extent[0];
+        var b = extent[1];
+        var c = extent[2];
+        var d = extent[3];
+        var ab = ol.proj.transform([a, b], "EPSG:4326", "EPSG:3857");
+        var cd = ol.proj.transform([c, d], "EPSG:4326", "EPSG:3857");
+        var verga = [ab[0], ab[1], cd[0], cd[1]];
+
+        var new_extent = transform_four_points_extent(extent, "EPSG:4326", "EPSG:3857");
+        display_base64_image(base64_image, new_extent, mapDiv);
     </script>
 </body>
 </html>
