@@ -23,12 +23,21 @@ def index():
 
     query   = DbConn.select_table("centros_pob_wgs84", conn, engine)
     centros = gpd.read_postgis(query, con=engine)
+    centros.rename(columns = {"geom":"geometry"}, inplace = True)
+    centros = gpd.GeoDataFrame(centros, crs=4326)
+    centros = centros.to_crs(3857)
 
     query   = DbConn.select_table("estados", conn, engine)
     estados = gpd.read_postgis(query, con=engine)
+    estados.rename(columns = {"geom":"geometry"}, inplace = True)
+    estados = gpd.GeoDataFrame(estados, crs=4326)
+    estados = estados.to_crs(3857)
     
     query    = DbConn.select_table("vialidad_troncal", conn, engine)
     vialidad = gpd.read_postgis(query, con=engine)
+    vialidad.rename(columns = {"geom":"geometry"}, inplace = True)
+    vialidad = gpd.GeoDataFrame(vialidad, crs=4326)
+    vialidad = vialidad.to_crs(3857)
 
     conn.close()
 

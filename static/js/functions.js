@@ -23,7 +23,8 @@ function display_base64_image(base64_image, extent, mapDiv) {
             imageLoadFunction : function(img){
                 img.getImage().src = base64_image.src;
             },
-            projection: "EPSG:4326",
+            //projection: "EPSG:4326",
+            projection: "EPSG:3857",
             //size : [150, 150], // 150x150px
             imageExtent: extent
         })
@@ -40,4 +41,13 @@ function display_base64_image_div(div, base64_image) {
         div.appendChild(this);
     }
     image.src = base64_image;
+}
+
+function transform_four_points_extent(extent, original_proj, target_proj) {    
+    var aux1 = ol.proj.transform([extent[0], extent[1]], original_proj, target_proj);
+    var aux2 = ol.proj.transform([extent[2], extent[3]], original_proj, target_proj);
+
+    var new_extent = aux1.concat(aux2);
+
+    return new_extent;
 }
