@@ -1,12 +1,12 @@
-var image = new ol.style.Circle({
+var image_style = new ol.style.Circle({
     radius: 1,
-    fill: null,
+    fill  : null,
     stroke: new ol.style.Stroke({color: "red", width: 1}),
 });
 
 var styles = {
     "Point": new ol.style.Style({
-        image: image,
+        image: image_style,
     }),
     "LineString": new ol.style.Style({
         stroke: new ol.style.Stroke({
@@ -21,7 +21,7 @@ var styles = {
         })
     }),
     "MultiPoint": new ol.style.Style({
-        image: image,
+        image: image_style,
     }),
     "MultiPolygon": new ol.style.Style({
         stroke: new ol.style.Stroke({

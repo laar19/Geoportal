@@ -17,7 +17,7 @@ function display_layer(data, title, mapDiv) {
 }
 
 // Show base 64 image on the map
-function display_base64_image(base64_image, extent, mapDiv) {
+function display_base64_image_onmap(base64_image, extent, mapDiv) {
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             imageLoadFunction : function(img){
@@ -34,7 +34,7 @@ function display_base64_image(base64_image, extent, mapDiv) {
 }
 
 // Show base 64 image on div
-function display_base64_image_div(div, base64_image) {
+function display_base64_image_ondiv(div, base64_image) {
     var image = document.createElement("img");
     image.onload = function() {
         div.innerHTML = "";

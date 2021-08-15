@@ -28,7 +28,8 @@ var view = new ol.View({
 });
 
 var mapDiv = new ol.Map({
-    target: "mapDiv",
+    //target: "mapDiv",
+    target: document.getElementById("mapDiv"),
     layers: [
         new ol.layer.Group({
             title : "Base maps", // A layer must have a title to appear in the layerswitcher

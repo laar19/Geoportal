@@ -1,196 +1,34 @@
-//var coordinates = [-64.691679, 5.972876];
-
-/*
-var content = document.getElementById("popup-content");
-
-straitSource = new ol.source.Vector({
-    wrapX: true
-});
-var straitsLayer = new ol.layer.Vector({
-    source: straitSource
-});
-mapDiv.addLayer(straitsLayer);
-
-// Popup showing the position the user clicked
-var container = document.getElementById("popup");
-var popup = new ol.Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-        duration: 250
-    }
-});
-mapDiv.addOverlay(popup);
-
-
-// Add a pointermove handler to the map to render the popup.
-
-mapDiv.on("pointermove", function (evt) {
-    var feature = mapDiv.forEachFeatureAtPixel(evt.pixel, function (feat, layer) {
-        return feat;
-    });
-
-    if (feature && feature.get("type") == "Point") {
-        var coordinate = evt.coordinate;    //default projection is EPSG:3857 you may want to use ol.proj.transform
-        content.innerHTML = feature.get("desc");
-        popup.setPosition(coordinate);
-    }
-    else {
-        popup.setPosition(undefined);
-    }
-});
-
-
-
-/*
-mapDiv.on("pointermove", function (event) {
-    if (mapDiv.hasFeatureAtPixel(event.pixel) === true) {
-        var coordinate = event.coordinate;
-
-        content.innerHTML = straitSource.uidIndex_["34"].values_.desc;
-        popup.setPosition(coordinate);
-    }
-    else {
-        popup.setPosition(undefined);
-    }
-});
-*
-
-
-//var data=[{"Lon":19.455128,"Lat":41.310575},{"Lon":19.455128,"Lat":41.310574},{"Lon":19.457388,"Lat":41.300442},{"Lon":19.413507,"Lat":41.295189},{"Lon":16.871931,"Lat":41.175926},{"Lon":16.844809,"Lat":41.151096},{"Lon":16.855165,"Lat":45}];
-
-var data = [
-    {"Lon":coordinates[0],"Lat":coordinates[1]}
-];
-
-
-function addPointGeom(data) {
-    data.forEach(function(item) { //iterate through array...
-        var longitude = item.Lon;
-        var latitude  = item.Lat;
-
-        var iconFeature = new ol.Feature({
-            //geometry: new ol.geom.Point([longitude, latitude]),
-            geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], "EPSG:4326", "EPSG:3857")),
-            type: "Point",
-            desc: "<pre> <b>Waypoint Details </b> " + "<br>" + "Latitude : " + latitude + "<br>Longitude: " + longitude + "</pre>"
-        });
-
-        var iconStyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 5,
-                    stroke: new ol.style.Stroke({
-                        color: "blue"
-                    }),
-                    fill: new ol.style.Fill({
-                        color: [57, 228, 193, 0.84]
-                    })
-                })
-            });
-
-        iconFeature.setStyle(iconStyle);
-        straitSource.addFeature(iconFeature);
-    });
-}// End of function showStraits()
-
-addPointGeom(data);
-*/
-
-
-
-
 var container = document.getElementById("popup");
 var content   = document.getElementById("popup-content");
-var closer    = document.getElementById("popup-closer");
-// Popup showing the position the user clicked
-var container = document.getElementById("popup");
-var popup = new ol.Overlay({
-    element: container,
-    autoPan: true,
-    autoPanAnimation: {
-        duration: 250
-    }
-});
-mapDiv.addOverlay(popup);
+var closer     = document.getElementById("popup-closer");
 
-
-
-var coordinates = [-64.691679, 5.972876];
-let marcador = new ol.Feature({
-    geometry: new ol.geom.Point(
-        ol.proj.fromLonLat(coordinates)// En dónde se va a ubicar
-    ),
-});
-
- marcador.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 5,
-                    stroke: new ol.style.Stroke({
-                        color: "blue"
-                    }),
-                    fill: new ol.style.Fill({
-                        color: [57, 228, 193, 0.84]
-                    })
-                })
-            }));
-
-// Agregamos icono
-/*
-marcador.setStyle(new ol.style.Style({
-    image: new ol.style.Icon({
-        src: "https://cdns.iconmonstr.com/wp-content/assets/preview/2021/240/iconmonstr-bed-9.png",
-    })
-}));
-*/
-
-// marcadores debe ser un arreglo
-const marcadores = []; // Arreglo para que se puedan agregar otros más tarde
-
-marcadores.push(marcador);// Agregamos el marcador al arreglo
-
-let capa = new ol.layer.Vector({
-    source: new ol.source.Vector({
-        features: marcadores, // A la capa le ponemos los marcadores
-    }),
-});
-// Y agregamos la capa al mapa
-mapDiv.addLayer(capa);
-
-//mapDiv.on('pointermove', function(evt) {
-/*
-mapDiv.on('singleclick', function(evt) {
-    var feature = mapDiv.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-        // Aquí se puede filtrar la feature
-        return feature;
-    });
-    if (feature) {
-        var latitude = "example";
-        var longitude = "example";
-        //alert("Click en: ", feature);
-        //content.innerHTML = feature.get("desc");
-        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Latitude : " + latitude + "<br>Longitude: " + longitude + "</pre>"
-        popup.setPosition(ol.proj.fromLonLat(coordinates));
-    }
-    else {
-        popup.setPosition(undefined);
-    }
-});
-*/
-
-closer.onclick = function () {
+closer.onclick = function() {
     popup.setPosition(undefined);
     closer.blur();
     return false;
 };
 
-mapDiv.on("singleclick", function (event) {
+// Popup showing the position the user clicked
+var popup = new ol.Overlay({
+    element: container,
+    autoPan: true,
+    positioning: "bottom-center",
+    autoPanAnimation: {
+        duration: 250
+    }
+});
+mapDiv.addOverlay(popup);
+
+//mapDiv.on("pointermove", function(evt) {
+/*
+mapDiv.on("singleclick", function(event) {
     if (mapDiv.hasFeatureAtPixel(event.pixel) === true) {
         var coordinate = event.coordinate;
 
         var latitude = "example";
         var longitude = "example";
 
-        content.innerHTML = content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Latitude : " + latitude + "<br>Longitude: " + longitude + "</pre>"
+        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Latitude : " + latitude + "<br>Longitude: " + longitude + "</pre>"
         popup.setPosition(ol.proj.fromLonLat(coordinates));
     }
     /*
@@ -198,5 +36,101 @@ mapDiv.on("singleclick", function (event) {
         popup.setPosition(undefined);
         closer.blur();
     }
+    *
+});
+*/
+
+// display popup on click
+mapDiv.on("click", function(evt) {
+    var feature = mapDiv.forEachFeatureAtPixel(evt.pixel, function(feature) {
+        return feature;
+    });
+
+    if(feature.get("display") == true) {
+        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Population : " + feature.get("population") + "<br>Rainfall: " + feature.get("rainfall") + "</pre>"        
+        popup.setPosition(evt.coordinate);
+        /*
+        $(container).popover({
+            placement: "top",
+            html: true,
+            //content: feature.get("name"),
+            content: "<a href='#' id='popup-closer' class='ol-popup-closer'></a><pre> <b>Waypoint Details </b> " + "<br>" + "Population : " + feature.get("population") + "<br>Rainfall: " + feature.get("rainfall") + "</pre>"
+        });
+        $(container).popover("show");
+        */
+    }
+    /*
+    else {
+        $(container).popover("dispose");
+    }
     */
 });
+
+// change mouse cursor when over marker
+mapDiv.on("pointermove", function(e) {
+    var pixel = mapDiv.getEventPixel(e.originalEvent);
+    var hit   = mapDiv.hasFeatureAtPixel(pixel);
+    mapDiv.getTarget().style.cursor = hit ? "pointer" : "";
+});
+
+// Close the popup when the map is moved
+/*
+mapDiv.on("movestart", function() {
+    $(container).popover("dispose");
+});
+*/
+
+function addMarker(mapDiv, coordinates, proj) {
+    var marker;
+    
+    if(proj == "EPSG:4326") {
+        marker = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
+            display      : true,
+            population   : 4000,
+            rainfall     : 500
+        });
+    }
+    else {
+        marker = new ol.Feature({
+            geometry  : new ol.geom.Point(coordinates),
+            display      : true,
+            population   : 4000,
+            rainfall     : 500
+        });
+    }
+    /*
+    marker.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 5,
+            stroke: new ol.style.Stroke({
+                color: "blue"
+            }),
+            fill: new ol.style.Fill({
+                color: [57, 228, 193, 0.84]
+            })
+        })
+    }));
+    */
+
+    // Change icon
+    marker.setStyle(new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 46],
+            anchorXUnits: "fraction",
+            anchorYUnits: "pixels",
+            src: "https://cdn.mapmarker.io/api/v1/pin?size=50&background=%2316A5A5&icon=fas%20fa-map-marker-alt&color=%23FFFFFF&voffset=0&hoffset=1&"
+        })
+    }));
+
+    var markers_list = Array();
+    markers_list.push(marker);
+
+    var layer_marker = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: markers_list
+        })
+    });
+
+    mapDiv.addLayer(layer_marker);
+}
