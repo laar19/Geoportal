@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- JQuery -->
-    <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">    
@@ -161,9 +161,7 @@
                                     <label><a>Geometry type</a> &nbsp;</label>
                                     <select id="draw_type" disabled>
                                         <option value="Point" selected="selected">Point</option>
-                                        <option value="LineString">LineString</option>
                                         <option value="Polygon">Polygon</option>
-                                        <option value="Circle">Circle</option>
                                     </select>
                                 </form>
                             </div>
@@ -194,11 +192,9 @@
         <!-- End of sidebar div -->
     </main>
 
-    <div id="mapDiv" class="mapDiv sidebar-map"></div>
-    <!-- div id="popup" title="myproject" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-        <div id="popup-content"></div>
-    </div -->
+    <div id="mapDiv" class="mapDiv sidebar-map">
+        <!-- div id="popup"></div -->
+    </div>
 
     <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -257,12 +253,7 @@
                 display_layer(vialidad, "Vías troncales", mapDiv)
             ]
         });
-        //layer_group.getLayers().array_.push(my_data);
-        //layer_group.getLayers().push(my_data);
-        //layer_group.push(my_data);
-        //mapDiv.removeLayer(layer_group);
         
-        //mapDiv.removeLayer(layer_group);
         var my_data = new ol.layer.Group({
             // A layer must have a title to appear in the layerswitcher
             title: "Data",
@@ -279,22 +270,15 @@
         var base64_image = new Image();
         base64_image.src = img["image"];
 
-        var imagePlaceholder = document.getElementById("placeholder"); // image div where the image will be displayed
-        display_base64_image_div(imagePlaceholder, base64_image.src);
-        //display_base64_image(base64_image, extent, mapDiv);
-
-
-        
-        var a = extent[0];
-        var b = extent[1];
-        var c = extent[2];
-        var d = extent[3];
-        var ab = ol.proj.transform([a, b], "EPSG:4326", "EPSG:3857");
-        var cd = ol.proj.transform([c, d], "EPSG:4326", "EPSG:3857");
-        var verga = [ab[0], ab[1], cd[0], cd[1]];
+        // Image div where the image will be displayed
+        var imagePlaceholder = document.getElementById("placeholder");
+        display_base64_image_ondiv(imagePlaceholder, base64_image.src);
 
         var new_extent = transform_four_points_extent(extent, "EPSG:4326", "EPSG:3857");
-        display_base64_image(base64_image, new_extent, mapDiv);
+        display_base64_image_onmap(base64_image, new_extent, mapDiv);
+
+        var coordinates = [-64.691679, 5.972876];
+        addMarker(mapDiv, coordinates, "EPSG:4326");
     </script>
 </body>
 </html>
