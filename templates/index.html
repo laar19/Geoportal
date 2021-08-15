@@ -238,6 +238,8 @@
         var centros  = {{ data[0]|safe }};
         var estados  = {{ data[1]|safe }};
         var vialidad = {{ data[2]|safe }};
+        var amo      = {{ data[3]|safe }};
+        var indice   = {{ data[4]|safe }};
         var img      = {{ image|tojson }};
         var extent   = {{ extent }};
         
@@ -250,7 +252,9 @@
             layers: [
                 display_layer(centros, "Centros poblados", mapDiv),
                 display_layer(estados, "Estados", mapDiv),
-                display_layer(vialidad, "Vías troncales", mapDiv)
+                display_layer(vialidad, "Vías troncales", mapDiv),
+                display_layer(amo, "AMO", mapDiv),
+                display_layer(indice, "Índice", mapDiv)
             ]
         });
         

@@ -85,18 +85,18 @@ function addMarker(mapDiv, coordinates, proj) {
     
     if(proj == "EPSG:4326") {
         marker = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
-            display      : true,
-            population   : 4000,
-            rainfall     : 500
+            geometry  : new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
+            display   : true,
+            population: 4000,
+            rainfall  : 500
         });
     }
     else {
         marker = new ol.Feature({
             geometry  : new ol.geom.Point(coordinates),
-            display      : true,
-            population   : 4000,
-            rainfall     : 500
+            display   : true,
+            population: 4000,
+            rainfall  : 500
         });
     }
     /*

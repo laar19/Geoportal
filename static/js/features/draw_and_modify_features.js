@@ -25,26 +25,26 @@ function addInteraction() {
 
         draw.on("drawend", function(e) {
             //alert(e.feature.getGeometry().getExtent());
-            console.log("UNO");
             var coordinates = e.feature.getGeometry().getCoordinates();
-            console.log(coordinates[0][0]);
-            addMarker(mapDiv, coordinates[0][0], "EPSG:3857");
+
+            if(coordinates.length == 2) {
+                addMarker(mapDiv, coordinates, "EPSG:3857");
+            }
+            else {
+                for(var i=0; i<=(coordinates.length)-1; i++) {
+                    for(var j=0; j<=(coordinates[i].length)-1; j++) {
+                        addMarker(mapDiv, coordinates[i][j], "EPSG:3857");
+                    }
+                }
+            }
             
             /*
             console.log("DOS");
             var geoJsonGeom = new ol.format.GeoJSON();    
             var pp = geoJsonGeom.writeGeometry(e.feature.getGeometry());
             console.log(pp);
-            
-
-            /*
-            // Go through this array and get coordinates of their geometry.
-            features.forEach(function(feature) {
-               console.log(feature.getGeometry().getCoordinates());
-            });
             */
         })
-        
         mapDiv.addInteraction(draw);
     }
 }
