@@ -83,9 +83,9 @@ mapDiv.on("movestart", function() {
 function addMarker(mapDiv, coordinates, proj) {
     var marker;
     
-    if(proj == "EPSG:4326") {
+    if(proj == main_projection) {
         marker = new ol.Feature({
-            geometry  : new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
+            geometry  : new ol.geom.Point(coordinates),
             display   : true,
             population: 4000,
             rainfall  : 500
@@ -93,7 +93,7 @@ function addMarker(mapDiv, coordinates, proj) {
     }
     else {
         marker = new ol.Feature({
-            geometry  : new ol.geom.Point(coordinates),
+            geometry  : new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
             display   : true,
             population: 4000,
             rainfall  : 500

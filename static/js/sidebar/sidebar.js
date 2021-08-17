@@ -1,3 +1,7 @@
+var proj_4326              = "EPSG:4326";
+var proj_3857              = "EPSG:3857";
+var main_projection        = proj_4326;
+
 /* Start basemaps */
 var osm = new ol.layer.Tile({
     title  : "OSM", // A layer must have a title to appear in the layerswitcher
@@ -21,9 +25,9 @@ var satelite = new ol.layer.Tile({
 /* End basemaps */
 
 var view = new ol.View({
-    //projection: "EPSG:4326",
-    center: ol.proj.transform([-65.89003678746177, 8.016859315038008], "EPSG:4326", "EPSG:3857"),
-    //center    : [-65.89003678746177, 8.016859315038008],
+    projection: main_projection,
+    center    : [-65.89003678746177, 8.016859315038008],
+    //center: ol.proj.transform([-65.89003678746177, 8.016859315038008], "EPSG:4326", "EPSG:3857"),
     zoom      : 5.5
 });
 

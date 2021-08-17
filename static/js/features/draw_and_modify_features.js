@@ -11,8 +11,7 @@ var draw; // global so we can remove it later
 var value_draw; // global so we can remove it later
 
 var typeSelect = document.getElementById("draw_type");
-value_draw          = typeSelect.value;
-
+value_draw     = typeSelect.value;
 
 function addInteraction() {
     value_draw = typeSelect.value;
@@ -27,13 +26,15 @@ function addInteraction() {
             //alert(e.feature.getGeometry().getExtent());
             var coordinates = e.feature.getGeometry().getCoordinates();
 
+            console.log(coordinates);
+
             if(coordinates.length == 2) {
-                addMarker(mapDiv, coordinates, "EPSG:3857");
+                addMarker(mapDiv, coordinates, main_projection);
             }
             else {
                 for(var i=0; i<=(coordinates.length)-1; i++) {
                     for(var j=0; j<=(coordinates[i].length)-1; j++) {
-                        addMarker(mapDiv, coordinates[i][j], "EPSG:3857");
+                        addMarker(mapDiv, coordinates[i][j], main_projection);
                     }
                 }
             }

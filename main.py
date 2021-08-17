@@ -20,43 +20,57 @@ def index():
     DbConn         = DbConnection()
     conn, engine   = DbConn.connection(db_credentials_path, 0)
     conn2, engine2 = DbConn.connection(db_credentials_path, 1)
+    
+    proj_4326 = 4326
+    proj_3857 = 3857
+    geom_col  = "geom"
 
     data = list()
 
     query   = DbConn.select_table("centros_pob_wgs84", conn, engine)
-    centros = gpd.read_postgis(query, con=engine)
-    centros.rename(columns = {"geom":"geometry"}, inplace = True)
-    centros = gpd.GeoDataFrame(centros, crs=4326)
-    centros = centros.to_crs(3857)
-    data.append(centros.to_json())
+    """
+    centros = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
+        .to_crs(proj_3857) \
+        .to_json()
+    """
+    centros = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
+    data.append(centros)
 
     query   = DbConn.select_table("estados", conn, engine)
-    estados = gpd.read_postgis(query, con=engine)
-    estados.rename(columns = {"geom":"geometry"}, inplace = True)
-    estados = gpd.GeoDataFrame(estados, crs=4326)
-    estados = estados.to_crs(3857)
-    data.append(estados.to_json())
-    
-    query    = DbConn.select_table("vialidad_troncal", conn, engine)
-    vialidad = gpd.read_postgis(query, con=engine)
-    vialidad.rename(columns = {"geom":"geometry"}, inplace = True)
-    vialidad = gpd.GeoDataFrame(vialidad, crs=4326)
-    vialidad = vialidad.to_crs(3857)
-    data.append(vialidad.to_json())
-    
-    query    = DbConn.select_table("amo_gwgs84", conn, engine)
-    amo = gpd.read_postgis(query, con=engine)
-    amo.rename(columns = {"geom":"geometry"}, inplace = True)
-    amo = gpd.GeoDataFrame(amo, crs=4326)
-    amo = amo.to_crs(3857)
-    data.append(amo.to_json())
-    
-    query    = DbConn.select_table("indice_pr_vrss2", conn, engine)
-    indice = gpd.read_postgis(query, con=engine)
-    indice.rename(columns = {"geom":"geometry"}, inplace = True)
-    indice = gpd.GeoDataFrame(indice, crs=4326)
-    indice = indice.to_crs(3857)
-    data.append(indice.to_json())
+    """
+    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
+        .to_crs(proj_3857) \
+        .to_json()
+    """
+    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
+    data.append(estados)
+
+    query   = DbConn.select_table("vialidad_troncal", conn, engine)
+    """
+    vialidad = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
+        .to_crs(proj_3857) \
+        .to_json()
+    """
+    vialidad = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
+    data.append(vialidad)
+
+    query   = DbConn.select_table("amo_gwgs84", conn, engine)
+    """
+    amo = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
+        .to_crs(proj_3857) \
+        .to_json()
+    """
+    amo = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
+    data.append(amo)
+
+    query   = DbConn.select_table("indice_pr_vrss2", conn, engine)
+    """
+    indice = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
+        .to_crs(proj_3857) \
+        .to_json()
+    """
+    indice = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
+    data.append(indice)
 
     conn.close()
 
