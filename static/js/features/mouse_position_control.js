@@ -1,6 +1,6 @@
 var mousePositionControl = new ol.control.MousePosition({
     coordinateFormat: ol.coordinate.createStringXY(4),
-    projection: "EPSG:4326",
+    projection: main_projection,
     // comment the following two lines to have the mouse position
     // be placed within the map.
     className    : "custom-mouse-position",
@@ -11,6 +11,7 @@ var mousePositionControl = new ol.control.MousePosition({
 var projectionSelect = document.getElementById("projection");
 projectionSelect.addEventListener("change", function (event) {
     mousePositionControl.setProjection(event.target.value);
+    main_projection = event.target.value;
 });
   
 var precisionInput = document.getElementById("precision");

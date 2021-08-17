@@ -17,14 +17,14 @@ function display_layer(data, title, mapDiv) {
 }
 
 // Show base 64 image on the map
-function display_base64_image_onmap(base64_image, extent, mapDiv) {
+function display_base64_image_onmap(base64_image, extent, mapDiv, proj) {
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             imageLoadFunction : function(img){
                 img.getImage().src = base64_image.src;
             },
             //projection: "EPSG:4326",
-            projection: "EPSG:3857",
+            projection: proj,
             //size : [150, 150], // 150x150px
             imageExtent: extent
         })
@@ -43,11 +43,19 @@ function display_base64_image_ondiv(div, base64_image) {
     image.src = base64_image;
 }
 
-function transform_four_points_extent(extent, original_proj, target_proj) {    
-    var aux1 = ol.proj.transform([extent[0], extent[1]], original_proj, target_proj);
-    var aux2 = ol.proj.transform([extent[2], extent[3]], original_proj, target_proj);
+function transform_projection(coordinates, original_proj, target_proj) {
+    var new_coordinates = Array();
 
-    var new_extent = aux1.concat(aux2);
-
-    return new_extent;
+    if(coordinates.length == 2) {
+        return ol.proj.transform(coordinates, original_proj, target_proj);
+    }
+    else {
+        for(var i=0; i<=(coordinates.length)-1; i++) {
+            for(var j=0; j<=(coordinates[i].length)-1; j++) {
+                new_coordinates.push(ol.proj.transform(coordinates[i][j], original_proj, target_proj));
+            }
+        }
+    }
+    
+    return new_coordinates;
 }
