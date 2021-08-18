@@ -13,7 +13,7 @@ var value_draw; // global so we can remove it later
 var typeSelect = document.getElementById("draw_type");
 value_draw     = typeSelect.value;
 
-function addInteraction() {
+function add_draw_interaction() {
     value_draw = typeSelect.value;
 
     if (value_draw !== "None") {
@@ -26,18 +26,32 @@ function addInteraction() {
             //alert(e.feature.getGeometry().getExtent());
             var coordinates = e.feature.getGeometry().getCoordinates();
 
-            console.log(coordinates);
+            var new_coordinates = Array();
 
             if(coordinates.length == 2) {
                 addMarker(mapDiv, coordinates, main_projection);
+                new_coordinates = coordinates;
             }
             else {
                 for(var i=0; i<=(coordinates.length)-1; i++) {
                     for(var j=0; j<=(coordinates[i].length)-1; j++) {
                         addMarker(mapDiv, coordinates[i][j], main_projection);
+                        new_coordinates.push(coordinates[i][j]);
                     }
                 }
+                new_coordinates.pop();
             }
+
+            $(".list-group").append(
+                "<li class='list-group-item d-flex justify-content-between align-items-center'>"
+                    +"<a href='#' id='list-item-closer' class='ol-popup-closer' onClick='remove_coordinate(this)'></a>"
+                    +"<strong> Coordinates: </strong>"+ new_coordinates
+                    +"<div class='image-parent'>"
+                        //+"<img src="+base64_image.src+" class='img-fluid'>"
+                        +"<div class='image-parent' id='placeholder'></div>"
+                    +"</div>"
+                +"</li>"
+            );
             
             /*
             console.log("DOS");
@@ -49,55 +63,18 @@ function addInteraction() {
         mapDiv.addInteraction(draw);
     }
 }
-/*
-function addInteraction() {
-    value_draw = typeSelect.value;
 
-    if(value_draw !== "None") {
-        var geometryFunction, maxPoints;
-
-        if(value_draw === "Square") {
-            value_draw = "Circle";
-            geometryFunction = ol.interaction.Draw.createRegularPolygon(4);
-        }
-        else if(value_draw === "Box") {
-            value_draw = "LineString";
-            maxPoints = 2;
-            geometryFunction = function(coordinates, geometry) {
-                if(!geometry) {
-                    geometry = new ol.geom.Polygon(null);
-                }
-                var start = coordinates[0];
-                var end   = coordinates[1];
-                geometry.setCoordinates([
-                    [start, [start[0], end[1]], end, [end[0], start[1]], start]
-                ]);
-                return geometry;
-            };
-        }
-
-        draw = new ol.interaction.Draw({
-            source: source_draw,
-            type: /** @type {ol.geom.GeometryType} * (typeSelect.value),
-            geometryFunction: geometryFunction,
-            maxPoints: maxPoints
-        });
-
-        draw.on("drawend", function(e) {
-            alert(e.feature.getGeometry().getExtent());
-        })
-        mapDiv.addInteraction(draw);
-    }
+// Remove coordinate item added to sidebar
+function remove_coordinate(item) {
+    $(item).parent().remove("li");
 }
-//addInteraction();
-*/
 
 var enable_draw = document.getElementById("enable_draw");
-function enableInteraction() {
+function enable_draw_interaction() {
     if(enable_draw.checked) {
         typeSelect.disabled = false;
         mapDiv.removeInteraction(draw);
-        addInteraction();
+        add_draw_interaction();
     }
     else {
         typeSelect.disabled = true;
@@ -111,6 +88,6 @@ function enableInteraction() {
  */
 typeSelect.onchange = function() {
     mapDiv.removeInteraction(draw);
-    addInteraction();
+    add_draw_interaction();
     //value_draw = typeSelect.value;
 };

@@ -20,7 +20,7 @@ def index():
     DbConn         = DbConnection()
     conn, engine   = DbConn.connection(db_credentials_path, 0)
     conn2, engine2 = DbConn.connection(db_credentials_path, 1)
-    
+
     proj_4326 = 4326
     proj_3857 = 3857
     geom_col  = "geom"
