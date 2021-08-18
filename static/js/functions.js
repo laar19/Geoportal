@@ -31,6 +31,16 @@ function display_base64_image_onmap(base64_image, extent, mapDiv, proj) {
     });
 
     mapDiv.addLayer(image);
+
+    $(".list-group").append(
+        "<li class='list-group-item d-flex justify-content-between align-items-center'>"
+            +"<strong> Coordinates </strong> (etc)"
+            +"<div class='image-parent'>"
+                +"<img src="+base64_image.src+" class='img-fluid'>"
+                +"<div class='image-parent' id='placeholder'></div>"
+            +"</div>"
+        +"</li>"
+    );
 }
 
 // Show base 64 image on div

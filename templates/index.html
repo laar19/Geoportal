@@ -107,7 +107,7 @@
                     <div id="layers" class="layer-switcher"></div>
 
                     <h5> Image Preview </h5>
-                    <div id="placeholder"></div>
+                    <div id="placeholde"></div>
                 </div>
 
                 <div class="sidebar-pane" id="tools">
@@ -155,15 +155,38 @@
                         </div>
                         <div class="row border-bottom">
                             <div class="col">
-                                <label for="enable_draw"><a>Enable</a></label>
-                                <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enableInteraction()">
+                                <label for="enable_draw"><a> Enable </a></label>
+                                <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enable_draw_interaction()">
                                 <form class="form-inline">
                                     <label><a>Geometry type</a> &nbsp;</label>
                                     <select id="draw_type" disabled>
-                                        <option value="Point" selected="selected">Point</option>
-                                        <option value="Polygon">Polygon</option>
+                                        <option value="Point" selected="selected"> Point </option>
+                                        <option value="Polygon"> Polygon </option>
                                     </select>
                                 </form>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <a> Results </a>
+
+                                <ul class="list-group" id="coordinates-list">
+                                    <!-- li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong> Coordinates </strong> (etc)
+                                        <div class="image-parent">
+                                            <div class="image-parent" id="placeholder"></div>
+                                        </div>
+                                    </li -->
+                                    <!-- li class="list-group-item"><strong>Signature
+                                        Accommodations</strong>(1480m)
+                                    </li -->
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <label for="enable_select"><a> Enable feature selection </a></label>
+                                <input type="checkbox" name="enable_select" id="enable_select" onClick="enable_select_interaction()">
                             </div>
                         </div>
                     </div>
@@ -229,6 +252,7 @@
     <script src="{{ url_for('static', filename='js/features/mouse_position_control.js') }}"></script>
     <script src="{{ url_for('static', filename='js/features/draw_and_modify_features.js') }}"></script>
     <script src="{{ url_for('static', filename='js/features/marker_popup.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/features/select_feature.js') }}"></script>
     <!-- End features -->
     
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
@@ -250,11 +274,11 @@
             // collapsible
             fold: "open",
             layers: [
-                display_layer(centros, "Centros poblados", mapDiv),
+                //display_layer(centros, "Centros poblados", mapDiv),
                 display_layer(estados, "Estados", mapDiv),
                 display_layer(vialidad, "Vías troncales", mapDiv),
-                display_layer(amo, "AMO", mapDiv),
-                display_layer(indice, "Índice", mapDiv)
+                //display_layer(amo, "AMO", mapDiv),
+                //display_layer(indice, "Índice", mapDiv)
             ]
         });
         
@@ -275,15 +299,12 @@
         base64_image.src = img["image"];
 
         // Image div where the image will be displayed
-        var imagePlaceholder = document.getElementById("placeholder");
-        display_base64_image_ondiv(imagePlaceholder, base64_image.src);
+        //var imagePlaceholder = document.getElementById("placeholder");
+        //display_base64_image_ondiv(imagePlaceholder, base64_image.src);
         
         var new_extent = transform_projection(extent, proj_4326, proj_3857);
         //display_base64_image_onmap(base64_image, new_extent, mapDiv);
         display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
-
-        var coordinates = [-64.691679, 5.972876];
-        addMarker(mapDiv, coordinates, main_projection);
     </script>
 </body>
 </html>
