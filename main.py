@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from flask_wtf import CSRFProtect
 
 import json
 
@@ -7,10 +8,17 @@ import geopandas as gpd
 
 import base64
 
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+from shapely.geometry.multipoint import MultiPoint
+
 from app.db_config import DbConnection
 from app.functions import *
+from app.config import *
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = SECRET_KEY
+csrf = CSRFProtect(app)
 
 db_credentials_path = "db_credentials.csv"
 
@@ -107,5 +115,52 @@ def index():
     #return render_template("index.html", data, img_str)
     return render_template("index.html", data=data, image=raw_data, extent=extent)
 
+@app.route("/search_image", methods=["POST"])
+def search_image():
+    DbConn         = DbConnection()
+    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
+    query     = DbConn.select_table("images", conn2, engine2)
+    dataframe = pd.read_sql(query, con=engine2)
+    conn2.close()
+    upperllat=dataframe.loc[0, "ullat"]
+    upperllon=dataframe.loc[0, "ullon"]
+    lowerrlat=dataframe.loc[0, "lrlat"]
+    lowerrlon=dataframe.loc[0, "lrlon"]
+    extent = [lowerrlon, lowerrlat, upperllon, upperllat]
+    
+    target = MultiPoint(
+    [
+        (lowerrlon, lowerrlat),
+        (upperllon, upperllat)
+    ]
+)
+    
+    intersection_elements = list()
+    
+    if request.method == "POST":
+        print("\nAQUI\n")
+        print(request.form)
+        print()
+
+        for i in request.form:
+            if i != "csrf_token":
+                if len(request.form.getlist(i)) == 2:
+                    intersection_elements.append(Point(float(request.form.getlist(i)[0]), float(request.form.getlist(i)[1])))
+                else:
+                    list_  = list()
+                    for j in range(len(request.form.getlist(i))-1):
+                        if (j%2) == 0:
+                            list_.append(tuple([float(request.form.getlist(i)[j]), float(request.form.getlist(i)[j+1])]))
+                    intersection_elements.append(Polygon(list_))
+
+        
+        for i in intersection_elements:
+            print()
+            print(target.intersects(i))
+            print()
+
+    return None
+
 if __name__ == "__main__":
+    csrf.init_app(app)
     app.run(debug=True)
