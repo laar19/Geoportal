@@ -155,6 +155,12 @@
                         </div>
                         <div class="row border-bottom">
                             <div class="col">
+                                <label for="enable_select"><a> Enable feature selection </a></label>
+                                <input type="checkbox" name="enable_select" id="enable_select" onClick="enable_select_interaction()">
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
                                 <label for="enable_draw"><a> Enable </a></label>
                                 <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enable_draw_interaction()">
                                 <form class="form-inline">
@@ -170,23 +176,24 @@
                             <div class="col">
                                 <a> Results </a>
 
-                                <ul class="list-group" id="coordinates-list">
-                                    <!-- li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <strong> Coordinates </strong> (etc)
-                                        <div class="image-parent">
-                                            <div class="image-parent" id="placeholder"></div>
-                                        </div>
-                                    </li -->
-                                    <!-- li class="list-group-item"><strong>Signature
-                                        Accommodations</strong>(1480m)
-                                    </li -->
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <label for="enable_select"><a> Enable feature selection </a></label>
-                                <input type="checkbox" name="enable_select" id="enable_select" onClick="enable_select_interaction()">
+                                <form method="POST" action="/search_image">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                    <div id="polygons">
+                                        <ul class="list-group" id="coordinates-list">
+                                            <!-- li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <strong> Coordinates </strong> (etc)
+                                                <div class="image-parent">
+                                                    <div class="image-parent" id="placeholder"></div>
+                                                </div>
+                                            </li -->
+                                            <!-- li class="list-group-item"><strong>Signature
+                                                Accommodations</strong>(1480m)
+                                            </li -->
+                                        </ul>
+                                    </div>
+                                    <button type="submit">Search</button>
+                                </form>
                             </div>
                         </div>
                     </div>

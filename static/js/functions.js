@@ -69,3 +69,14 @@ function transform_projection(coordinates, original_proj, target_proj) {
     
     return new_coordinates;
 }
+
+// Round decimal numbers
+function round_coordinates(coordinates, decimal_places) {
+    var new_coordinates = Array();
+    
+    for(var i=0; i<=(coordinates.length)-1; i++) {
+        new_coordinates.push(Number(Math.round(coordinates[i] + "e" + decimal_places) + "e-" + decimal_places));
+    }
+
+    return new_coordinates;
+}
