@@ -44,6 +44,7 @@ function display_base64_image_onmap(base64_image, extent, mapDiv, proj) {
 }
 
 // Show base 64 image on div
+/*
 function display_base64_image_ondiv(div, base64_image) {
     var image = document.createElement("img");
     image.onload = function() {
@@ -52,6 +53,7 @@ function display_base64_image_ondiv(div, base64_image) {
     }
     image.src = base64_image;
 }
+*/
 
 function transform_projection(coordinates, original_proj, target_proj) {
     var new_coordinates = Array();
