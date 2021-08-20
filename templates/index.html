@@ -105,9 +105,6 @@
 
                     <!-- !!! HERE WILL GO THE CONTENT OF LAYERSWITCHER !!! -->
                     <div id="layers" class="layer-switcher"></div>
-
-                    <h5> Image Preview </h5>
-                    <div id="placeholde"></div>
                 </div>
 
                 <div class="sidebar-pane" id="tools">
@@ -125,7 +122,7 @@
                                         <option value="EPSG:3857"> EPSG:3857 </option>
                                     </select>
                                     <label for="precision"> Precision </label>
-                                    <input id="precision" class="precision" type="number" min="0" max="12" value="4" size="3"/>
+                                    <input id="precision" class="precision" type="number" min="0" max="12" value="6" size="3"/>
                                 </form>
                             </div>
                         </div>
@@ -272,7 +269,22 @@
         var amo      = {{ data[3]|safe }};
         var indice   = {{ data[4]|safe }};
         var img      = {{ image|tojson }};
-        var extent   = {{ extent }};
+        //var img      = { { image }};
+        var extent   = {{ extent|tojson }};
+        
+        if(img["null"] != 1) {
+            var base64_image = new Image();
+            base64_image.src = img["image"];
+
+            // Image div where the image will be displayed
+            //var imagePlaceholder = document.getElementById("placeholder");
+            //display_base64_image_ondiv(imagePlaceholder, base64_image.src);
+            
+            //var new_extent = transform_projection(extent, proj_4326, proj_3857);
+            //display_base64_image_onmap(base64_image, new_extent, mapDiv);
+            display_base64_image_onmap(base64_image, extent["extent"], mapDiv, main_projection);            
+        }
+        
         
         var ven_layers = new ol.layer.Group({
             // A layer must have a title to appear in the layerswitcher
@@ -302,16 +314,115 @@
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
         mapDiv.addControl(sidebar);
 
-        var base64_image = new Image();
-        base64_image.src = img["image"];
+        //var base64_image = new Image();
+        //base64_image.src = img["image"];
 
         // Image div where the image will be displayed
         //var imagePlaceholder = document.getElementById("placeholder");
         //display_base64_image_ondiv(imagePlaceholder, base64_image.src);
         
-        var new_extent = transform_projection(extent, proj_4326, proj_3857);
+        //var new_extent = transform_projection(extent, proj_4326, proj_3857);
         //display_base64_image_onmap(base64_image, new_extent, mapDiv);
-        display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
+        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
+
+
+
+
+
+
+        /*
+        addMarker(mapDiv, [extent[0], extent[1]], main_projection);
+        addMarker(mapDiv, [extent[0], extent[3]], main_projection);
+
+        addMarker(mapDiv, [extent[2], extent[1]], main_projection);
+        addMarker(mapDiv, [extent[2], extent[3]], main_projection);
+        */
+
+
+
+
+
+
+
+        
+        
+        var dataUpperLeftLat   = 30.412538;
+        var dataUpperLeftLong  = 35.039703;
+        var dataUpperRightLat  = 30.353029;
+        var dataUpperRightLong = 35.353039;
+        var dataLowerLeftLat   = 30.135107;
+        var dataLowerLeftLong  = 34.969799;
+        var dataLowerRightLat  = 30.075734;
+        var dataLowerRightLong = 35.282209;
+        
+        //var extent = [dataLowerLeftLong, dataLowerLeftLat, dataUpperRightLong, dataUpperRightLat];
+
+        /*
+        addMarker(mapDiv, [dataUpperLeftLong, dataUpperLeftLat], main_projection);
+        addMarker(mapDiv, [dataUpperRightLong, dataUpperRightLat], main_projection);
+        addMarker(mapDiv, [dataLowerLeftLong, dataLowerLeftLat], main_projection);
+        addMarker(mapDiv, [dataLowerRightLong, dataLowerRightLat], main_projection);
+        */
+        
+        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
+
+        /*
+        var productUpperLeftLat   = 30.413528;
+        var productUpperLeftLong  = 34.975369;
+        var productUpperRightLat  = 30.407242;
+        var productUpperRightLong = 35.354339;
+        var productLowerLeftLat   = 30.080805;
+        var productLowerLeftLong  = 34.968722;
+        var productLowerRightLat  = 30.074602;
+        var productLowerRightLong = 35.346420;
+        */
+        //var extent = [productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat];
+
+        /*
+        addMarker(mapDiv, [productUpperLeftLong, productUpperLeftLat], main_projection);
+        addMarker(mapDiv, [productUpperRightLong, productUpperRightLat], main_projection);
+        addMarker(mapDiv, [productLowerLeftLong, productLowerLeftLat], main_projection);
+        addMarker(mapDiv, [productLowerRightLong, productLowerRightLat], main_projection);
+        */
+        
+        
+        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
+
+        //Holds the Polygon feature  
+        var polyData = new ol.Feature({
+            geometry: new ol.geom.Polygon([
+                [
+                    [dataUpperRightLong, dataUpperRightLat],
+                    [dataLowerRightLong, dataLowerRightLat],
+                    [dataLowerLeftLong, dataLowerLeftLat],
+                    [dataUpperLeftLong, dataUpperLeftLat]
+                ]
+            ])
+        });
+        //Holds the Polygon feature
+        /*
+        var polyProduct = new ol.Feature({
+            geometry: new ol.geom.Polygon([
+                [
+                    [productUpperRightLong, productUpperRightLat],
+                    [productLowerRightLong, productLowerRightLat],
+                    [productLowerLeftLong, productLowerLeftLat],
+                    [productUpperLeftLong, productUpperLeftLat]
+                ]
+            ])
+        });
+        */
+        //A vector layer to hold the features
+        var vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [
+                    polyData,
+                    //polyProduct
+                ]
+            })
+        });
+        mapDiv.addLayer(vectorLayer);
+        
     </script>
 </body>
 </html>

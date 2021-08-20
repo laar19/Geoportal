@@ -1,5 +1,5 @@
 var mousePositionControl = new ol.control.MousePosition({
-    coordinateFormat: ol.coordinate.createStringXY(4),
+    coordinateFormat: ol.coordinate.createStringXY(6),
     projection: main_projection,
     // comment the following two lines to have the mouse position
     // be placed within the map.
