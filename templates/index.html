@@ -43,11 +43,11 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="{{ url_for('sample_layers') }}">Sample layers</a>
                         </li>
                         
                         <li class="nav-item">
@@ -77,6 +77,10 @@
                     
                     <li>
                         <a href="#tools" role="tab"><i class="fas fa-drafting-compass"></i></a>
+                    </li>
+                    
+                    <li>
+                        <a href="#results" role="tab"><i class="fas fa-poll-h"></i></a>
                     </li>
 
                     <li>
@@ -196,6 +200,14 @@
                     </div>
                 </div>
                 
+                <div class="sidebar-pane" id="results">
+                    <h1 class="sidebar-header">
+                        Results<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
+
+                    <div id="layers2" class="layer-switcher"></div>
+                </div>
+                
                 <div class="sidebar-pane" id="profile">
                     <h1 class="sidebar-header">
                         Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
@@ -263,89 +275,67 @@
     <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
 
     <script>
-        var centros  = {{ data[0]|safe }};
-        var estados  = {{ data[1]|safe }};
-        var vialidad = {{ data[2]|safe }};
-        var amo      = {{ data[3]|safe }};
-        var indice   = {{ data[4]|safe }};
-        var img      = {{ image|tojson }};
-        //var img      = { { image }};
-        var extent   = {{ extent|tojson }};
+        var layers   = {{ layers|tojson }};
+        /*
+        var centros  = { { data[0]|safe }};
+        var estados  = { { data[1]|safe }};
+        var vialidad = { { data[2]|safe }};
+        var amo      = { { data[3]|safe }};
+        var indice   = { { data[4]|safe }};
+        */
+        var images   = {{ images|tojson }};
         
-        if(img["null"] != 1) {
+        if(images["image"] != 1) {
             var base64_image = new Image();
-            base64_image.src = img["image"];
-
-            // Image div where the image will be displayed
-            //var imagePlaceholder = document.getElementById("placeholder");
-            //display_base64_image_ondiv(imagePlaceholder, base64_image.src);
+            base64_image.src = images["image"];
             
-            //var new_extent = transform_projection(extent, proj_4326, proj_3857);
-            //display_base64_image_onmap(base64_image, new_extent, mapDiv);
-            display_base64_image_onmap(base64_image, extent["extent"], mapDiv, main_projection);            
+            display_base64_image_onmap(base64_image, images["extent"], mapDiv, main_projection);
         }
+
+        if(layers["layers"] != 1) {
+            layers_data = Array();
+
+            for(var i=0; i<=(layers["layers"].length)-1; i++) {
+                layers_data.push(display_layer(layers["layers"][i]["data"], layers["layers"][i]["title"], mapDiv));
+            }
+
+            var ven_layers = new ol.layer.Group({
+                // A layer must have a title to appear in the layerswitcher
+                title: "Venezuela data",
+                // Adding a "fold" property set to either "open" or "close" makes the group layer
+                // collapsible
+                fold: "open",
+                /*
+                layers: [
+                    //display_layer(centros, "Centros poblados", mapDiv),
+                    //display_layer(estados, "Estados", mapDiv),
+                    //display_layer(vialidad, "Vías troncales", mapDiv),
+                    //display_layer(amo, "AMO", mapDiv),
+                    //display_layer(indice, "Índice", mapDiv)
+                ]
+                */
+                layers: layers_data
+            });
+
+            var my_data = new ol.layer.Group({
+                // A layer must have a title to appear in the layerswitcher
+                title: "Data",
+                // Adding a "fold" property set to either "open" or "close" makes the group layer
+                // collapsible
+                fold: "open",
+                //layers: [uk_layers, ven_layers]
+                layers: [ven_layers]
+            });
+            mapDiv.addLayer(my_data);
+            ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
+        }
+
+        mapDiv.addLayer(uk_layers);
+        ol.control.LayerSwitcher.renderPanel(mapDiv, toc2, { reverse: false });
         
-        
-        var ven_layers = new ol.layer.Group({
-            // A layer must have a title to appear in the layerswitcher
-            title: "Venezuela data",
-            // Adding a "fold" property set to either "open" or "close" makes the group layer
-            // collapsible
-            fold: "open",
-            layers: [
-                //display_layer(centros, "Centros poblados", mapDiv),
-                display_layer(estados, "Estados", mapDiv),
-                display_layer(vialidad, "Vías troncales", mapDiv),
-                //display_layer(amo, "AMO", mapDiv),
-                //display_layer(indice, "Índice", mapDiv)
-            ]
-        });
-        
-        var my_data = new ol.layer.Group({
-            // A layer must have a title to appear in the layerswitcher
-            title: "Data",
-            // Adding a "fold" property set to either "open" or "close" makes the group layer
-            // collapsible
-            fold: "open",
-            //layers: [uk_layers, ven_layers]
-            layers: [ven_layers]
-        });
-        mapDiv.addLayer(my_data);
-        ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
         mapDiv.addControl(sidebar);
 
-        //var base64_image = new Image();
-        //base64_image.src = img["image"];
-
-        // Image div where the image will be displayed
-        //var imagePlaceholder = document.getElementById("placeholder");
-        //display_base64_image_ondiv(imagePlaceholder, base64_image.src);
-        
-        //var new_extent = transform_projection(extent, proj_4326, proj_3857);
-        //display_base64_image_onmap(base64_image, new_extent, mapDiv);
-        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
-
-
-
-
-
-
         /*
-        addMarker(mapDiv, [extent[0], extent[1]], main_projection);
-        addMarker(mapDiv, [extent[0], extent[3]], main_projection);
-
-        addMarker(mapDiv, [extent[2], extent[1]], main_projection);
-        addMarker(mapDiv, [extent[2], extent[3]], main_projection);
-        */
-
-
-
-
-
-
-
-        
-        
         var dataUpperLeftLat   = 30.412538;
         var dataUpperLeftLong  = 35.039703;
         var dataUpperRightLat  = 30.353029;
@@ -354,39 +344,6 @@
         var dataLowerLeftLong  = 34.969799;
         var dataLowerRightLat  = 30.075734;
         var dataLowerRightLong = 35.282209;
-        
-        //var extent = [dataLowerLeftLong, dataLowerLeftLat, dataUpperRightLong, dataUpperRightLat];
-
-        /*
-        addMarker(mapDiv, [dataUpperLeftLong, dataUpperLeftLat], main_projection);
-        addMarker(mapDiv, [dataUpperRightLong, dataUpperRightLat], main_projection);
-        addMarker(mapDiv, [dataLowerLeftLong, dataLowerLeftLat], main_projection);
-        addMarker(mapDiv, [dataLowerRightLong, dataLowerRightLat], main_projection);
-        */
-        
-        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
-
-        /*
-        var productUpperLeftLat   = 30.413528;
-        var productUpperLeftLong  = 34.975369;
-        var productUpperRightLat  = 30.407242;
-        var productUpperRightLong = 35.354339;
-        var productLowerLeftLat   = 30.080805;
-        var productLowerLeftLong  = 34.968722;
-        var productLowerRightLat  = 30.074602;
-        var productLowerRightLong = 35.346420;
-        */
-        //var extent = [productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat];
-
-        /*
-        addMarker(mapDiv, [productUpperLeftLong, productUpperLeftLat], main_projection);
-        addMarker(mapDiv, [productUpperRightLong, productUpperRightLat], main_projection);
-        addMarker(mapDiv, [productLowerLeftLong, productLowerLeftLat], main_projection);
-        addMarker(mapDiv, [productLowerRightLong, productLowerRightLat], main_projection);
-        */
-        
-        
-        //display_base64_image_onmap(base64_image, extent, mapDiv, main_projection);
 
         //Holds the Polygon feature  
         var polyData = new ol.Feature({
@@ -399,19 +356,6 @@
                 ]
             ])
         });
-        //Holds the Polygon feature
-        /*
-        var polyProduct = new ol.Feature({
-            geometry: new ol.geom.Polygon([
-                [
-                    [productUpperRightLong, productUpperRightLat],
-                    [productLowerRightLong, productLowerRightLat],
-                    [productLowerLeftLong, productLowerLeftLat],
-                    [productUpperLeftLong, productUpperLeftLat]
-                ]
-            ])
-        });
-        */
         //A vector layer to hold the features
         var vectorLayer = new ol.layer.Vector({
             source: new ol.source.Vector({
@@ -422,6 +366,7 @@
             })
         });
         mapDiv.addLayer(vectorLayer);
+        */
         
     </script>
 </body>
