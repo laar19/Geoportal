@@ -359,14 +359,20 @@
         //A vector layer to hold the features
         var vectorLayer = new ol.layer.Vector({
             source: new ol.source.Vector({
-                features: [
-                    polyData,
-                    //polyProduct
-                ]
-            })
+                features: [polyData]
+            }),
+            name: "polygon2"
         });
         mapDiv.addLayer(vectorLayer);
         */
+
+
+        /*
+        mapDiv.getLayers().getArray()
+            .filter(layer => layer.get("name") === "polygon1")
+            .forEach(layer => mapDiv.removeLayer(layer));
+        */
+        
         
     </script>
 </body>

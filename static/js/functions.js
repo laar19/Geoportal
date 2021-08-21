@@ -9,6 +9,7 @@ function display_layer(data, title, mapDiv) {
     var vectorLayer = new ol.layer.Vector({
         title : title,
         source: vectorSource,
+        name  : title,
         style : styleFunction
     });
 
@@ -81,4 +82,12 @@ function round_coordinates(coordinates, decimal_places) {
     }
 
     return new_coordinates;
+}
+
+// Remove layer from map
+function remove_layer(layer_name) {
+    mapDiv.getLayers().getArray()
+        //.filter(layer => layer.get("name") === layer_name)
+        .filter(layer => layer.get("name") == layer_name)
+        .forEach(layer => mapDiv.removeLayer(layer));
 }

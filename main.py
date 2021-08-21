@@ -1,19 +1,15 @@
 from flask import Flask, render_template, request
 from flask_wtf import CSRFProtect
 
-import json
-
-import pandas as pd
-import geopandas as gpd
-
-import base64
-
-import requests
-
 from io import BytesIO
 
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
+
+import pandas as pd
+import geopandas as gpd
+
+import json, base64, requests
 
 from app.db_config import DbConnection
 from app.functions import *
@@ -50,9 +46,7 @@ def index():
     conn.close()
 
     layers = {"layers": layers_data}
-
     images = {"image": 1, "extent": 1}
-    
     return render_template("index.html", layers=layers, images=images)
 
 @app.route("/search_image", methods=["POST"])
@@ -133,10 +127,6 @@ def search_image():
     intersection_elements = list()
     
     if request.method == "POST":
-        print("\nAQUI\n")
-        print(request.form)
-        print()
-
         for i in request.form:
             if i != "csrf_token":
                 if len(request.form.getlist(i)) == 2:
@@ -151,14 +141,8 @@ def search_image():
         
         for i in intersection_elements:
             if(target.intersects(i)):
-                print()
-                print(True)
-                print()
                 return render_template("index.html", layers=layers, images=images)
             else:
-                print()
-                print(False)
-                print()
                 images = {"image": 1, "extent": 1}
                 return render_template("index.html", layers=layers, images=images)
 
@@ -223,9 +207,7 @@ def sample_layers():
     conn.close()
 
     layers = {"layers": layers_data}
-
     images = {"image": 1, "extent": 1}
-    
     return render_template("index.html", layers=layers, images=images)
     
 if __name__ == "__main__":

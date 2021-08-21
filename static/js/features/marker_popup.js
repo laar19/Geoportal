@@ -80,7 +80,7 @@ mapDiv.on("movestart", function() {
 });
 */
 
-function addMarker(mapDiv, coordinates, proj) {
+function addMarker(mapDiv, coordinates, proj, name) {
     var marker;
     
     if(proj == main_projection) {
@@ -123,13 +123,17 @@ function addMarker(mapDiv, coordinates, proj) {
         })
     }));
 
+    /*
     var markers_list = Array();
     markers_list.push(marker);
+    */
 
     var layer_marker = new ol.layer.Vector({
         source: new ol.source.Vector({
-            features: markers_list
-        })
+            //features: markers_list
+            features: [marker]
+        }),
+        name: name
     });
 
     mapDiv.addLayer(layer_marker);
