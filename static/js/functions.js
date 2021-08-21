@@ -18,7 +18,7 @@ function display_layer(data, title, mapDiv) {
 }
 
 // Show base 64 image on the map
-function display_base64_image_onmap(base64_image, extent, mapDiv, proj) {
+function display_base64_image_onmap(base64_image, extent, name, mapDiv, proj) {    
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             imageLoadFunction : function(img){
@@ -28,14 +28,17 @@ function display_base64_image_onmap(base64_image, extent, mapDiv, proj) {
             projection: proj,
             //size : [150, 150], // 150x150px
             imageExtent: extent
-        })
+        }),
+        name: name
     });
+    
 
     mapDiv.addLayer(image);
 
     $(".list-group").append(
         "<li class='list-group-item d-flex justify-content-between align-items-center'>"
-            +"<strong> Coordinates </strong> (etc)"
+            +"<input type='checkbox' id="+name+" value="+name+" checked='checked' onchange='change_layer_visibility(this)'/>"
+            +"<label for="+name+"> <strong> Some data </strong> etc </label>"
             +"<div class='image-parent'>"
                 +"<img src="+base64_image.src+" class='img-fluid'>"
                 +"<div class='image-parent' id='placeholder'></div>"
@@ -87,7 +90,24 @@ function round_coordinates(coordinates, decimal_places) {
 // Remove layer from map
 function remove_layer(layer_name) {
     mapDiv.getLayers().getArray()
-        //.filter(layer => layer.get("name") === layer_name)
         .filter(layer => layer.get("name") == layer_name)
         .forEach(layer => mapDiv.removeLayer(layer));
+}
+
+// Change layer visibility
+function change_layer_visibility(element) {
+    if(element.checked == true) {
+        mapDiv.getLayers().forEach(function (layer) {
+            if (layer.get("name") == element.value) {
+                layer.setVisible(true);
+            }
+        });
+    }
+    else {
+        mapDiv.getLayers().forEach(function (layer) {
+            if (layer.get("name") == element.value) {
+                layer.setVisible(false);
+            }
+        });
+    }
 }

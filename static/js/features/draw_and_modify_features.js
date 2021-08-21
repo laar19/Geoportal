@@ -112,11 +112,11 @@ function add_draw_interaction() {
     }
 }
 
-// Remove coordinate item added to sidebar
-function remove_coordinate(item, layer_name) {
+// Remove coordinate element added to sidebar
+function remove_coordinate(element, layer_name) {
     mapDiv.removeInteraction(draw);
     add_draw_interaction();
-    $(item).parent().remove("li");
+    $(element).parent().remove("li");
     remove_layer(layer_name);
 }
 
