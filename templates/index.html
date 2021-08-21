@@ -285,11 +285,13 @@
         */
         var images   = {{ images|tojson }};
         
-        if(images["image"] != 1) {
-            var base64_image = new Image();
-            base64_image.src = images["image"];
-            
-            display_base64_image_onmap(base64_image, images["extent"], mapDiv, main_projection);
+        if(images["images"] != 1) {
+            for(var i=0; i<=(images["images"].length)-1; i++) {
+                var base64_image = new Image();
+                base64_image.src = images["images"][i]["image"];
+                
+                display_base64_image_onmap(base64_image, images["images"][i]["extent"], images["images"][i]["name"], mapDiv, main_projection);
+            }
         }
 
         if(layers["layers"] != 1) {
@@ -365,15 +367,6 @@
         });
         mapDiv.addLayer(vectorLayer);
         */
-
-
-        /*
-        mapDiv.getLayers().getArray()
-            .filter(layer => layer.get("name") === "polygon1")
-            .forEach(layer => mapDiv.removeLayer(layer));
-        */
-        
-        
     </script>
 </body>
 </html>

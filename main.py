@@ -6,10 +6,12 @@ from io import BytesIO
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
+from datetime import datetime as dt
+
 import pandas as pd
 import geopandas as gpd
 
-import json, base64, requests
+import json, base64, requests, hashlib
 
 from app.db_config import DbConnection
 from app.functions import *
@@ -46,7 +48,7 @@ def index():
     conn.close()
 
     layers = {"layers": layers_data}
-    images = {"image": 1, "extent": 1}
+    images = {"images": 1}
     return render_template("index.html", layers=layers, images=images)
 
 @app.route("/search_image", methods=["POST"])
@@ -113,7 +115,8 @@ def search_image():
     productLowerRightLong = dataframe.loc[0, "productLowerRightLong"]
 
     extent = [productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat]
-    images = {"image": image, "extent": extent}
+    name = hashlib.md5(str(dt.now()).encode()).hexdigest()
+    images.append({"image": image, "extent": extent, "name": name})
     
     target = Polygon(
         [
@@ -141,9 +144,9 @@ def search_image():
         
         for i in intersection_elements:
             if(target.intersects(i)):
-                return render_template("index.html", layers=layers, images=images)
+                return render_template("index.html", layers=layers, images={"images": images})
             else:
-                images = {"image": 1, "extent": 1}
+                images = {"images": 1}
                 return render_template("index.html", layers=layers, images=images)
 
 @app.route("/sample_layers")
@@ -207,7 +210,7 @@ def sample_layers():
     conn.close()
 
     layers = {"layers": layers_data}
-    images = {"image": 1, "extent": 1}
+    images = {"images": 1}
     return render_template("index.html", layers=layers, images=images)
     
 if __name__ == "__main__":
