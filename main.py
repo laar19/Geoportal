@@ -48,14 +48,28 @@ def index():
     conn.close()
 
     layers = {"layers": layers_data}
-    images = {"images": 1}
-    return render_template("index.html", layers=layers, images=images)
+    result = {"result": 1}
+    return render_template("index.html", layers=layers, result=result)
 
 @app.route("/search_image", methods=["POST"])
 def search_image():
-    DbConn         = DbConnection()
+    DbConn = DbConnection()
+    
+    polygons_from_map = list()
+    if request.method == "POST":
+        for j in request.form:
+            if j != "csrf_token":
+                if len(request.form.getlist(j)) == 2:
+                    polygons_from_map.append(Point(float(request.form.getlist(j)[0]), float(request.form.getlist(j)[1])))
+                else:
+                    list_  = list()
+                    for k in range(len(request.form.getlist(j))-1):
+                        if (k%2) == 0:
+                            list_.append(tuple([float(request.form.getlist(j)[k]), float(request.form.getlist(j)[k+1])]))
+                    polygons_from_map.append(Polygon(list_))
+
+    # Retrieve base layers
     conn, engine   = DbConn.connection(db_credentials_path, 0)
-    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
 
     proj_4326 = 4326
     proj_3857 = 3857
@@ -76,78 +90,76 @@ def search_image():
 
     layers = {"layers": layers_data}
 
-    # Add image
-    
+    # Retreve images from database
     conn2, engine2 = DbConn.connection(db_credentials_path, 1)
-    query     = DbConn.select_table("images", conn2, engine2)
-    dataframe = pd.read_sql(query, con=engine2)
+    query          = DbConn.select_table("images", conn2, engine2)
+    dataframe      = pd.read_sql(query, con=engine2)
     conn2.close()
 
-    url      = dataframe.loc[0, "path"]
-    response = requests.get(url)
-    image    = Image.open(BytesIO(response.content))
-    image    = black_to_transparency(image)
-    #image = np.array(image)
+    result   = list()
+    targets  = list()
 
-    buffer = BytesIO()
-    image.save(buffer,format="PNG")
-    img   = buffer.getvalue()
-    image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
-
-    images = list()
-    
-    dataUpperLeftLat      = dataframe.loc[0, "dataUpperLeftLat"]
-    dataUpperLeftLong     = dataframe.loc[0, "dataUpperLeftLong"]
-    dataUpperRightLat     = dataframe.loc[0, "dataUpperRightLat"]
-    dataUpperRightLong    = dataframe.loc[0, "dataUpperRightLong"]
-    dataLowerLeftLat      = dataframe.loc[0, "dataLowerLeftLat"]
-    dataLowerLeftLong     = dataframe.loc[0, "dataLowerLeftLong"]
-    dataLowerRightLat     = dataframe.loc[0, "dataLowerRightLat"]
-    dataLowerRightLong    = dataframe.loc[0, "dataLowerRightLong"]
-    
-    productUpperLeftLat   = dataframe.loc[0, "productUpperLeftLat"]
-    productUpperLeftLong  = dataframe.loc[0, "productUpperLeftLong"]
-    productUpperRightLat  = dataframe.loc[0, "productUpperRightLat"]
-    productUpperRightLong = dataframe.loc[0, "productUpperRightLong"]
-    productLowerLeftLat   = dataframe.loc[0, "productLowerLeftLat"]
-    productLowerLeftLong  = dataframe.loc[0, "productLowerLeftLong"]
-    productLowerRightLat  = dataframe.loc[0, "productLowerRightLat"]
-    productLowerRightLong = dataframe.loc[0, "productLowerRightLong"]
-
-    extent = [productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat]
-    name = hashlib.md5(str(dt.now()).encode()).hexdigest()
-    images.append({"image": image, "extent": extent, "name": name})
-    
-    target = Polygon(
-        [
-            (productUpperRightLong, productUpperRightLat),
-            (productLowerRightLong, productLowerRightLat),
-            (productLowerLeftLong, productLowerLeftLat),
-            (productUpperLeftLong, productUpperLeftLat)
-        ]
-    )
-    
-    intersection_elements = list()
-    
-    if request.method == "POST":
-        for i in request.form:
-            if i != "csrf_token":
-                if len(request.form.getlist(i)) == 2:
-                    intersection_elements.append(Point(float(request.form.getlist(i)[0]), float(request.form.getlist(i)[1])))
-                else:
-                    list_  = list()
-                    for j in range(len(request.form.getlist(i))-1):
-                        if (j%2) == 0:
-                            list_.append(tuple([float(request.form.getlist(i)[j]), float(request.form.getlist(i)[j+1])]))
-                    intersection_elements.append(Polygon(list_))
-
+    # Get polygons from database images
+    for i in range(len(dataframe)-1):
+        dataUpperLeftLat      = dataframe.loc[i, "dataUpperLeftLat"]
+        dataUpperLeftLong     = dataframe.loc[i, "dataUpperLeftLong"]
+        dataUpperRightLat     = dataframe.loc[i, "dataUpperRightLat"]
+        dataUpperRightLong    = dataframe.loc[i, "dataUpperRightLong"]
+        dataLowerLeftLat      = dataframe.loc[i, "dataLowerLeftLat"]
+        dataLowerLeftLong     = dataframe.loc[i, "dataLowerLeftLong"]
+        dataLowerRightLat     = dataframe.loc[i, "dataLowerRightLat"]
+        dataLowerRightLong    = dataframe.loc[i, "dataLowerRightLong"]
         
-        for i in intersection_elements:
-            if(target.intersects(i)):
-                return render_template("index.html", layers=layers, images={"images": images})
-            else:
-                images = {"images": 1}
-                return render_template("index.html", layers=layers, images=images)
+        productUpperLeftLat   = dataframe.loc[i, "productUpperLeftLat"]
+        productUpperLeftLong  = dataframe.loc[i, "productUpperLeftLong"]
+        productUpperRightLat  = dataframe.loc[i, "productUpperRightLat"]
+        productUpperRightLong = dataframe.loc[i, "productUpperRightLong"]
+        productLowerLeftLat   = dataframe.loc[i, "productLowerLeftLat"]
+        productLowerLeftLong  = dataframe.loc[i, "productLowerLeftLong"]
+        productLowerRightLat  = dataframe.loc[i, "productLowerRightLat"]
+        productLowerRightLong = dataframe.loc[i, "productLowerRightLong"]
+        
+        polygon = Polygon(
+            [
+                (productUpperRightLong, productUpperRightLat),
+                (productLowerRightLong, productLowerRightLat),
+                (productLowerLeftLong, productLowerLeftLat),
+                (productUpperLeftLong, productUpperLeftLat)
+            ]
+        )        
+        targets.append(
+            {
+                "polygon": polygon,
+                "path"   : dataframe.loc[i, "path"],
+                "extent" : [
+                    productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat
+                ]
+            }
+        )
+
+    for i in targets:
+        for j in polygons_from_map:
+            if(i["polygon"].intersects(j)):
+                url      = i["path"]
+                response = requests.get(url)
+                image    = Image.open(BytesIO(response.content))
+                image    = black_to_transparency(image)
+                #image = np.array(image)
+
+                buffer = BytesIO()
+                image.save(buffer,format="PNG")
+                img   = buffer.getvalue()
+                image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
+
+                extent = i["extent"]
+                name = hashlib.md5(str(dt.now()).encode()).hexdigest()
+                result.append({"image": image, "extent": extent, "name": name})
+
+    if len(result) == 0:
+        result = {"result": 1}
+        return render_template("index.html", layers=layers, result=result)
+    else:
+        return render_template("index.html", layers=layers, result={"result": result})
 
 @app.route("/sample_layers")
 def sample_layers():
@@ -210,8 +222,8 @@ def sample_layers():
     conn.close()
 
     layers = {"layers": layers_data}
-    images = {"images": 1}
-    return render_template("index.html", layers=layers, images=images)
+    result = {"result": 1}
+    return render_template("index.html", layers=layers, result=result)
     
 if __name__ == "__main__":
     csrf.init_app(app)
