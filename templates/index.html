@@ -283,14 +283,14 @@
         var amo      = { { data[3]|safe }};
         var indice   = { { data[4]|safe }};
         */
-        var images   = {{ images|tojson }};
+        var result   = {{ result|tojson }};
         
-        if(images["images"] != 1) {
-            for(var i=0; i<=(images["images"].length)-1; i++) {
+        if(result["result"] != 1) {
+            for(var i=0; i<=(result["result"].length)-1; i++) {
                 var base64_image = new Image();
-                base64_image.src = images["images"][i]["image"];
+                base64_image.src = result["result"][i]["image"];
                 
-                display_base64_image_onmap(base64_image, images["images"][i]["extent"], images["images"][i]["name"], mapDiv, main_projection);
+                display_base64_image_onmap(base64_image, result["result"][i]["extent"], result["result"][i]["name"], mapDiv, main_projection);
             }
         }
 
