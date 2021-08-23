@@ -98,9 +98,9 @@ def search_image():
 
     result   = list()
     targets  = list()
-
+    
     # Get polygons from database images
-    for i in range(len(dataframe)-1):
+    for i in range(len(dataframe)):
         dataUpperLeftLat      = dataframe.loc[i, "dataUpperLeftLat"]
         dataUpperLeftLong     = dataframe.loc[i, "dataUpperLeftLong"]
         dataUpperRightLat     = dataframe.loc[i, "dataUpperRightLat"]
@@ -126,7 +126,7 @@ def search_image():
                 (productLowerLeftLong, productLowerLeftLat),
                 (productUpperLeftLong, productUpperLeftLat)
             ]
-        )        
+        )
         targets.append(
             {
                 "polygon": polygon,
@@ -152,7 +152,7 @@ def search_image():
                 image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
 
                 extent = i["extent"]
-                name = hashlib.md5(str(dt.now()).encode()).hexdigest()
+                name   = hashlib.md5(str(dt.now()).encode()).hexdigest()
                 result.append({"image": image, "extent": extent, "name": name})
 
     if len(result) == 0:
