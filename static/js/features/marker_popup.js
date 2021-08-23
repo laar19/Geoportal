@@ -119,7 +119,7 @@ function addMarker(mapDiv, coordinates, proj, name) {
             anchor: [0.5, 46],
             anchorXUnits: "fraction",
             anchorYUnits: "pixels",
-            src: "https://cdn.mapmarker.io/api/v1/pin?size=50&background=%2316A5A5&icon=fas%20fa-map-marker-alt&color=%23FFFFFF&voffset=0&hoffset=1&"
+            src: "http://localhost/geoabae/static/img/pin_marker.png"
         })
     }));
 
