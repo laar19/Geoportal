@@ -66,13 +66,16 @@ function add_draw_interaction() {
             else {
                 for(var i=0; i<=(new_coordinates.length)-1; i++) {
                     coordinate_results += "<p>"+new_coordinates[i]+"</p>";
+                    input_hidden       += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i]+">";
                 }
 
+                /*
                 for(var i=0; i<=(new_coordinates.length)-1; i++) {
                     for(var j=0; j<=(new_coordinates[i].length)-1; j++) {
                         input_hidden += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i][j]+">";
                     }
                 }
+                */
             }
 
             $(".list-group").append(
