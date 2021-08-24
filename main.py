@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
 
 from io import BytesIO
@@ -6,10 +6,9 @@ from io import BytesIO
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
-from datetime import datetime as dt
+from datetime import datetime as dtime
 
 import pandas as pd
-import geopandas as gpd
 
 import json, base64, requests, hashlib
 
@@ -21,103 +20,87 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
+# Globals
 db_credentials_path = "db_credentials.csv"
+DbConn              = DbConnection()
+
+mapDiv = MapDiv()
+default_map_config = mapDiv.main_config()
 
 @app.route("/")
 @app.route("/index")
 def index():
-    DbConn         = DbConnection()
-    conn, engine   = DbConn.connection(db_credentials_path, 0)
-    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
+    # Retrieve base layers
+    conn, engine = DbConn.connection(db_credentials_path, 0)
 
-    proj_4326 = 4326
-    proj_3857 = 3857
-    geom_col  = "geom"
-
-    layers_data = list()
-
-    query   = DbConn.select_table("estados", conn, engine)
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Estados de Venezuela", "data": estados})
+    layers = [
+        {
+            "title": "Estados de Venezuela",
+            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
+        }
+    ]
 
     conn.close()
 
-    layers = {"layers": layers_data}
+    layers = {"layers": layers}
+    # End retrieve base layers
+
     result = {"result": 1}
-    return render_template("index.html", layers=layers, result=result)
+    return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
 
 @app.route("/search_image", methods=["POST"])
 def search_image():
-    DbConn = DbConnection()
+    map_config = dict()
     
+    # Retrieve polygons from user
     polygons_from_map = list()
     if request.method == "POST":
+        map_config = {
+            "center": get_list_from_string(request.form["center"]),
+            "zoom"  : float(request.form["level-zoom"])
+        }
+        
         for j in request.form:
             if j != "csrf_token":
                 if len(request.form.getlist(j)) == 2:
                     polygons_from_map.append(Point(float(request.form.getlist(j)[0]), float(request.form.getlist(j)[1])))
                 else:
-                    list_  = list()
+                    coordinates = list()
                     for k in range(len(request.form.getlist(j))-1):
                         if (k%2) == 0:
-                            list_.append(tuple([float(request.form.getlist(j)[k]), float(request.form.getlist(j)[k+1])]))
-                    polygons_from_map.append(Polygon(list_))
+                            coordinates.append(tuple([float(request.form.getlist(j)[k]), float(request.form.getlist(j)[k+1])]))
+                    polygons_from_map.append(Polygon(coordinates))
 
-    # Retrieve base layers
-    conn, engine   = DbConn.connection(db_credentials_path, 0)
-
-    proj_4326 = 4326
-    proj_3857 = 3857
-    geom_col  = "geom"
-
-    layers_data = list()
-
-    query   = DbConn.select_table("estados", conn, engine)
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Estados de Venezuela", "data": estados})
-
+    # Retrieve images from database
+    conn, engine = DbConn.connection(db_credentials_path, 1)
+    query        = DbConn.select_table("images", conn, engine)
+    df_images    = pd.read_sql(query, con=engine)
     conn.close()
 
-    layers = {"layers": layers_data}
-
-    # Retreve images from database
-    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
-    query          = DbConn.select_table("images", conn2, engine2)
-    dataframe      = pd.read_sql(query, con=engine2)
-    conn2.close()
-
-    result   = list()
-    targets  = list()
+    result  = list()
+    targets = list()
     
-    # Get polygons from database images
-    for i in range(len(dataframe)):
-        dataUpperLeftLat      = dataframe.loc[i, "dataUpperLeftLat"]
-        dataUpperLeftLong     = dataframe.loc[i, "dataUpperLeftLong"]
-        dataUpperRightLat     = dataframe.loc[i, "dataUpperRightLat"]
-        dataUpperRightLong    = dataframe.loc[i, "dataUpperRightLong"]
-        dataLowerLeftLat      = dataframe.loc[i, "dataLowerLeftLat"]
-        dataLowerLeftLong     = dataframe.loc[i, "dataLowerLeftLong"]
-        dataLowerRightLat     = dataframe.loc[i, "dataLowerRightLat"]
-        dataLowerRightLong    = dataframe.loc[i, "dataLowerRightLong"]
+    # Construct polygons from database images
+    for i in range(len(df_images)):
+        """
+        dataUpperLeftLat      = df_images.loc[i, "dataUpperLeftLat"]
+        dataUpperLeftLong     = df_images.loc[i, "dataUpperLeftLong"]
+        dataUpperRightLat     = df_images.loc[i, "dataUpperRightLat"]
+        dataUpperRightLong    = df_images.loc[i, "dataUpperRightLong"]
+        dataLowerLeftLat      = df_images.loc[i, "dataLowerLeftLat"]
+        dataLowerLeftLong     = df_images.loc[i, "dataLowerLeftLong"]
+        dataLowerRightLat     = df_images.loc[i, "dataLowerRightLat"]
+        dataLowerRightLong    = df_images.loc[i, "dataLowerRightLong"]
+        """
         
-        productUpperLeftLat   = dataframe.loc[i, "productUpperLeftLat"]
-        productUpperLeftLong  = dataframe.loc[i, "productUpperLeftLong"]
-        productUpperRightLat  = dataframe.loc[i, "productUpperRightLat"]
-        productUpperRightLong = dataframe.loc[i, "productUpperRightLong"]
-        productLowerLeftLat   = dataframe.loc[i, "productLowerLeftLat"]
-        productLowerLeftLong  = dataframe.loc[i, "productLowerLeftLong"]
-        productLowerRightLat  = dataframe.loc[i, "productLowerRightLat"]
-        productLowerRightLong = dataframe.loc[i, "productLowerRightLong"]
+        productUpperLeftLat   = df_images.loc[i, "productUpperLeftLat"]
+        productUpperLeftLong  = df_images.loc[i, "productUpperLeftLong"]
+        productUpperRightLat  = df_images.loc[i, "productUpperRightLat"]
+        productUpperRightLong = df_images.loc[i, "productUpperRightLong"]
+        productLowerLeftLat   = df_images.loc[i, "productLowerLeftLat"]
+        productLowerLeftLong  = df_images.loc[i, "productLowerLeftLong"]
+        productLowerRightLat  = df_images.loc[i, "productLowerRightLat"]
+        productLowerRightLong = df_images.loc[i, "productLowerRightLong"]
         
         polygon = Polygon(
             [
@@ -130,13 +113,17 @@ def search_image():
         targets.append(
             {
                 "polygon": polygon,
-                "path"   : dataframe.loc[i, "path"],
+                "path"   : df_images.loc[i, "path"],
                 "extent" : [
-                    productLowerLeftLong, productLowerLeftLat, productUpperRightLong, productUpperRightLat
+                    productLowerLeftLong,
+                    productLowerLeftLat,
+                    productUpperRightLong,
+                    productUpperRightLat
                 ]
             }
         )
 
+    # Compare new constructed polygons against recieved from user
     for i in targets:
         for j in polygons_from_map:
             if(i["polygon"].intersects(j)):
@@ -147,83 +134,71 @@ def search_image():
                 #image = np.array(image)
 
                 buffer = BytesIO()
-                image.save(buffer,format="PNG")
+                image.save(buffer, format="PNG")
                 img   = buffer.getvalue()
                 image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
 
                 extent = i["extent"]
-                name   = hashlib.md5(str(dt.now()).encode()).hexdigest()
+                name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
                 result.append({"image": image, "extent": extent, "name": name})
 
-    if len(result) == 0:
-        result = {"result": 1}
-        return render_template("index.html", layers=layers, result=result)
-    else:
-        return render_template("index.html", layers=layers, result={"result": result})
+    # Retrieve base layers
+    conn, engine = DbConn.connection(db_credentials_path, 0)
 
-@app.route("/sample_layers")
-def sample_layers():
-    DbConn         = DbConnection()
-    conn, engine   = DbConn.connection(db_credentials_path, 0)
-    conn2, engine2 = DbConn.connection(db_credentials_path, 1)
-
-    proj_4326 = 4326
-    proj_3857 = 3857
-    geom_col  = "geom"
-
-    layers_data = list()
-
-    query   = DbConn.select_table("centros_pob_wgs84", conn, engine)
-    """
-    centros = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    centros = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Centros poblados", "data": centros})
-
-    query   = DbConn.select_table("estados", conn, engine)
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    estados = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Estados de Venezuela", "data": estados})
-
-    query   = DbConn.select_table("vialidad_troncal", conn, engine)
-    """
-    vialidad = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    vialidad = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Vías troncales", "data": vialidad})
-    
-
-    query   = DbConn.select_table("amo_gwgs84", conn, engine)
-    """
-    amo = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    amo = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "Arco minero del Orinoco", "data": amo})
-
-    query   = DbConn.select_table("indice_pr_vrss2", conn, engine)
-    """
-    indice = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326) \
-        .to_crs(proj_3857) \
-        .to_json()
-    """
-    indice = gpd.read_postgis(query, con=engine, geom_col=geom_col, crs=proj_4326).to_json()
-    layers_data.append({"title": "ïndice ?", "data": indice})
+    layers = [
+        {
+            "title": "Estados de Venezuela",
+            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
+        }
+    ]
 
     conn.close()
 
-    layers = {"layers": layers_data}
+    layers = {"layers": layers}
+    # End retrieve base layers
+
+    # If there were no match
+    if len(result) == 0:
+        result = {"result": 1}
+        return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
+    else:
+        return render_template("index.html", layers=layers, images={"result": result}, map_config=map_config)
+
+@app.route("/sample_layers")
+def sample_layers():
+    # Retrieve base layers
+    conn, engine = DbConn.connection(db_credentials_path, 0)
+
+    layers = [
+        {
+            "title": "Estados de Venezuela",
+            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
+        },
+        {
+            "title": "Centros poblados",
+            "data" : get_layer_from_db(DbConn, conn, engine, "centros_pob_wgs84", proj_4326, proj_4326)
+        },
+        {
+            "title": "Vías troncales",
+            "data" : get_layer_from_db(DbConn, conn, engine, "vialidad_troncal", proj_4326, proj_4326)
+        },
+        {
+            "title": "Arco minero del Orinoco",
+            "data" : get_layer_from_db(DbConn, conn, engine, "amo_gwgs84", proj_4326, proj_4326)
+        },
+        {
+            "title": "índice ?",
+            "data" : get_layer_from_db(DbConn, conn, engine, "indice_pr_vrss2", proj_4326, proj_4326)
+        },
+    ]
+
+    conn.close()
+
+    layers = {"layers": layers}
+    # End retrieve base layers
+    
     result = {"result": 1}
-    return render_template("index.html", layers=layers, result=result)
+    return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
     
 if __name__ == "__main__":
     csrf.init_app(app)

@@ -1,5 +1,17 @@
+function map_view(center, zoom) {
+    var view = new ol.View({
+        projection: main_projection,
+        //center    : [-65.89003678746177, 8.016859315038008],
+        center    : center,
+        //center: ol.proj.transform([-65.89003678746177, 8.016859315038008], "EPSG:4326", "EPSG:3857"),
+        zoom      : zoom
+    });
+
+    return view
+}
+
 // Show coordinate points on the map
-function display_layer(data, title, mapDiv) {
+function display_layer(data, title, map) {
     var vectorSource = new ol.source.Vector({
         features: new ol.format.GeoJSON().readFeatures(data)
     });
@@ -13,12 +25,12 @@ function display_layer(data, title, mapDiv) {
         style : styleFunction
     });
 
-    //mapDiv.addLayer(vectorLayer);
+    //map.addLayer(vectorLayer);
     return vectorLayer;
 }
 
 // Show base 64 image on the map
-function display_base64_image_onmap(base64_image, extent, name, mapDiv, proj) {    
+function display_base64_image_onmap(base64_image, extent, name, map, proj) {    
     image = new ol.layer.Image({
         source: new ol.source.ImageStatic({
             imageLoadFunction : function(img){
@@ -31,13 +43,12 @@ function display_base64_image_onmap(base64_image, extent, name, mapDiv, proj) {
         }),
         name: name
     });
-    
 
-    mapDiv.addLayer(image);
+    map.addLayer(image);
 
     $(".list-group").append(
         "<li class='list-group-item d-flex justify-content-between align-items-center'>"
-            +"<input type='checkbox' id="+name+" value="+name+" checked='checked' onchange='change_layer_visibility(this)'/>"
+            +"<input type='checkbox' id="+name+" value="+name+" checked='checked' onchange='change_layer_visibility(this, mapDiv)'/>"
             +"<label for="+name+"> <strong> Some data </strong> etc </label>"
             +"<div class='image-parent'>"
                 +"<img src="+base64_image.src+" class='img-fluid'>"
@@ -88,26 +99,31 @@ function round_coordinates(coordinates, decimal_places) {
 }
 
 // Remove layer from map
-function remove_layer(layer_name) {
-    mapDiv.getLayers().getArray()
+function remove_layer(layer_name, map) {
+    map.getLayers().getArray()
         .filter(layer => layer.get("name") == layer_name)
-        .forEach(layer => mapDiv.removeLayer(layer));
+        .forEach(layer => map.removeLayer(layer));
 }
 
 // Change layer visibility
-function change_layer_visibility(element) {
+function change_layer_visibility(element, map) {
     if(element.checked == true) {
-        mapDiv.getLayers().forEach(function (layer) {
+        map.getLayers().forEach(function (layer) {
             if (layer.get("name") == element.value) {
                 layer.setVisible(true);
             }
         });
     }
     else {
-        mapDiv.getLayers().forEach(function (layer) {
+        map.getLayers().forEach(function (layer) {
             if (layer.get("name") == element.value) {
                 layer.setVisible(false);
             }
         });
     }
+}
+
+// Get map config
+function get_map_config(map) {
+    center = map.getView().getCenter();
 }

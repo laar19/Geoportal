@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- OpenLayers -->
+    <!-- OpenLayers CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" integrity="sha512-usVBAd66/NpVNfBge19gws2j6JZinnca12rAe2l+d+QkLU9fiG02O1X8Q6hepIpr/EYKZvKx/I9WsnujJuOmBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js" integrity="sha512-a6ctI6w1kg3J4dSjknHj3aWLEbjitAXAjLDRUxo2wyYmDFRcz2RJuQr5M3Kt8O/TtUSp8n2rAyaXYy1sjoKmrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script -->
 
@@ -66,7 +66,7 @@
     <!-- Begin page content -->
     <main class="flex-shrink-0">
 
-        <!-- Star of sidebar div -->
+        <!-- Start of sidebar div -->
         <div id="sidebar" class="sidebar collapsed">
             <!-- Nav tabs -->
             <div class="sidebar-tabs">
@@ -193,6 +193,9 @@
                                             </li -->
                                         </ul>
                                     </div>
+
+                                    <input type="hidden" id="level-zoom" name="level-zoom" value="">
+                                    <input type="hidden" id="center" name="center" value="">
                                     <button type="submit">Search</button>
                                 </form>
                             </div>
@@ -247,7 +250,16 @@
         </div>
     </footer -->
 
+    <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-72WD92hLs7T5FAXn3vkNZflWG6pglUDDpm87TeQmfSg8KnrymL2G30R7as4FmTwhgu9H7eSzDCX3mjitSecKnw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="{{ url_for('static', filename='js/globals.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+    
+    <script>
+        var map_config = {{ map_config|tojson }};
+        var view = map_view(map_config["center"], map_config["zoom"]);
+    </script>
 
     <!-- Start sidebar -->
     <script>
@@ -271,7 +283,6 @@
     <script src="{{ url_for('static', filename='js/features/select_feature.js') }}"></script>
     <!-- End features -->
     
-    <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
     <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
 
     <script>
@@ -283,17 +294,19 @@
         var amo      = { { data[3]|safe }};
         var indice   = { { data[4]|safe }};
         */
-        var result   = {{ result|tojson }};
-        
-        if(result["result"] != 1) {
-            for(var i=0; i<=(result["result"].length)-1; i++) {
+        var images   = {{ images|tojson }};
+
+        // If there is images to show
+        if(images["result"] != 1) {
+            for(var i=0; i<=(images["result"].length)-1; i++) {
                 var base64_image = new Image();
-                base64_image.src = result["result"][i]["image"];
+                base64_image.src = images["result"][i]["image"];
                 
-                display_base64_image_onmap(base64_image, result["result"][i]["extent"], result["result"][i]["name"], mapDiv, main_projection);
+                display_base64_image_onmap(base64_image, images["result"][i]["extent"], images["result"][i]["name"], mapDiv, main_projection);
             }
         }
 
+        // If there is layers to show
         if(layers["layers"] != 1) {
             layers_data = Array();
 
@@ -307,15 +320,6 @@
                 // Adding a "fold" property set to either "open" or "close" makes the group layer
                 // collapsible
                 fold: "open",
-                /*
-                layers: [
-                    //display_layer(centros, "Centros poblados", mapDiv),
-                    //display_layer(estados, "Estados", mapDiv),
-                    //display_layer(vialidad, "Vías troncales", mapDiv),
-                    //display_layer(amo, "AMO", mapDiv),
-                    //display_layer(indice, "Índice", mapDiv)
-                ]
-                */
                 layers: layers_data
             });
 
