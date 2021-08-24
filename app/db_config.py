@@ -1,12 +1,5 @@
-"""
-from sqlalchemy import create_engine, select, Table, MetaData
-from sqlalchemy.sql import text
-"""
-
 import sqlalchemy as db
-
 import pandas as pd
-#import geopandas as gpd
 
 class DbConnection:
     def get_credentials(self, path, position):
@@ -30,32 +23,14 @@ class DbConnection:
         user        = credentials["user"]
         password    = credentials["password"]
         
-        #connection = f"postgresql://{user}:{password}@{host}/{database}"
-        #engine     = create_engine(connection)        
         engine = db.create_engine(f"{database}://{user}:{password}@{host}/{db_name}")
         conn   = engine.connect()
 
         return conn, engine
 
     def select_table(self, table_name, conn, engine):
-        #s = select([table])
-        #s = select(text(table))
-        #r = conn.execute(s)
-
-        """
-        table = Table(table_name, MetaData(), autoload_with=conn)
-        query = table.select()
-        #r = engine.execute(query)
-        result = conn.execute(query)
-        """
-
         metadata = db.MetaData()
         table    = db.Table(table_name, metadata, autoload=True, autoload_with=engine)
         query    = table.select()
-        #result   = conn.execute(query)
 
-        #result = gpd.read_postgis(sql=query, con=conn).to_json()
-        #result = pd.read_sql(query, conn)
-
-        #return result
         return query

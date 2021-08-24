@@ -2,6 +2,7 @@ var container = document.getElementById("popup");
 var content   = document.getElementById("popup-content");
 var closer    = document.getElementById("popup-closer");
 
+// Close popup 
 closer.onclick = function() {
     popup.setPosition(undefined);
     closer.blur();
@@ -19,27 +20,6 @@ var popup = new ol.Overlay({
 });
 mapDiv.addOverlay(popup);
 
-//mapDiv.on("pointermove", function(evt) {
-/*
-mapDiv.on("singleclick", function(event) {
-    if (mapDiv.hasFeatureAtPixel(event.pixel) === true) {
-        var coordinate = event.coordinate;
-
-        var latitude = "example";
-        var longitude = "example";
-
-        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Latitude : " + latitude + "<br>Longitude: " + longitude + "</pre>"
-        popup.setPosition(ol.proj.fromLonLat(coordinates));
-    }
-    /*
-    else {
-        popup.setPosition(undefined);
-        closer.blur();
-    }
-    *
-});
-*/
-
 // display popup on click
 mapDiv.on("click", function(evt) {
     var feature = mapDiv.forEachFeatureAtPixel(evt.pixel, function(feature) {
@@ -47,23 +27,9 @@ mapDiv.on("click", function(evt) {
     });
 
     if(feature.get("display") == true) {
-        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Population : " + feature.get("population") + "<br>Rainfall: " + feature.get("rainfall") + "</pre>"        
+        content.innerHTML = "<pre> <b>Waypoint Details </b> " + "<br>" + "Population : " + feature.get("population") + "<br>Rainfall: " + feature.get("rainfall") + "</pre>"
         popup.setPosition(evt.coordinate);
-        /*
-        $(container).popover({
-            placement: "top",
-            html: true,
-            //content: feature.get("name"),
-            content: "<a href='#' id='popup-closer' class='ol-popup-closer'></a><pre> <b>Waypoint Details </b> " + "<br>" + "Population : " + feature.get("population") + "<br>Rainfall: " + feature.get("rainfall") + "</pre>"
-        });
-        $(container).popover("show");
-        */
     }
-    /*
-    else {
-        $(container).popover("dispose");
-    }
-    */
 });
 
 // change mouse cursor when over marker
@@ -80,6 +46,7 @@ mapDiv.on("movestart", function() {
 });
 */
 
+// Add marker on polygon draw or point
 function addMarker(mapDiv, coordinates, proj, name) {
     var marker;
     
