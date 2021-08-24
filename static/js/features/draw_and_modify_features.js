@@ -54,11 +54,14 @@ function add_draw_interaction() {
             var coordinate_results = "";
             var input_hidden       = "";
             if(new_coordinates.length == 2) {
-                coordinate_results = "<p>"+new_coordinates+"</p>";
+                coordinate_results += "<p>"+new_coordinates+"</p>";
+                input_hidden       += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates+">";
 
+                /*
                 for(var i=0; i<=(new_coordinates.length)-1; i++) {
                     input_hidden += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i]+">";
                 }
+                */
             }
             else {
                 for(var i=0; i<=(new_coordinates.length)-1; i++) {
@@ -92,7 +95,7 @@ function remove_coordinate(element, layer_name) {
     mapDiv.removeInteraction(draw);
     add_draw_interaction();
     $(element).parent().remove("li");
-    remove_layer(layer_name);
+    remove_layer(layer_name, mapDiv);
 }
 
 // Enable or disable draw interaction
