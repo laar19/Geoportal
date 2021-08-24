@@ -31,7 +31,7 @@ def get_layer_from_db(DbConn, conn, engine, table_name, layer_proj, returned_pro
         return layer
 
 # Extract the list sent from javascript
-def get_list_from_string(string):
+def get_coord_from_js(string):
     string += ","
     
     element = str()
