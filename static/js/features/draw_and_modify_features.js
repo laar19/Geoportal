@@ -52,33 +52,17 @@ function add_draw_interaction() {
             }
 
             var coordinate_results = "";
-            var input_hidden       = "";
             if(new_coordinates.length == 2) {
                 coordinate_results += "<p>"+new_coordinates+"</p>";
-                input_hidden       += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates+">";
-
-                /*
-                for(var i=0; i<=(new_coordinates.length)-1; i++) {
-                    input_hidden += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i]+">";
-                }
-                */
             }
             else {
                 for(var i=0; i<=(new_coordinates.length)-1; i++) {
                     coordinate_results += "<p>"+new_coordinates[i]+"</p>";
-                    input_hidden       += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i]+">";
                 }
-
-                /*
-                for(var i=0; i<=(new_coordinates.length)-1; i++) {
-                    for(var j=0; j<=(new_coordinates[i].length)-1; j++) {
-                        input_hidden += "<input type='hidden' name="+'polygon'+new_coordinates+" value="+new_coordinates[i][j]+">";
-                    }
-                }
-                */
             }
+            var input_hidden = "<input type='hidden' name="+'matchme'+new_coordinates+" value="+new_coordinates+">";
 
-            $(".list-group").append(
+            $(".list-group-coordinates").append(
                 "<li class='list-group-item d-flex justify-content-between align-items-center border-bottom'>"
                     +"<a href='#' id='list-item-closer' class='ol-popup-closer' onClick='remove_coordinate(this, "+'"'+name+'"'+")'></a>"
                     +input_hidden

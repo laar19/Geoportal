@@ -61,20 +61,16 @@ def search_image():
         }
         
         for i in request.form:
-            if i != "csrf_token":
+            if "matchme" in i:
                 tmp = get_coord_from_js(request.form.getlist(i)[0])
                 
-                #if len(request.form.getlist(i)) == 2:
                 if len(tmp) == 2:
-                    #polygons_from_map.append(Point(float(request.form.getlist(j)[0]), float(request.form.getlist(j)[1])))
                     polygons_from_map.append(Point(tmp))
                 else:
                     coordinates = list()
-                    #for k in range(len(request.form.getlist(i))-1):
                     for j in range(len(tmp)-1):
                         if (j%2) == 0:
-                            #coordinates.append(tuple([float(request.form.getlist(i)[j]), float(request.form.getlist(i)[j+1])]))
-                            coordinates.append(tuple([float(tmp(i)[j]), float(tmp(i)[j+1])]))
+                            coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
                     polygons_from_map.append(Polygon(coordinates))
 
     # Retrieve images from database
