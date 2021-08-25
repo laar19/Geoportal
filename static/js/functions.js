@@ -46,7 +46,7 @@ function display_base64_image_onmap(base64_image, extent, name, map, proj) {
 
     map.addLayer(image);
 
-    $(".list-group").append(
+    $(".list-group-result").append(
         "<li class='list-group-item d-flex justify-content-between align-items-center'>"
             +"<input type='checkbox' id="+name+" value="+name+" checked='checked' onchange='change_layer_visibility(this, mapDiv)'/>"
             +"<label for="+name+"> <strong> Some data </strong> etc </label>"
@@ -56,6 +56,10 @@ function display_base64_image_onmap(base64_image, extent, name, map, proj) {
             +"</div>"
         +"</li>"
     );
+
+    $("#results").addClass("active");
+    $("#sidebar").removeClass("collapsed");
+    $("#results").css("color", "red");
 }
 
 // Show base 64 image on div
