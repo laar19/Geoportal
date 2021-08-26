@@ -121,6 +121,7 @@
                     <div class="container">
                         <div class="row border-bottom">
                             <div class="col">
+                                <br>
                                 <form>
                                     <label for="projection"> Projection </label>
                                     <select id="projection">
@@ -130,12 +131,15 @@
                                     <label for="precision"> Precision </label>
                                     <input id="precision" class="precision" type="number" min="0" max="12" value="6" size="3"/>
                                 </form>
+                                <br>
                             </div>
                         </div>
                         <div class="row">
+                            <br>
                             <div class="container">
                                 <div class="row">
                                     <div class="col">
+                                        <br>
                                         <h6> Mouse Position: </h6>
                                     </div>
                                     <div class="col">
@@ -143,6 +147,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <br>
                         </div>
                         <div class="row border-bottom">
                             <div class="container">
@@ -152,18 +157,23 @@
                                     </div>
                                     <div class="col">
                                         <div id="zoom-level"></div>
+                                        <br>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row border-bottom">
                             <div class="col">
+                                <br>
                                 <label for="enable_select"><a> Enable feature selection </a></label>
                                 <input type="checkbox" name="enable_select" id="enable_select" onClick="enable_select_interaction()">
+                                <br>
+                                <br>
                             </div>
                         </div>
                         <div class="row border-bottom">
                             <div class="col">
+                                <br>
                                 <label for="enable_draw"><a> Enable </a></label>
                                 <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enable_draw_interaction()">
                                 <form class="form-inline">
@@ -173,10 +183,12 @@
                                         <option value="Point"> Point </option>
                                     </select>
                                 </form>
+                                <br>
                             </div>
                         </div>
                         <div class="row border-bottom">
                             <div class="col">
+                                <br>
                                 <a> Coordinates </a>
 
                                 <form method="POST" action="/search_image">
@@ -200,6 +212,7 @@
                                     <input type="hidden" id="center" name="center" value="">
                                     <button type="submit">Search</button>
                                 </form>
+                                <br>
                             </div>
                         </div>
                     </div>

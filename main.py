@@ -84,17 +84,6 @@ def search_image():
     
     # Construct polygons from database images
     for i in range(len(df_images)):
-        """
-        dataUpperLeftLat      = df_images.loc[i, "dataUpperLeftLat"]
-        dataUpperLeftLong     = df_images.loc[i, "dataUpperLeftLong"]
-        dataUpperRightLat     = df_images.loc[i, "dataUpperRightLat"]
-        dataUpperRightLong    = df_images.loc[i, "dataUpperRightLong"]
-        dataLowerLeftLat      = df_images.loc[i, "dataLowerLeftLat"]
-        dataLowerLeftLong     = df_images.loc[i, "dataLowerLeftLong"]
-        dataLowerRightLat     = df_images.loc[i, "dataLowerRightLat"]
-        dataLowerRightLong    = df_images.loc[i, "dataLowerRightLong"]
-        """
-        
         productUpperLeftLat   = df_images.loc[i, "productUpperLeftLat"]
         productUpperLeftLong  = df_images.loc[i, "productUpperLeftLong"]
         productUpperRightLat  = df_images.loc[i, "productUpperRightLat"]
