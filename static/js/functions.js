@@ -57,9 +57,10 @@ function display_base64_image_onmap(base64_image, extent, name, map, proj) {
         +"</li>"
     );
 
+    $("#sidebar-content > div").removeClass("active");
+    $(".fa-poll-h").parent().parent().addClass("active");
     $("#results").addClass("active");
     $("#sidebar").removeClass("collapsed");
-    $("#results").css("color", "red");
 }
 
 // Show base 64 image on div
