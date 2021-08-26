@@ -5,8 +5,9 @@
 }
 
 /* Zoom control */
+
 .ol-zoom {
     left : unset;
     right: 8px;
-    margin-top: 5%;
+    margin-top: 6%;
 }
