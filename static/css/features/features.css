@@ -49,7 +49,8 @@
 
 .ol-popup-closer:after {
     content: "✖";
-    color: #c3c3c3;
+    /*color: #c3c3c3;*/
+    color  : red;
 }
 
 /* End marker popup */

@@ -43,7 +43,6 @@ def index():
     conn.close()
 
     layers = {"layers": layers}
-    # End retrieve base layers
 
     result = {"result": 1}
     return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
@@ -63,9 +62,11 @@ def search_image():
         for i in request.form:
             if "matchme" in i:
                 tmp = get_coord_from_js(request.form.getlist(i)[0])
-                
+
+                # If there is only two coordinates
                 if len(tmp) == 2:
                     polygons_from_map.append(Point(tmp))
+                # More than two
                 else:
                     coordinates = list()
                     for j in range(len(tmp)-1):
@@ -114,7 +115,7 @@ def search_image():
             }
         )
 
-    # Compare new constructed polygons against recieved from user
+    # Compare new constructed polygons and points against recieved from user
     for i in targets:
         for j in polygons_from_map:
             if(i["polygon"].intersects(j)):
@@ -146,7 +147,6 @@ def search_image():
     conn.close()
 
     layers = {"layers": layers}
-    # End retrieve base layers
 
     # If there were no match
     if len(result) == 0:
@@ -186,7 +186,6 @@ def sample_layers():
     conn.close()
 
     layers = {"layers": layers}
-    # End retrieve base layers
     
     result = {"result": 1}
     return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
