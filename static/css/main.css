@@ -5,9 +5,18 @@
 }
 
 /* Zoom control */
-
 .ol-zoom {
     left : unset;
     right: 8px;
     margin-top: 6%;
+}
+
+/* Image search results */
+.list-group-result {
+    max-height: 600px !important;
+}
+
+/* Main navbar */
+.navigationbar {
+    background-color: white;
 }

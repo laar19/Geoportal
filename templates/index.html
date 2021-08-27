@@ -20,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- local -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol3-sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol-layerswitcher.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/sidebar.css') }}">
@@ -32,31 +32,21 @@
 <body class="d-flex flex-column h-100">
     <header>
         <!-- Fixed navbar -->
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <nav class="navbar navbar-expand-md fixed-top navigationbar">
         <!-- nav class="navbar navbar-expand-md navbar-dark bg-dark" -->
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Fixed navbar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/logogeoabae2020.png') }}">
+                </a>
 
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('sample_layers') }}">Sample layers</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                        </li>
-                    </ul>
+                <a class="navbar-brand" href="{{ url_for('sample_layers') }}">Sample layers</a>
+                
+                <a class="navbar-brand" href="#">About us</a>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
                     <form class="d-flex">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
                     </form>
                 </div>
             </div>
@@ -225,6 +215,7 @@
 
                     <div class="col">
                         <div id="polygons">
+                            <br>
                             <ul class="list-group list-group-result" id="coordinates-list">
                             </ul>
                         </div>
