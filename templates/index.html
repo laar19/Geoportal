@@ -297,15 +297,8 @@
     <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
 
     <script>
-        var layers   = {{ layers|tojson }};
-        /*
-        var centros  = { { data[0]|safe }};
-        var estados  = { { data[1]|safe }};
-        var vialidad = { { data[2]|safe }};
-        var amo      = { { data[3]|safe }};
-        var indice   = { { data[4]|safe }};
-        */
-        var images   = {{ images|tojson }};
+        var layers = {{ layers|tojson }};
+        var images = {{ images|tojson }};
 
         // If there is images to show
         if(images["result"] != 1) {
@@ -353,37 +346,6 @@
         */
         
         mapDiv.addControl(sidebar);
-
-        /*
-        var dataUpperLeftLat   = 30.412538;
-        var dataUpperLeftLong  = 35.039703;
-        var dataUpperRightLat  = 30.353029;
-        var dataUpperRightLong = 35.353039;
-        var dataLowerLeftLat   = 30.135107;
-        var dataLowerLeftLong  = 34.969799;
-        var dataLowerRightLat  = 30.075734;
-        var dataLowerRightLong = 35.282209;
-
-        //Holds the Polygon feature  
-        var polyData = new ol.Feature({
-            geometry: new ol.geom.Polygon([
-                [
-                    [dataUpperRightLong, dataUpperRightLat],
-                    [dataLowerRightLong, dataLowerRightLat],
-                    [dataLowerLeftLong, dataLowerLeftLat],
-                    [dataUpperLeftLong, dataUpperLeftLat]
-                ]
-            ])
-        });
-        //A vector layer to hold the features
-        var vectorLayer = new ol.layer.Vector({
-            source: new ol.source.Vector({
-                features: [polyData]
-            }),
-            name: "polygon2"
-        });
-        mapDiv.addLayer(vectorLayer);
-        */
     </script>
 </body>
 </html>

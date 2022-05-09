@@ -24,7 +24,7 @@ csrf = CSRFProtect(app)
 db_credentials_path = "db_credentials.csv"
 DbConn              = DbConnection()
 
-mapDiv = MapDiv()
+mapDiv             = MapDiv()
 default_map_config = mapDiv.main_config()
 
 @app.route("/")

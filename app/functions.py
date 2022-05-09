@@ -13,7 +13,7 @@ def black_to_transparency(img):
 
     return Image.fromarray(x)
 
-# Retrieve layer from db
+# Get layer from db, retrieve layer from db
 def get_layer_from_db(DbConn, conn, engine, table_name, layer_proj, returned_proj):
     geom_col = "geom"
     
@@ -30,7 +30,7 @@ def get_layer_from_db(DbConn, conn, engine, table_name, layer_proj, returned_pro
         
         return layer
 
-# Extract the list sent from javascript
+# Get coordinates from javascript, extract the list sent from javascript
 def get_coord_from_js(string):
     string += ","
     
