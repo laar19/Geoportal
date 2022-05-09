@@ -3,7 +3,7 @@ from flask_wtf import CSRFProtect
 
 from io import BytesIO
 
-from shapely.geometry         import         Point
+from shapely.geometry         import Point
 from shapely.geometry.polygon import Polygon
 
 from datetime import datetime as dtime
