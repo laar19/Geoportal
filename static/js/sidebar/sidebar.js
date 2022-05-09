@@ -91,7 +91,7 @@ var sidebar = new ol.control.Sidebar({
     element: "sidebar",
     position: "left"
 });
-var toc = document.getElementById("layers");
+var toc  = document.getElementById("layers");
 var toc2 = document.getElementById("layers2");
 
 mapDiv.on("rendercomplete",function(e) {
