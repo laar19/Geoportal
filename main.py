@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask     import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
 
 from io import BytesIO
 
-from shapely.geometry import Point
+from shapely.geometry         import         Point
 from shapely.geometry.polygon import Polygon
 
 from datetime import datetime as dtime
@@ -14,7 +14,7 @@ import json, base64, requests, hashlib
 
 from app.db_config import DbConnection
 from app.functions import *
-from app.config import *
+from app.config    import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -33,12 +33,19 @@ def index():
     # Retrieve base layers
     conn, engine = DbConn.connection(db_credentials_path, 0)
 
-    layers = [
-        {
-            "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
-        }
-    ]
+    query        = DbConn.select_table("geometry_columns", conn, engine)
+    layer_tables = pd.read_sql(query, con=engine)
+    conn.close()
+
+    layers = list()
+
+    for i in layer_tables["f_table_name"]:
+        layers.append(
+            {
+                "title": i,
+                "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
+            }
+        )
 
     conn.close()
 

@@ -34,6 +34,7 @@ var mapDiv = new ol.Map({
 });
 
 /* Start sample data */
+/*
 var uk_layers = new ol.layer.Group({
     // A layer must have a title to appear in the layerswitcher
     title: "Sample_data",
@@ -78,6 +79,7 @@ var uk_layers = new ol.layer.Group({
         })
     ]
 });
+*/
 //mapDiv.addLayer(uk_layers);
 /* End sample data */
 

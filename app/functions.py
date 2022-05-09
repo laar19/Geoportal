@@ -1,10 +1,10 @@
 from PIL import Image
 
-from shapely.geometry import Point
+from shapely.geometry         import Point
 from shapely.geometry.polygon import Polygon
 
 import geopandas as gpd
-import numpy as np
+import numpy     as np
 
 def black_to_transparency(img):
     x = np.asarray(img.convert("RGBA")).copy()
