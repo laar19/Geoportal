@@ -8,9 +8,15 @@ from shapely.geometry.polygon import Polygon
 
 from datetime import datetime as dtime
 
+from folium.plugins import Draw
+
 import pandas as pd
 
 import json, base64, requests, hashlib
+
+import folium
+
+import geopandas as gpd
 
 from app.db_config import DbConnection
 from app.functions import *
@@ -59,7 +65,7 @@ def search_image():
     map_config = dict()
     
     # Retrieve polygons from user
-    polygons_from_map = list()
+    polygons_from_user = list()
     if request.method == "POST":
         map_config = {
             "center": get_coord_from_js(request.form["center"]),
@@ -72,14 +78,14 @@ def search_image():
 
                 # If there is only two coordinates
                 if len(tmp) == 2:
-                    polygons_from_map.append(Point(tmp))
+                    polygons_from_user.append(Point(tmp))
                 # More than two
                 else:
                     coordinates = list()
                     for j in range(len(tmp)-1):
                         if (j%2) == 0:
                             coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
-                    polygons_from_map.append(Polygon(coordinates))
+                    polygons_from_user.append(Polygon(coordinates))
 
     # Retrieve images from database
     conn, engine = DbConn.connection(db_credentials_path, 1)
@@ -124,7 +130,7 @@ def search_image():
 
     # Compare new constructed polygons and points against recieved from user
     for i in targets:
-        for j in polygons_from_map:
+        for j in polygons_from_user:
             if(i["polygon"].intersects(j)):
                 url      = i["path"]
                 response = requests.get(url)
@@ -162,8 +168,8 @@ def search_image():
     else:
         return render_template("index.html", layers=layers, images={"result": result}, map_config=map_config)
 
-@app.route("/sample_layers")
-def sample_layers():
+@app.route("/sample_layers_openlayers_openlayers")
+def sample_layers_openlayers():
     # Retrieve base layers
     conn, engine = DbConn.connection(db_credentials_path, 0)
 
@@ -196,6 +202,61 @@ def sample_layers():
     
     result = {"result": 1}
     return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
+
+@app.route("/sample_layers_folium")
+def sample_layers_folium():
+    # Retrieve base layers
+    conn, engine = DbConn.connection(db_credentials_path, 0)
+
+    """
+    query        = DbConn.select_table("geometry_columns", conn, engine)
+    layer_tables = pd.read_sql(query, con=engine)
+
+    #layer_tables = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitude, df.Latitude))
+
+    layers = list()
+
+    for i in layer_tables["f_table_name"]:
+        layers.append(
+            {
+                "title": i,
+                "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
+            }
+        )
+
+    """
+
+    # HAZME BONITO COMO EL DE ARRIBA
+    sql = "SELECT * FROM vialidad_troncal"
+    gdf = gpd.read_postgis(sql, conn)
+    conn.close()
+
+    start_coords = (46.9540700, 142.7360300)
+    folium_map = folium.Map(location=start_coords, zoom_start=5.5)
+
+    #draw = Draw()
+    draw = Draw(
+        export       = True,
+        filename     = "my_data.geojson",
+        position     = "topleft",
+        draw_options = {"polyline": {"allowIntersection": False}},
+        edit_options = {"poly": {"allowIntersection": False}}
+    )
+    draw.add_to(folium_map)
+
+    for _, r in gdf.iterrows():
+        # Without simplifying the representation of each borough,
+        # the map might not be displayed
+        sim_geo = gpd.GeoSeries(r["geom"]).simplify(tolerance=0.001)
+        geo_j = sim_geo.to_json()
+        geo_j = folium.GeoJson(data=geo_j,
+                               style_function=lambda x: {"fillColor": "orange"})
+        folium.Popup(r["nombre"]).add_to(geo_j)
+        geo_j.add_to(folium_map)
+
+    
+    return folium_map._repr_html_()
+    
     
 if __name__ == "__main__":
     csrf.init_app(app)
