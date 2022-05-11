@@ -86,7 +86,7 @@ function addMarker(mapDiv, coordinates, proj, name) {
             anchor: [0.5, 46],
             anchorXUnits: "fraction",
             anchorYUnits: "pixels",
-            src: "http://localhost/geoabae/static/img/pin_marker.png"
+            src: "http://localhost/geoportal/static/img/pin_marker.png"
         })
     }));
 

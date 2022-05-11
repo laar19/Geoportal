@@ -52,7 +52,6 @@ def index():
                 "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
             }
         )
-
     conn.close()
 
     layers = {"layers": layers}
@@ -208,27 +207,24 @@ def sample_layers_folium():
     # Retrieve base layers
     conn, engine = DbConn.connection(db_credentials_path, 0)
 
-    """
+    # HAZME BONITO COMO EL DE ARRIBA
+    sql = "SELECT * FROM vialidad_troncal"
+    gdf = gpd.read_postgis(sql, conn)
+
     query        = DbConn.select_table("geometry_columns", conn, engine)
     layer_tables = pd.read_sql(query, con=engine)
-
-    #layer_tables = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitude, df.Latitude))
+    conn.close()
 
     layers = list()
 
     for i in layer_tables["f_table_name"]:
+        #if i != "centros_pob_wgs84":
         layers.append(
             {
                 "title": i,
                 "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
             }
         )
-
-    """
-
-    # HAZME BONITO COMO EL DE ARRIBA
-    sql = "SELECT * FROM vialidad_troncal"
-    gdf = gpd.read_postgis(sql, conn)
     conn.close()
 
     start_coords = (46.9540700, 142.7360300)
@@ -244,16 +240,20 @@ def sample_layers_folium():
     )
     draw.add_to(folium_map)
 
-    for _, r in gdf.iterrows():
-        # Without simplifying the representation of each borough,
-        # the map might not be displayed
-        sim_geo = gpd.GeoSeries(r["geom"]).simplify(tolerance=0.001)
-        geo_j = sim_geo.to_json()
-        geo_j = folium.GeoJson(data=geo_j,
-                               style_function=lambda x: {"fillColor": "orange"})
-        folium.Popup(r["nombre"]).add_to(geo_j)
-        geo_j.add_to(folium_map)
+    for i in range(0, len(layers)):
+        tmp     = json.loads(layers[i]["data"])
+        tmp_gdf = gpd.GeoDataFrame.from_features(tmp["features"])
 
+        for _, row in tmp_gdf.iterrows():
+            if row["geometry"].geom_type != "MultiPoint":
+                # Without simplifying the representation of each borough,
+                # the map might not be displayed
+                sim_geo = gpd.GeoSeries(row["geometry"]).simplify(tolerance=0.001)
+                geo_j   = sim_geo.to_json()
+                geo_j   = folium.GeoJson(data=geo_j,
+                                       style_function=lambda x: {"fillColor": "orange"})
+                #folium.Popup(row["nombre"]).add_to(geo_j)
+                geo_j.add_to(folium_map)
     
     return folium_map._repr_html_()
     
