@@ -204,8 +204,8 @@ def sample_layers_openlayers():
     conn.close()
 
     layers = {"layers": layers}
-    
     images = {"images": 1}
+    
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
     
 if __name__ == "__main__":
