@@ -40,8 +40,6 @@
                 </a>
 
                 <a class="navbar-brand" href="{{ url_for('sample_layers_openlayers') }}">Sample layers</a>
-
-                <a class="navbar-brand" href="{{ url_for('sample_layers_folium') }}">Sample layers</a>
                 
                 <a class="navbar-brand" href="#">About us</a>
 
@@ -300,15 +298,20 @@
 
     <script>
         var layers = {{ layers|tojson }};
-        var images = {{ images|tojson }};
+        var result = {{ result|tojson }};
 
         // If there is images to show
-        if(images["result"] != 1) {
-            for(var i=0; i<=(images["result"].length)-1; i++) {
+        if(result["images"] != 1) {
+            for(var i=0; i<=(result["images"].length)-1; i++) {
                 var base64_image = new Image();
-                base64_image.src = images["result"][i]["image"];
+                base64_image.src = result["images"][i]["image"];
                 
-                display_base64_image_onmap(base64_image, images["result"][i]["extent"], images["result"][i]["name"], mapDiv, main_projection);
+                display_base64_image_onmap(base64_image, result["images"][i]["extent"], result["images"][i]["name"], mapDiv, main_projection);
+            }
+
+            for(var i=0; i<=(result["shapes"].length)-1; i++) {
+                console.log(result["shapes"][i]);
+                display_user_selection(mapDiv, result["shapes"][i]);
             }
         }
 
@@ -339,14 +342,9 @@
                 layers: [ven_layers]
             });
             mapDiv.addLayer(my_data);
-            ol.control.LayerSwitcher.renderPanel(mapDiv, toc, { reverse: false });
         }
 
-        /*
-        mapDiv.addLayer(uk_layers);
-        ol.control.LayerSwitcher.renderPanel(mapDiv, toc2, { reverse: false });
-        */
-        
+        ol.control.LayerSwitcher.renderPanel(mapDiv, toc, {reverse: false});
         mapDiv.addControl(sidebar);
     </script>
 </body>
