@@ -10,7 +10,7 @@ Python 3.7.x
 Flask framework as backend.   
 Openlayers 6 as mapping library.   
 Postgresql + Postgis as database.   
-Distributed under the GNU General Public License (GPLv3).   
+Distributed under the GNU Affero General Public License (AGPLv3).   
 
 ## Credits:
 
