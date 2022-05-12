@@ -1,3 +1,9 @@
+import pandas as pd
+
+import json, base64, requests, hashlib
+
+import geopandas as gpd
+
 from flask     import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
 
@@ -7,16 +13,6 @@ from shapely.geometry         import Point
 from shapely.geometry.polygon import Polygon
 
 from datetime import datetime as dtime
-
-from folium.plugins import Draw
-
-import pandas as pd
-
-import json, base64, requests, hashlib
-
-import folium
-
-import geopandas as gpd
 
 from app.db_config import DbConnection
 from app.functions import *
@@ -56,8 +52,8 @@ def index():
 
     layers = {"layers": layers}
 
-    result = {"result": 1}
-    return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
+    images = {"images": 1}
+    return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
 
 @app.route("/search_image", methods=["POST"])
 def search_image():
@@ -92,7 +88,7 @@ def search_image():
     df_images    = pd.read_sql(query, con=engine)
     conn.close()
 
-    result  = list()
+    images  = list()
     targets = list()
     
     # Construct polygons from database images
@@ -127,10 +123,19 @@ def search_image():
             }
         )
 
+    # List of user polygons
+    shapes = list()
+
     # Compare new constructed polygons and points against recieved from user
     for i in targets:
         for j in polygons_from_user:
-            if(i["polygon"].intersects(j)):
+            if i["polygon"].intersects(j):
+                # Convert polygons from user to list
+                tmp = list()
+                for k in i["polygon"].exterior.coords:
+                    tmp.append(list(k))
+                shapes.append(tmp)
+                
                 url      = i["path"]
                 response = requests.get(url)
                 image    = Image.open(BytesIO(response.content))
@@ -144,15 +149,15 @@ def search_image():
 
                 extent = i["extent"]
                 name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
-                result.append({"image": image, "extent": extent, "name": name})
+                images.append({"image": image, "extent": extent, "name": name})
 
     # Retrieve base layers
     conn, engine = DbConn.connection(db_credentials_path, 0)
 
     layers = [
         {
-            "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
+            "title" : "Estados de Venezuela",
+            "data"  : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326),
         }
     ]
 
@@ -161,11 +166,12 @@ def search_image():
     layers = {"layers": layers}
 
     # If there were no match
-    if len(result) == 0:
-        result = {"result": 1}
-        return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
+    if len(images) == 0:
+        images = {"images": 1}
+        shapes = {"shapes": 1}
+        return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
     else:
-        return render_template("index.html", layers=layers, images={"result": result}, map_config=map_config)
+        return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
 
 @app.route("/sample_layers_openlayers_openlayers")
 def sample_layers_openlayers():
@@ -199,64 +205,8 @@ def sample_layers_openlayers():
 
     layers = {"layers": layers}
     
-    result = {"result": 1}
-    return render_template("index.html", layers=layers, images=result, map_config=default_map_config)
-
-@app.route("/sample_layers_folium")
-def sample_layers_folium():
-    # Retrieve base layers
-    conn, engine = DbConn.connection(db_credentials_path, 0)
-
-    # HAZME BONITO COMO EL DE ARRIBA
-    sql = "SELECT * FROM vialidad_troncal"
-    gdf = gpd.read_postgis(sql, conn)
-
-    query        = DbConn.select_table("geometry_columns", conn, engine)
-    layer_tables = pd.read_sql(query, con=engine)
-    conn.close()
-
-    layers = list()
-
-    for i in layer_tables["f_table_name"]:
-        #if i != "centros_pob_wgs84":
-        layers.append(
-            {
-                "title": i,
-                "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
-            }
-        )
-    conn.close()
-
-    start_coords = (46.9540700, 142.7360300)
-    folium_map = folium.Map(location=start_coords, zoom_start=5.5)
-
-    #draw = Draw()
-    draw = Draw(
-        export       = True,
-        filename     = "my_data.geojson",
-        position     = "topleft",
-        draw_options = {"polyline": {"allowIntersection": False}},
-        edit_options = {"poly": {"allowIntersection": False}}
-    )
-    draw.add_to(folium_map)
-
-    for i in range(0, len(layers)):
-        tmp     = json.loads(layers[i]["data"])
-        tmp_gdf = gpd.GeoDataFrame.from_features(tmp["features"])
-
-        for _, row in tmp_gdf.iterrows():
-            if row["geometry"].geom_type != "MultiPoint":
-                # Without simplifying the representation of each borough,
-                # the map might not be displayed
-                sim_geo = gpd.GeoSeries(row["geometry"]).simplify(tolerance=0.001)
-                geo_j   = sim_geo.to_json()
-                geo_j   = folium.GeoJson(data=geo_j,
-                                       style_function=lambda x: {"fillColor": "orange"})
-                #folium.Popup(row["nombre"]).add_to(geo_j)
-                geo_j.add_to(folium_map)
-    
-    return folium_map._repr_html_()
-    
+    images = {"images": 1}
+    return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
     
 if __name__ == "__main__":
     csrf.init_app(app)

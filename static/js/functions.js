@@ -132,3 +132,44 @@ function change_layer_visibility(element, map) {
 function get_map_config(map) {
     center = map.getView().getCenter();
 }
+
+// Draw user selection alongside with the results
+function display_user_selection(map, coordinates) {
+    var coordinatesPolygon = new Array();
+    //Cycle traversal transfers longitude and latitude to the projection coordinate system of "EPSG:4326"
+    for (var i = 0; i < coordinates.length; i++) {
+        var pointTransform = ol.proj.fromLonLat([coordinates[i][0], coordinates[i][1]], "EPSG:4326");
+        coordinatesPolygon.push(pointTransform);
+    }
+    
+    var source = new ol.source.Vector();
+    
+    var vector = new ol.layer.Vector({
+        source: source,
+        style: new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: "rgba(255, 255, 255, 0.1)"
+            }),
+            stroke: new ol.style.Stroke({
+                color: "red",
+                width: 2
+            }),
+            image: new ol.style.Circle({
+                radius: 10,
+                fill: new ol.style.Fill({
+                    color: "#ffcc33"
+                })
+            })
+        })
+    });
+    //The polygon here must be an array of coordinates
+    var plygon = new ol.geom.Polygon([coordinatesPolygon])
+    //var plygon = new ol.geom.Polygon([coordinates])
+    //Polygon feature class
+    var feature = new ol.Feature({
+        geometry: plygon,
+    });
+    source.addFeature(feature);
+    map.addLayer(vector);
+    
+}
