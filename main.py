@@ -101,6 +101,15 @@ def search_image():
         productLowerLeftLong  = df_images.loc[i, "productLowerLeftLong"]
         productLowerRightLat  = df_images.loc[i, "productLowerRightLat"]
         productLowerRightLong = df_images.loc[i, "productLowerRightLong"]
+
+        dataUpperLeftLat   = df_images.loc[i, "dataUpperLeftLat"]
+        dataUpperLeftLong  = df_images.loc[i, "dataUpperLeftLong"]
+        dataUpperRightLat  = df_images.loc[i, "dataUpperRightLat"]
+        dataUpperRightLong = df_images.loc[i, "dataUpperRightLong"]
+        dataLowerLeftLat   = df_images.loc[i, "dataLowerLeftLat"]
+        dataLowerLeftLong  = df_images.loc[i, "dataLowerLeftLong"]
+        dataLowerRightLat  = df_images.loc[i, "dataLowerRightLat"]
+        dataLowerRightLong = df_images.loc[i, "dataLowerRightLong"]
         
         polygon = Polygon(
             [
@@ -110,9 +119,20 @@ def search_image():
                 (productUpperLeftLong, productUpperLeftLat)
             ]
         )
+
+        polygon_shapes = Polygon(
+            [
+                (dataUpperRightLong, dataUpperRightLat),
+                (dataLowerRightLong, dataLowerRightLat),
+                (dataLowerLeftLong, dataLowerLeftLat),
+                (dataUpperLeftLong, dataUpperLeftLat)
+            ]
+        )
+        
         targets.append(
             {
                 "polygon": polygon,
+                "shapes" : polygon_shapes,
                 "path"   : df_images.loc[i, "path"],
                 "extent" : [
                     productLowerLeftLong,
@@ -132,8 +152,8 @@ def search_image():
             if i["polygon"].intersects(j):
                 # Convert polygons from user to list
                 tmp = list()
-                for k in i["polygon"].exterior.coords:
-                    tmp.append(list(k))
+                for k in range(len(i["shapes"].exterior.coords)):
+                    tmp.append(list(i["shapes"].exterior.coords[k]))
                 shapes.append(tmp)
                 
                 url      = i["path"]
@@ -156,8 +176,8 @@ def search_image():
 
     layers = [
         {
-            "title" : "Estados de Venezuela",
-            "data"  : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326),
+            "title": "Estados de Venezuela",
+            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326),
         }
     ]
 

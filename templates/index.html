@@ -213,6 +213,9 @@
                         Results<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
+                    <br>
+                    <b><span id="number-images" style=""></span> images</b>
+
                     <div class="col">
                         <div id="polygons">
                             <br>
@@ -300,6 +303,14 @@
         var layers = {{ layers|tojson }};
         var result = {{ result|tojson }};
 
+        // Set the number of images found in database
+        if(Object.keys(result["images"]).length == 0) {
+            document.getElementById("number-images").innerHTML = 0;
+        }
+        else {
+            document.getElementById("number-images").innerHTML = Object.keys(result["images"]).length;
+        }
+
         // If there is images to show
         if(result["images"] != 1) {
             for(var i=0; i<=(result["images"].length)-1; i++) {
@@ -310,7 +321,6 @@
             }
 
             for(var i=0; i<=(result["shapes"].length)-1; i++) {
-                console.log(result["shapes"][i]);
                 display_user_selection(mapDiv, result["shapes"][i]);
             }
         }
