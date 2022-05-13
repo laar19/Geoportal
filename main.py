@@ -78,7 +78,7 @@ def search_image():
                 else:
                     coordinates = list()
                     for j in range(len(tmp)-1):
-                        if (j%2) == 0:
+                        if j%2 == 0:
                             coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
                     polygons_from_user.append(Polygon(coordinates))
 
