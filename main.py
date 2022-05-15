@@ -193,7 +193,7 @@ def search_image():
     else:
         return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
 
-@app.route("/sample_layers_openlayers_openlayers")
+@app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():
     # Retrieve base layers
     conn, engine = DbConn.connection(db_credentials_path, 0)

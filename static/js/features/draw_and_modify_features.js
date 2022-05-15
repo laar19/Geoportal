@@ -37,10 +37,12 @@ function add_draw_interaction() {
 
             var new_coordinates = Array();
 
+            // POINT or LINESTRING
             if(coordinates.length == 2) {
                 addMarker(mapDiv, coordinates, main_projection, name);
                 new_coordinates = round_coordinates(coordinates, decimal_places);
             }
+            // SO FAR POLYGON
             else {
                 for(var i=0; i<=(coordinates.length)-1; i++) {
                     for(var j=0; j<=(coordinates[i].length)-1; j++) {
