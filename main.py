@@ -59,8 +59,8 @@ def index():
 def search_image():
     map_config = dict()
     
-    # Retrieve polygons from user
-    polygons_from_user = list()
+    # Retrieve coordinates from user
+    coord_from_user = list()
     if request.method == "POST":
         map_config = {
             "center": get_coord_from_js(request.form["center"]),
@@ -73,14 +73,14 @@ def search_image():
 
                 # If there is only two coordinates
                 if len(tmp) == 2:
-                    polygons_from_user.append(Point(tmp))
+                    coord_from_user.append(Point(tmp))
                 # More than two
                 else:
                     coordinates = list()
                     for j in range(len(tmp)-1):
                         if j%2 == 0:
                             coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
-                    polygons_from_user.append(Polygon(coordinates))
+                    coord_from_user.append(Polygon(coordinates))
 
     # Retrieve images from database
     conn, engine = DbConn.connection(db_credentials_path, 1)
@@ -148,7 +148,7 @@ def search_image():
 
     # Compare new constructed polygons and points against recieved from user
     for i in targets:
-        for j in polygons_from_user:
+        for j in coord_from_user:
             if i["polygon"].intersects(j):
                 # Convert polygons from user to list
                 tmp = list()

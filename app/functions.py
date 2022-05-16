@@ -45,3 +45,32 @@ def get_coord_from_js(string):
             element = str()
 
     return list_
+
+# Match user coordinates selection vs stored on database
+def match_coordinates(request):
+    # Retrieve coordinates from user
+    coord_from_user = list()
+    if request.method == "POST":
+        map_config = {
+            "center": get_coord_from_js(request.form["center"]),
+            "zoom"  : float(request.form["level-zoom"])
+        }
+        
+        for i in request.form:
+            if "matchme" in i:
+                tmp = get_coord_from_js(request.form.getlist(i)[0])
+
+                # If there is only two coordinates
+                if len(tmp) == 2:
+                    #coord_from_user.append(Point(tmp))
+                    coord_from_user.append({"type":"POINT", "value":Point(tmp)})
+                # More than two
+                else:
+                    coordinates = list()
+                    for j in range(len(tmp)-1):
+                        if j%2 == 0:
+                            coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
+                    #coord_from_user.append(Polygon(coordinates))
+                    coord_from_user.append({"type":"POLYGON", "value":Polygon(coordinates)})
+
+    conn, engine = DbConn.connection(db_credentials_path, 0)
