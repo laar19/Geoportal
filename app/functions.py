@@ -1,7 +1,7 @@
 from PIL import Image
 
-#from shapely.geometry         import Point
-#from shapely.geometry.polygon import Polygon
+from shapely.geometry         import Point
+from shapely.geometry.polygon import Polygon
 
 import geopandas as gpd
 import numpy     as np
@@ -47,7 +47,7 @@ def get_coord_from_js(string):
     return list_
 
 # Match user coordinates selection vs stored on database
-def match_coordinates(request):
+def match_coordinates(DbConn, db_credentials_path, request):
     # Retrieve coordinates from user
     coord_from_user = list()
     if request.method == "POST":
@@ -74,3 +74,15 @@ def match_coordinates(request):
                     coord_from_user.append({"type":"POLYGON", "value":Polygon(coordinates)})
 
     conn, engine = DbConn.connection(db_credentials_path, 0)
+
+    # CUSTON QUERY SQL ALCHEMY
+
+    conn.execute("SELECT gid FROM amo_gwgs84")
+    rows = conn.fetchall()
+    for i in rows:
+        print()
+        print(i)
+        print()
+
+    print("Operation done successfully")
+    conn.close()

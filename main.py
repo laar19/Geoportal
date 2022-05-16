@@ -143,6 +143,8 @@ def search_image():
             }
         )
 
+    match_coordinates(DbConn, db_credentials_path, request)
+
     # List of user polygons
     shapes = list()
 
