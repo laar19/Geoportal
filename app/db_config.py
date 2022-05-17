@@ -1,5 +1,6 @@
 import sqlalchemy as db
-import pandas     as pd
+
+import pandas as pd
 
 class DbConnection:
     def get_credentials(self, path, position):
@@ -28,7 +29,7 @@ class DbConnection:
 
         return conn, engine
 
-    def select_table(self, table_name, conn, engine):
+    def select_table(self, table_name, engine):
         metadata = db.MetaData()
         table    = db.Table(table_name, metadata, autoload=True, autoload_with=engine)
         query    = table.select()

@@ -1,8 +1,8 @@
 import pandas as pd
 
-import json, base64, requests, hashlib
-
 import geopandas as gpd
+
+import json, base64, requests, hashlib
 
 from flask     import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
@@ -29,26 +29,28 @@ DbConn              = DbConnection()
 mapDiv             = MapDiv()
 default_map_config = mapDiv.main_config()
 
+# Abstract all geometry colums on database
+geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
+tables          = dict()
+for i in geometry_colums["f_table_name"]:
+    tables[i] = abs_table(DbConn, db_credentials_path, i)
+
 @app.route("/")
 @app.route("/index")
 def index():
     # Retrieve base layers
-    conn, engine = DbConn.connection(db_credentials_path, 0)
 
-    query        = DbConn.select_table("geometry_columns", conn, engine)
-    layer_tables = pd.read_sql(query, con=engine)
-    conn.close()
+    geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
 
     layers = list()
 
-    for i in layer_tables["f_table_name"]:
+    for i in geometry_colums["f_table_name"]:
         layers.append(
             {
                 "title": i,
-                "data" : get_layer_from_db(DbConn, conn, engine, i, proj_4326, proj_4326)
+                "data" : get_layer_from_db(DbConn, db_credentials_path, i, proj_4326, proj_4326)
             }
         )
-    conn.close()
 
     layers = {"layers": layers}
 
@@ -84,7 +86,7 @@ def search_image():
 
     # Retrieve images from database
     conn, engine = DbConn.connection(db_credentials_path, 1)
-    query        = DbConn.select_table("images", conn, engine)
+    query        = DbConn.select_table("images", engine)
     df_images    = pd.read_sql(query, con=engine)
     conn.close()
 
@@ -143,7 +145,7 @@ def search_image():
             }
         )
 
-    match_coordinates(DbConn, db_credentials_path, request)
+    match_coordinates(DbConn, db_credentials_path, request, tables)
 
     # List of user polygons
     shapes = list()
@@ -174,16 +176,12 @@ def search_image():
                 images.append({"image": image, "extent": extent, "name": name})
 
     # Retrieve base layers
-    conn, engine = DbConn.connection(db_credentials_path, 0)
-
     layers = [
         {
             "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326),
+            "data" : get_layer_from_db(DbConn, db_credentials_path, "estados", proj_4326, proj_4326),
         }
     ]
-
-    conn.close()
 
     layers = {"layers": layers}
 
@@ -198,32 +196,28 @@ def search_image():
 @app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():
     # Retrieve base layers
-    conn, engine = DbConn.connection(db_credentials_path, 0)
-
     layers = [
         {
             "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, conn, engine, "estados", proj_4326, proj_4326)
+            "data" : get_layer_from_db(DbConn, engine, "estados", proj_4326, proj_4326)
         },
         {
             "title": "Centros poblados",
-            "data" : get_layer_from_db(DbConn, conn, engine, "centros_pob_wgs84", proj_4326, proj_4326)
+            "data" : get_layer_from_db(DbConn, engine, "centros_pob_wgs84", proj_4326, proj_4326)
         },
         {
             "title": "Vías troncales",
-            "data" : get_layer_from_db(DbConn, conn, engine, "vialidad_troncal", proj_4326, proj_4326)
+            "data" : get_layer_from_db(DbConn, engine, "vialidad_troncal", proj_4326, proj_4326)
         },
         {
             "title": "Arco minero del Orinoco",
-            "data" : get_layer_from_db(DbConn, conn, engine, "amo_gwgs84", proj_4326, proj_4326)
+            "data" : get_layer_from_db(DbConn, engine, "amo_gwgs84", proj_4326, proj_4326)
         },
         {
             "title": "índice ?",
-            "data" : get_layer_from_db(DbConn, conn, engine, "indice_pr_vrss2", proj_4326, proj_4326)
+            "data" : get_layer_from_db(DbConn, engine, "indice_pr_vrss2", proj_4326, proj_4326)
         },
     ]
-
-    conn.close()
 
     layers = {"layers": layers}
     images = {"images": 1}
