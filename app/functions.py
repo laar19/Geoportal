@@ -1,3 +1,9 @@
+import numpy as np
+
+import pandas as pd
+
+import geopandas as gpd
+
 from PIL import Image
 
 from shapely.geometry         import Point
@@ -7,12 +13,6 @@ from sqlalchemy             import func
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm         import sessionmaker
 from sqlalchemy.sql         import select
-
-import numpy as np
-
-import pandas as pd
-
-import geopandas as gpd
 
 # Get all geometry colums from database
 def get_all_geometry_colums(DbConn, db_credentials_path):
