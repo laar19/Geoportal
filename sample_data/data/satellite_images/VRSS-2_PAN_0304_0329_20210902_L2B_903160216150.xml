@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<productMeta>
+	<OrganizationName>Bolivarian Agency for Space Activities (ABAE)</OrganizationName>
+	<!--FileInformation-->
+	<RawdataFileName>/IPS_PF/DataDir/VRSS-2/a6_21090285000044/a6_210902850000440/PAN/</RawdataFileName>
+	<L0DataFileName>/LS_DMS_L0DATA/L0_DATA/L0DATA/VRSS-2/PAN/20210902/21011/142131/FGS-1_VRSS-2_PAN_20210902_021011_00000001_00_10_B1/FGS-1_VRSS-2_PAN_1_20210902_021011_00000001_00_10_B1.RAW,/LS_DMS_L0DATA/L0_DATA/L0DATA/VRSS-2/PAN/20210902/21011/142131/FGS-1_VRSS-2_PAN_20210902_021011_00000001_00_10_B1/FGS-1_VRSS-2_PAN_2_20210902_021011_00000001_00_10_B1.RAW,/LS_DMS_L0DATA/L0_DATA/L0DATA/VRSS-2/PAN/20210902/21011/142131/FGS-1_VRSS-2_PAN_20210902_021011_00000001_00_10_B1/FGS-1_VRSS-2_PAN_3_20210902_021011_00000001_00_10_B1.RAW,/LS_DMS_L0DATA/L0_DATA/L0DATA/VRSS-2/PAN/20210902/21011/142131/FGS-1_VRSS-2_PAN_20210902_021011_00000001_00_10_B1/FGS-1_VRSS-2_PAN_4_20210902_021011_00000001_00_10_B1.RAW</L0DataFileName>
+	<imageName>VRSS-2_PAN_0304_0329_20210902_L2B_903160216150.tif</imageName>
+	<browseName>VRSS-2_PAN_0304_0329_20210902_L2B_903160216150.jpg</browseName>
+	<thumbName>VRSS-2_PAN_0304_0329_20210902_L2B_903160216150_THUMB.jpg</thumbName>
+	<productDate>2021 09 03 16:09:18.163068</productDate>
+	<!--IdentifierCodes-->
+	<productId>2523774</productId>
+	<satelliteId>VRSS-2</satelliteId>
+	<sensorId>PAN</sensorId>
+	<recStationId>FGS-1</recStationId>
+	<sceneId>2523195</sceneId>
+	<orbitId>21011</orbitId>
+	<RawdataID>21011</RawdataID>
+	<L0DataID>142131</L0DataID>
+	<sceneSerialNo>123</sceneSerialNo>
+	<!--Coordinates Type="Geographic" Units="Degrees"-->
+	<dataUpperLeftLat>10.117031</dataUpperLeftLat>
+	<dataUpperLeftLong>-71.161803</dataUpperLeftLong>
+	<dataUpperRightLat>10.058055</dataUpperRightLat>
+	<dataUpperRightLong>-70.861452</dataUpperRightLong>
+	<dataLowerLeftLat>9.822542</dataLowerLeftLat>
+	<dataLowerLeftLong>-71.222530</dataLowerLeftLong>
+	<dataLowerRightLat>9.763584</dataLowerRightLat>
+	<dataLowerRightLong>-70.922822</dataLowerRightLong>
+	<productUpperLeftLat>10.116612</productUpperLeftLat>
+	<productUpperLeftLong>-71.224524</productUpperLeftLong>
+	<productUpperRightLat>10.118865</productUpperRightLat>
+	<productUpperRightLong>-70.861801</productUpperRightLong>
+	<productLowerLeftLat>9.761762</productLowerLeftLat>
+	<productLowerLeftLong>-71.222125</productLowerLeftLong>
+	<productLowerRightLat>9.763934</productLowerRightLat>
+	<productLowerRightLong>-70.859793</productLowerRightLong>
+	<!--Coordinates Type="UTM" Units="Meters"-->
+	<dataUpperLeftX>263108.242750</dataUpperLeftX>
+	<dataUpperLeftY>1119137.152236</dataUpperLeftY>
+	<dataUpperRightX>295995.647105</dataUpperRightX>
+	<dataUpperRightY>1112410.203708</dataUpperRightY>
+	<dataLowerLeftX>256231.757671</dataLowerLeftX>
+	<dataLowerLeftY>1086599.098522</dataLowerLeftY>
+	<dataLowerRightX>289079.277102</dataLowerRightX>
+	<dataLowerRightY>1079873.999222</dataLowerRightY>
+	<productUpperLeftX>256231.757671</productUpperLeftX>
+	<productUpperLeftY>1119137.152236</productUpperLeftY>
+	<productUpperRightX>295995.647105</productUpperRightX>
+	<productUpperRightY>1119137.152236</productUpperRightY>
+	<productLowerLeftX>256231.757671</productLowerLeftX>
+	<productLowerLeftY>1079873.999222</productLowerLeftY>
+	<productLowerRightX>295995.647105</productLowerRightX>
+	<productLowerRightY>1079873.999222</productLowerRightY>
+	<!--SceneInformation-->
+	<dataSize>39765,39264</dataSize>
+	<sceneCenterLat>9.940177</sceneCenterLat>
+	<sceneCenterLong>-71.041328</sceneCenterLong>
+	<sceneStartLine>99691,99691,99691,99691</sceneStartLine>
+	<sceneStopLine>132458,132458,132458,132458</sceneStopLine>
+	<Scene_imagingStartTime>2021 09 02 15:07:39.061787</Scene_imagingStartTime>
+	<Scene_imagingStopTime>2021 09 02 15:07:43.891790</Scene_imagingStopTime>
+	<scenePath>304</scenePath>
+	<sceneRow>329</sceneRow>
+	<scenePathBias>NULL</scenePathBias>
+	<sceneRowBias>NULL</sceneRowBias>
+	<sceneCount>1</sceneCount>
+	<sceneShift>0</sceneShift>
+	<!--Processing-->
+	<direction>D</direction>
+	<lostFrameNum>0</lostFrameNum>
+	<lineTimeDataStatus>0</lineTimeDataStatus>
+	<mtfcPro>No</mtfcPro>
+	<resampleTechnique>BL</resampleTechnique>
+	<productLevel>LEVEL2B</productLevel>
+	<DeadPixel/>
+	<!--ReferenceSystem-->
+	<earthModel>WGS_84</earthModel>
+	<mapProjection>UTM</mapProjection>
+	<Zone_Number>19N</Zone_Number>
+	<!--ContentInformation-->
+	<productType>Standard</productType>
+	<quality Range="0-9">0</quality>
+	<sunElevation Units="Degrees">65.988</sunElevation>
+	<sunAzimuth Units="Degrees">265.159</sunAzimuth>
+	<cloudCoverage Units="Percent">5</cloudCoverage>
+	<bands/>
+	<!--InstrumentDescription-->
+	<gain>6</gain>
+	<intergralLevel>3</intergralLevel>
+	<instrumentMode>imaging</instrumentMode>
+	<sensorGSD>1.000000</sensorGSD>
+	<mirrorOffNadir>0.000000</mirrorOffNadir>
+	<!--CalibrationParameters-->
+	<SolarIrradiance Band="1" Units="Watt/m2/micron">1507.420044</SolarIrradiance>
+	<ab_calibra_param>
+		<K>3.271800</K>
+		<B>40.626000</B>
+	</ab_calibra_param>
+	<!--PlatformDescription-->
+	<Satellite_Altitude>645.806000</Satellite_Altitude>
+	<satZenithAngle>13.197953</satZenithAngle>
+	<satAzimuthAngle>3.250770</satAzimuthAngle>
+	<satOffNadir>-12.046913</satOffNadir>
+	<satPath>304</satPath>
+	<satRow>329</satRow>
+	<ephemerisData>GPS</ephemerisData>
+	<attitudeData>StarsensorAtt</attitudeData>
+	<attDataStatus>0</attDataStatus>
+	<gpsDataStatus>0</gpsDataStatus>
+	<dataFormatDes>GEOTIFF</dataFormatDes>
+	<Linkage>www.abae.gob.ve</Linkage>
+</productMeta>
