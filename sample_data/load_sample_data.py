@@ -49,24 +49,26 @@ path      = "data/satellite_images/"
 xml_files = glob(path+"*.xml")
 jpg_files = glob(path+"*.jgp")
 
+# XML tags
+columns = {"productDate", "satelliteId", "sensorId", "productUpperLeftLat", "productUpperLeftLong", "productUpperRightLat", "productUpperRightLong", "productLowerLeftLat", "productLowerLeftLong", "productLowerRightLat", "productLowerRightLong", "dataUpperLeftLat", "dataUpperLeftLong", "dataUpperRightLat", "dataUpperRightLong", "dataLowerLeftLat", "dataLowerLeftLong", "dataLowerRightLat", "dataLowerRightLong"}
+
+data = dict()
+
 for i in range(0, len(xml_files)):
     # parse an xml file by name
     xml_file = minidom.parse(xml_files[i])
-    #use getElementsByTagName() to get tag
-    productMeta = xml_file.getElementsByTagName('productMeta')
-    satelliteId = xml_file.getElementsByTagName('satelliteId')
-    print(satelliteId[0].firstChild.nodeValue)
-    import sys
-    sys.exit()
-    # XML tags
-    #colums = ["productDate", "satelliteId", "sensorId", "productUpperLeftLat", "productUpperLeftLong", "productUpperRightLat", "productUpperRightLong", "productLowerLeftLat", "productLowerLeftLong", "productLowerRightLat", "productLowerRightLong", "dataUpperLeftLat", "dataUpperLeftLong", "dataUpperRightLat", "dataUpperRightLong", "dataLowerLeftLat", "dataLowerLeftLong", "dataLowerRightLat", "dataLowerRightLong"]
 
-    # Temporal dataframe
-    #tmp_df = pd.read_xml(xml_files[i])[colums]
-    tmp_df = pd.read_xml(xml_files[i])
-    print(tmp_df["sensorId"])
-    import sys
-    sys.exit()
+    for i in columns:
+        #use getElementsByTagName() to get tag
+        tag        = xml_file.getElementsByTagName(i)
+        data[i] = [tag[0].firstChild.nodeValue]
+
+    df = pd.DataFrame(data)
+
+    print(df)
+
+import sys
+sys.exit()
 
 """
 images.insert().execute([
