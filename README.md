@@ -1,12 +1,12 @@
 # Geoportal
 
-## Geoportal for satelite images distribution
+## Catalog for satellite images
 
 ## Luis Acevedo  <laar@pm.me>
 
 ## Technical information:
 
-Python 3.7.x   
+Python 3.8.x   
 Flask framework as backend.   
 Openlayers 6 as mapping library.   
 Postgresql + Postgis as database.   
