@@ -2,11 +2,7 @@ import geopandas as gpd
 
 import pandas as pd
 
-import matplotlib.pyplot as plt
-
-from sqlalchemy             import create_engine, MetaData, Table
-from sqlalchemy.orm         import sessionmaker
-from sqlalchemy.ext.automap import automap_base
+from sqlalchemy import create_engine, MetaData, Table
 
 from glob import glob
 
