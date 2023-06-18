@@ -1,8 +1,12 @@
-import geopandas as gpd
+from os import listdir
+from os.path import isfile, join
 
 import pandas as pd
 
-from sqlalchemy import create_engine, MetaData, Table
+import geopandas as gpd
+
+#from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import MetaData, Table
 
 from glob import glob
 
@@ -13,12 +17,16 @@ from shapely.geometry.polygon import Polygon
 # DB connection
 db_type  = "postgresql"
 host     = "localhost"
-db_name  = "geoportal2"
+#db_name  = "geoportal2"
+db_name  = "satellite_images"
 user     = "postgres"
 password = "root"
+port     = "5433"
 
-engine = create_engine(f"{db_type}://{user}:{password}@{host}/{db_name}")
+#engine = create_engine(f"{db_type}://{user}:{password}@{host}:{port}/{db_name}")
+engine = f"{db_type}://{user}:{password}@{host}:{port}/{db_name}"
 
+"""
 # Open shapefiles
 # Get all .shp files
 path       = "data/layers/"
@@ -35,10 +43,12 @@ for i in shapefiles:
 # Upload shapefiles to DB
 for i in geometry:
     i["geom"].to_postgis(i["filename"], engine, schema="layers", index=True, index_label="Index")
+"""
 
-# Upload images to DB
+# Upload raster to DB
 metadata = MetaData(engine)
-images   = Table("images", metadata, autoload=True, autoload_with=engine, schema="satellite_images")
+#raster   = Table("raster", metadata, autoload=True, autoload_with=engine, schema="satellite_images")
+raster   = Table("rasters", metadata)
 
 def get_tag_value(xml_file, tagname):
     tag = xml_file.getElementsByTagName(tagname)
@@ -47,11 +57,38 @@ def get_tag_value(xml_file, tagname):
 
 # Open .xml and .jpg files
 path      = "data/satellite_images/"
-xml_files = glob(path+"*.xml")
-jpg_files = glob(path+"*.jgp")
+onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+
+xml_files = []
+jpg_files = []
+for i in onlyfiles:
+    if ".xml" in i:
+        xml_files.append(path+i)
+    if ".jpp" in i:
+        jpg_files.append(path+i)
 
 # XML tags
-columns = {"productDate", "satelliteId", "sensorId", "productUpperLeftLat", "productUpperLeftLong", "productUpperRightLat", "productUpperRightLong", "productLowerLeftLat", "productLowerLeftLong", "productLowerRightLat", "productLowerRightLong", "dataUpperLeftLat", "dataUpperLeftLong", "dataUpperRightLat", "dataUpperRightLong", "dataLowerLeftLat", "dataLowerLeftLong", "dataLowerRightLat", "dataLowerRightLong"}
+columns = {
+    "productDate",
+    "satelliteId",
+    "sensorId",
+    "productUpperLeftLat",
+    "productUpperLeftLong",
+    "productUpperRightLat",
+    "productUpperRightLong",
+    "productLowerLeftLat",
+    "productLowerLeftLong",
+    "productLowerRightLat",
+    "productLowerRightLong",
+    "dataUpperLeftLat",
+    "dataUpperLeftLong",
+    "dataUpperRightLat",
+    "dataUpperRightLong",
+    "dataLowerLeftLat",
+    "dataLowerLeftLong",
+    "dataLowerRightLat",
+    "dataLowerRightLong"
+}
 
 # Here we'll store the data from XML file
 data = dict()
@@ -102,16 +139,35 @@ for i in range(0, len(xml_files)):
 
 df = pd.DataFrame(data)
 
-drop_columns = ["productUpperLeftLat", "productUpperLeftLong", "productUpperRightLat", "productUpperRightLong", "productLowerLeftLat", "productLowerLeftLong", "productLowerRightLat", "productLowerRightLong", "dataUpperLeftLat", "dataUpperLeftLong", "dataUpperRightLat", "dataUpperRightLong", "dataLowerLeftLat", "dataLowerLeftLong", "dataLowerRightLat", "dataLowerRightLong"]
+"""
+drop_columns = [
+    "productUpperLeftLat",
+    "productUpperLeftLong",
+    "productUpperRightLat",
+    "productUpperRightLong",
+    "productLowerLeftLat",
+    "productLowerLeftLong",
+    "productLowerRightLat",
+    "productLowerRightLong",
+    "dataUpperLeftLat",
+    "dataUpperLeftLong",
+    "dataUpperRightLat",
+    "dataUpperRightLong",
+    "dataLowerLeftLat",
+    "dataLowerLeftLong",
+    "dataLowerRightLat",
+    "dataLowerRightLong"
+]
 
 for i in drop_columns:
     df.pop(i)
+"""
 
-df.to_sql("images", con=engine, schema="satellite_images", if_exists="append", index=False)
-
+#df.to_sql("raster", con=engine, schema="satellite_images", if_exists="append", index=False)
+df.to_sql("rasters", con=engine, if_exists="append", index=False)
 
 """
-images.insert().execute([
+raster.insert().execute([
     {"date": "2021-08-20",
     "satellite": "VRSS-2",
     "sensor": "MSS",

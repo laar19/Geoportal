@@ -1,8 +1,13 @@
-import pandas as pd
-
+import pandas    as pd
 import geopandas as gpd
 
-import json, base64, requests, hashlib
+import json
+
+import base64
+
+import requests
+
+import hashlib
 
 from flask     import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
@@ -14,32 +19,39 @@ from shapely.geometry.polygon import Polygon
 
 from datetime import datetime as dtime
 
-from app.db_config import DbConnection
-from app.functions import *
-from app.config    import *
+from geo.Geoserver import Geoserver
+
+from app.models.models import DatabaseConfig, check_satellite_images_db
+from app.functions     import *
+from app.config        import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
 # Globals
-db_credentials_path = "db_credentials.csv"
-DbConn              = DbConnection()
+db_credentials_path = "config/db_credentials.csv"
+DbConn              = DatabaseConfig(db_credentials_path, 1)
 
 mapDiv             = MapDiv()
 default_map_config = mapDiv.main_config()
 
 # Abstract all geometry colums on database
+"""
 geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
 tables          = dict()
 for i in geometry_colums["f_table_name"]:
-    tables[i] = abs_table(DbConn, db_credentials_path, i)
+    tables[i] = abs_table(DbConn, i)
+"""
+
+check_satellite_images_db()
 
 @app.route("/")
 @app.route("/index")
 def index():
     # Retrieve base layers
 
+    """
     geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
 
     layers = list()
@@ -53,6 +65,8 @@ def index():
         )
 
     layers = {"layers": layers}
+    """
+    layers=1
 
     images = {"images": 1}
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
@@ -85,7 +99,7 @@ def search_image():
                     coord_from_user.append(Polygon(coordinates))
 
     # Retrieve images from database
-    conn, engine = DbConn.connection(db_credentials_path, 1)
+    conn, engine = DbConn.connection()
     query        = DbConn.select_table("images", engine)
     df_images    = pd.read_sql(query, con=engine)
     conn.close()
@@ -95,23 +109,23 @@ def search_image():
     
     # Construct polygons from database images
     for i in range(len(df_images)):
-        productUpperLeftLat   = df_images.loc[i, "productUpperLeftLat"]
-        productUpperLeftLong  = df_images.loc[i, "productUpperLeftLong"]
-        productUpperRightLat  = df_images.loc[i, "productUpperRightLat"]
-        productUpperRightLong = df_images.loc[i, "productUpperRightLong"]
-        productLowerLeftLat   = df_images.loc[i, "productLowerLeftLat"]
-        productLowerLeftLong  = df_images.loc[i, "productLowerLeftLong"]
-        productLowerRightLat  = df_images.loc[i, "productLowerRightLat"]
-        productLowerRightLong = df_images.loc[i, "productLowerRightLong"]
+        productUpperLeftLat   = df_images.loc[i, "productupperleftlat"]
+        productUpperLeftLong  = df_images.loc[i, "productupperleftlong"]
+        productUpperRightLat  = df_images.loc[i, "productupperrightlat"]
+        productUpperRightLong = df_images.loc[i, "productupperrightlong"]
+        productLowerLeftLat   = df_images.loc[i, "productlowerleftlat"]
+        productLowerLeftLong  = df_images.loc[i, "productlowerleftlong"]
+        productLowerRightLat  = df_images.loc[i, "productlowerrightlat"]
+        productLowerRightLong = df_images.loc[i, "productlowerrightlong"]
 
-        dataUpperLeftLat   = df_images.loc[i, "dataUpperLeftLat"]
-        dataUpperLeftLong  = df_images.loc[i, "dataUpperLeftLong"]
-        dataUpperRightLat  = df_images.loc[i, "dataUpperRightLat"]
-        dataUpperRightLong = df_images.loc[i, "dataUpperRightLong"]
-        dataLowerLeftLat   = df_images.loc[i, "dataLowerLeftLat"]
-        dataLowerLeftLong  = df_images.loc[i, "dataLowerLeftLong"]
-        dataLowerRightLat  = df_images.loc[i, "dataLowerRightLat"]
-        dataLowerRightLong = df_images.loc[i, "dataLowerRightLong"]
+        dataUpperLeftLat   = df_images.loc[i, "dataupperleftlat"]
+        dataUpperLeftLong  = df_images.loc[i, "dataupperleftlong"]
+        dataUpperRightLat  = df_images.loc[i, "dataupperrightlat"]
+        dataUpperRightLong = df_images.loc[i, "dataupperrightlong"]
+        dataLowerLeftLat   = df_images.loc[i, "datalowerleftlat"]
+        dataLowerLeftLong  = df_images.loc[i, "datalowerleftlong"]
+        dataLowerRightLat  = df_images.loc[i, "datalowerrightlat"]
+        dataLowerRightLong = df_images.loc[i, "datalowerrightlong"]
         
         polygon = Polygon(
             [
@@ -145,7 +159,8 @@ def search_image():
             }
         )
 
-    match_coordinates(DbConn, db_credentials_path, request, tables)
+    #match_coordinates(DbConn, db_credentials_path, request, tables)
+    #match_coordinates(DbConn, db_credentials_path, request)
 
     # List of user polygons
     shapes = list()
@@ -159,9 +174,18 @@ def search_image():
                 for k in range(len(i["shapes"].exterior.coords)):
                     tmp.append(list(i["shapes"].exterior.coords[k]))
                 shapes.append(tmp)
+
+                import requests
+                from app.requests_file import FileAdapter
+
+                s = requests.Session()
+                s.mount('file://', FileAdapter())
+
+                #resp = s.get('file:///path/to/file')
                 
                 url      = i["path"]
-                response = requests.get(url)
+                #response = requests.get(url)
+                response = s.get(url)
                 image    = Image.open(BytesIO(response.content))
                 image    = black_to_transparency(image)
                 #image = np.array(image)
@@ -176,10 +200,11 @@ def search_image():
                 images.append({"image": image, "extent": extent, "name": name})
 
     # Retrieve base layers
+    DbConn2              = DatabaseConfig(db_credentials_path)
     layers = [
         {
             "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, db_credentials_path, "estados", proj_4326, proj_4326),
+            "data" : get_layer_from_db(DbConn2, db_credentials_path, "estados", proj_4326, proj_4326),
         }
     ]
 
@@ -189,13 +214,17 @@ def search_image():
     if len(images) == 0:
         images = {"images": 1}
         shapes = {"shapes": 1}
-        return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
+        #return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
+        return render_template("index.html", layers=1, result=images, shapes=shapes, map_config=default_map_config)
     else:
-        return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
+        #return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
+        return render_template("index.html", layers=1, result={"images": images, "shapes": shapes}, map_config=map_config)
 
 @app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():
     # Retrieve base layers
+
+    """
     layers = [
         {
             "title": "Estados de Venezuela",
@@ -220,7 +249,13 @@ def sample_layers_openlayers():
     ]
 
     layers = {"layers": layers}
+    """
+
     images = {"images": 1}
+
+    geo = Geoserver("http://localhost:8080/geoserver", username="admin", password="geoserver")
+    layers = geo.get_layers()
+    print(layers)
     
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
     

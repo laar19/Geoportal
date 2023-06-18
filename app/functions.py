@@ -16,7 +16,7 @@ from sqlalchemy.sql         import select
 
 # Get all geometry colums from database
 def get_all_geometry_colums(DbConn, db_credentials_path):
-    conn, engine = DbConn.connection(db_credentials_path, 0)
+    conn, engine = DbConn.connection()
     
     query        = DbConn.select_table("geometry_columns", engine)
     layer_tables = pd.read_sql(query, con=engine)
@@ -25,8 +25,8 @@ def get_all_geometry_colums(DbConn, db_credentials_path):
     return layer_tables
 
 # Abstract table (ORM) on database
-def abs_table(DbConn, db_credentials_path, tablename):
-    conn, engine = DbConn.connection(db_credentials_path, 0)
+def abs_table(DbConn, tablename):
+    conn, engine = DbConn.connection()
     
     Session = sessionmaker(bind=engine)
 
@@ -65,7 +65,7 @@ def black_to_transparency(img):
 
 # Get layer from db, retrieve layer from db
 def get_layer_from_db(DbConn, db_credentials_path, table_name, layer_proj, returned_proj):
-    conn, engine = DbConn.connection(db_credentials_path, 0)
+    conn, engine = DbConn.connection()
     geom_col = "geom"
     
     query = DbConn.select_table(table_name, engine)
@@ -102,8 +102,9 @@ def get_coord_from_js(string):
     return list_
 
 # Match user coordinates selection vs stored on database
-def match_coordinates(DbConn, db_credentials_path, request, tables):
-    conn, engine = DbConn.connection(db_credentials_path, 0)
+#def match_coordinates(DbConn, db_credentials_path, request, tables):
+def match_coordinates(DbConn, db_credentials_path, request):
+    conn, engine = DbConn.connection()
     
     # Retrieve coordinates from user
     coord_from_user = list()
@@ -129,6 +130,11 @@ def match_coordinates(DbConn, db_credentials_path, request, tables):
                             coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
                     #coord_from_user.append(Polygon(coordinates))
                     coord_from_user.append({"type":"POLYGON", "value":Polygon(coordinates)})
+
+    print()
+    print("OK")
+    print()
+    print(coord_from_user)
 
     #s = select([amo_gwgs84],
     s = select([tables["amo_gwgs84"]],

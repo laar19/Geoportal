@@ -326,11 +326,15 @@
         }
 
         // If there is layers to show
+        console.log(layers["layers"]);
+        /*
         if(layers["layers"] != 1) {
             layers_data = Array();
 
-            for(var i=0; i<=(layers["layers"].length)-1; i++) {
-                layers_data.push(display_layer(layers["layers"][i]["data"], layers["layers"][i]["title"], mapDiv));
+            for(var i=0; i<=(layers["layers"]["layer"].length)-1; i++) {
+                //layers_data.push(display_layer(layers["layers"][i]["data"], layers["layers"][i]["title"], mapDiv));
+                console.log(layers["layers"]["layer"][i]["href"]);
+                layers_data.push(display_layer(layers["layers"]["layer"][i]["href"], layers["layers"]["layer"][i]["name"], mapDiv));
             }
 
             var ven_layers = new ol.layer.Group({
@@ -353,6 +357,31 @@
             });
             mapDiv.addLayer(my_data);
         }
+        */
+        /*
+        var wmsSource = new ol.source.TileWMS({
+                url: 'https://ahocevar.com/geoserver/wms',
+                params: {'LAYERS': '', 'TILED': true},
+                serverType: 'geoserver',
+                crossOrigin: 'anonymous'
+              });
+
+              var wmsLayer = new ol.layer.Tile({
+                source: wmsSource
+              });
+            mapDiv.addLayer(wmsLayer);
+        */
+        var wmsSource = new ol.source.TileWMS({
+                url: 'http://localhost:8080/geoserver/test_workspace/wms',
+                params: {'LAYERS': 'test_workspace:Estados', 'TILED': true},
+                serverType: 'geoserver',
+                crossOrigin: 'anonymous'
+              });
+
+              var wmsLayer = new ol.layer.Tile({
+                source: wmsSource
+              });
+            //mapDiv.addLayer(wmsLayer);
 
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, {reverse: false});
         mapDiv.addControl(sidebar);

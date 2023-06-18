@@ -11,7 +11,9 @@ function map_view(center, zoom) {
 }
 
 // Show coordinate points on the map
-function display_layer(data, title, map) {
+//function display_layer(data, title, map) {
+/*
+function display_layer(data, title) {
     var vectorSource = new ol.source.Vector({
         features: new ol.format.GeoJSON().readFeatures(data)
     });
@@ -27,6 +29,23 @@ function display_layer(data, title, map) {
 
     //map.addLayer(vectorLayer);
     return vectorLayer;
+}
+*/
+
+function display_layer(data, title, map) {    
+    var tiled = new ol.layer.Tile({
+        visible: false,
+        source: new ol.source.TileWMS({
+          url: data,
+          params: {
+                   tiled: true,
+                "LAYERS": title,
+             //tilesOrigin: -73.37929272299993 + "," + 0.6418623440000601
+          }
+        })
+      });
+
+    return tiled;
 }
 
 // Show base 64 image on the map
@@ -171,5 +190,4 @@ function display_user_selection(map, coordinates) {
     });
     source.addFeature(feature);
     map.addLayer(vector);
-    
 }
