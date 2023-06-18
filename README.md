@@ -5,22 +5,23 @@
 ## Luis Acevedo  <laar@pm.me>
 
 ## Technical information:
-
-Python 3.8.x   
+Python 3.9   
 Flask framework as backend.   
 Openlayers 6 as mapping library.   
 Postgresql + Postgis as database.   
-Distributed under the GNU Affero General Public License (AGPLv3).   
+Distributed under the GNU Affero General Public License (AGPLv3).
+
+## *<u>geoserver-rest</u>* must be installed manually with conda
+> conda install -c conda-forge geoserver-rest
 
 ## Credits:
-
 - [Ronald Delgado](https://github.com/RDelgado1980)
-- [Jackie Ng](https://github.com/jumpinjackie), [repository](https://github.com/jumpinjackie/bootstrap-viewer-template) 
+- [Jackie Ng](https://github.com/jumpinjackie),[repository](https://github.com/jumpinjackie/bootstrap-viewer-template)
 - [Tobias Bieniek](https://github.com/Turbo87), [repository](https://github.com/Turbo87/sidebar-v2) 
-- [Matt Walker](https://github.com/walkermatt) [repository](https://github.com/walkermatt/ol-layerswitcher) 
+- [Matt Walker](https://github.com/walkermatt), [repository](https://github.com/walkermatt/ol-layerswitcher) 
+- [David Shea](https://github.com/dashea), [repository](https://github.com/dashea/requests-file) 
 
 ## Reference templates:
-
 - https://github.com/jumpinjackie/bootstrap-viewer-template
 - https://jumpinjackie.github.io/bootstrap-viewer-template/3-column/index.html
 - https://github.com/Turbo87/sidebar-v2

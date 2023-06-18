@@ -176,7 +176,7 @@ def search_image():
                 shapes.append(tmp)
 
                 import requests
-                from app.requests_file import FileAdapter
+                from third_party.requests_file import FileAdapter
 
                 s = requests.Session()
                 s.mount('file://', FileAdapter())
