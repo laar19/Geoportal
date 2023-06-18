@@ -11,8 +11,13 @@ Openlayers 6 as mapping library.
 Postgresql + Postgis as database.   
 Distributed under the GNU Affero General Public License (AGPLv3).
 
-## *<u>geoserver-rest</u>* must be installed manually with conda
-> conda install -c conda-forge geoserver-rest
+## Setup
+### Setup PostGis database first
+> add the credentials to /config/db_credentials.csv   
+### Setup anaconda environment
+> conda env create -n geoportal -f environment.yml   
+### Run
+> python main.py
 
 ## Credits:
 - [Ronald Delgado](https://github.com/RDelgado1980)

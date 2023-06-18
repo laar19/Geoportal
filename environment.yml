@@ -1,4 +1,3 @@
-name: geotest
 channels:
   - anaconda
   - conda-forge
