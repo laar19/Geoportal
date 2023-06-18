@@ -200,6 +200,7 @@ def search_image():
                 images.append({"image": image, "extent": extent, "name": name})
 
     # Retrieve base layers
+    """
     DbConn2              = DatabaseConfig(db_credentials_path)
     layers = [
         {
@@ -209,6 +210,7 @@ def search_image():
     ]
 
     layers = {"layers": layers}
+    """
 
     # If there were no match
     if len(images) == 0:
