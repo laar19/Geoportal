@@ -25,6 +25,10 @@ from app.models.models import DatabaseConfig, check_satellite_images_db
 from app.functions     import *
 from app.config        import *
 
+# THIRD PARTY LIBRARIES
+# David Shea https://github.com/dashea/requests-file
+from app.third_party.david_shea.requests_file import FileAdapter
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
@@ -175,11 +179,11 @@ def search_image():
                     tmp.append(list(i["shapes"].exterior.coords[k]))
                 shapes.append(tmp)
 
-                import requests
-                from third_party.requests_file import FileAdapter
-
+                # THIRD PARTY
+                # David Shea https://github.com/dashea/requests-file
                 s = requests.Session()
                 s.mount('file://', FileAdapter())
+                ### END THIRD PARTY
 
                 #resp = s.get('file:///path/to/file')
                 

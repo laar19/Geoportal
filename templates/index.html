@@ -30,10 +30,10 @@
 </head>
 
 <body class="d-flex flex-column h-100">
-    <header>
-        <!-- Fixed navbar -->
+    <!-- header>
+        <!-- Fixed navbar ->
         <nav class="navbar navbar-expand-md fixed-top navigationbar">
-        <!-- nav class="navbar navbar-expand-md navbar-dark bg-dark" -->
+        <!-- nav class="navbar navbar-expand-md navbar-dark bg-dark" ->
             <div class="container-fluid">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='img/logo.png') }}">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header -->
 
     <!-- Begin page content -->
     <main class="flex-shrink-0">
@@ -62,7 +62,15 @@
             <div class="sidebar-tabs">
                 <ul role="tablist">
                     <li>
+                        <a href="{{ url_for('index') }}"><i class="fa fa-home"></i></a>
+                    </li>
+                    
+                    <li>
                         <a href="#home" role="tab"><i class="fa fa-bars"></i></a>
+                    </li>
+                    
+                    <li>
+                        <a href="#search" role="tab"><i class="fas fa-search"></i></a>
                     </li>
                     
                     <li>
@@ -95,6 +103,7 @@
                     <h1 class="sidebar-header">
                         Layers
                         <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                        
                     </h1>
 
                     <!-- !!! HERE WILL GO THE CONTENT OF LAYERSWITCHER !!! -->
@@ -103,9 +112,9 @@
                     <div id="layers2" class="layer-switcher"></div>
                 </div>
 
-                <div class="sidebar-pane" id="tools">
+                <div class="sidebar-pane" id="search">
                     <h1 class="sidebar-header">
-                        Tools<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                        Search<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                     </h1>
 
                     <div class="container">
@@ -164,6 +173,83 @@
                         <div class="row border-bottom">
                             <div class="col">
                                 <br>
+                                <form>
+                                    <label for="satelite"> Satélite </label>
+                                    <select id="satelite">
+                                        <option value="vrss1"> Miranda VRSS-1 </option>
+                                        <option value="vrss2"> Sucre   VRSS-2 </option>
+                                    </select>
+                                </form>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="sensor"><a> Sensor </a></label>
+                                <br>
+                                <br>
+                                <label for="mss"><a> MSS </a></label>
+                                <input type="checkbox" name="mss" id="mss">
+                                <br>
+                                <label for="pan"><a> PAN </a></label>
+                                <input type="checkbox" name="pan" id="pan">
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="orbit"><a> Órbita </a></label>
+                                <input type="text">
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="sceneid"><a> Scene ID </a></label>
+                                <input type="text">
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="date"><a> Fecha </a></label>
+                                <input type="date">
+                                <input type="date">
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="date"><a> Roll </a></label>
+                                <div class="slidecontainer">
+                                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                                    <p>Valor: <span id="myRangeValue"></span></p>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
+                                <label for="nubosity"><a> Porcentaje de nubosidad </a></label>
+                                <input id="nubosity" type="number" min="0" max="100" value="10" size="3"/>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row border-bottom">
+                            <div class="col">
+                                <br>
                                 <label for="enable_draw"><a> Enable </a></label>
                                 <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enable_draw_interaction()">
                                 <form class="form-inline">
@@ -206,6 +292,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="sidebar-pane" id="tools">
+                    <h1 class="sidebar-header">
+                        Tools<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                    </h1>
                 </div>
                 
                 <div class="sidebar-pane" id="results">
@@ -269,6 +361,16 @@
 
     <script src="{{ url_for('static', filename='js/globals.js') }}"></script>
     <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+
+    <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("myRangeValue");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+        }
+    </script>
     
     <script>
         var map_config = {{ map_config|tojson }};
