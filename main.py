@@ -54,7 +54,6 @@ check_satellite_images_db()
 @app.route("/index")
 def index():
     # Retrieve base layers
-
     """
     geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
 
@@ -70,8 +69,7 @@ def index():
 
     layers = {"layers": layers}
     """
-    layers=1
-
+    layers = 1
     images = {"images": 1}
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
 
@@ -106,7 +104,7 @@ def search_image():
     conn, engine = DbConn.connection()
     query        = DbConn.select_table("images", engine)
     df_images    = pd.read_sql(query, con=engine)
-    conn.close()
+    #conn.close()
 
     images  = list()
     targets = list()
@@ -203,7 +201,26 @@ def search_image():
                 name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
                 images.append({"image": image, "extent": extent, "name": name})
 
+    """
+    from sqlalchemy.sql import text
+    stmt = select().where(
+        func.ST_Intersects(
+            'images.cutted_image_shape' \
+            ,'POLYGON ((-70.810267 10.300543, -70.872173 10.005507, -71.172781 10.064082, -71.111674 10.359124, -70.810267 10.300543))'
+        )
+    )
+    result = conn.execute(stmt)
+
+    rows = result.fetchall()
+    for i in rows:
+        print()
+        print(i)
+        print()
+
+    conn.close()
+
     # Retrieve base layers
+    """
     """
     DbConn2              = DatabaseConfig(db_credentials_path)
     layers = [
@@ -215,21 +232,19 @@ def search_image():
 
     layers = {"layers": layers}
     """
+    layers = 1
 
     # If there were no match
     if len(images) == 0:
         images = {"images": 1}
         shapes = {"shapes": 1}
-        #return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
-        return render_template("index.html", layers=1, result=images, shapes=shapes, map_config=default_map_config)
+        return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
     else:
-        #return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
-        return render_template("index.html", layers=1, result={"images": images, "shapes": shapes}, map_config=map_config)
+        return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
 
 @app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():
     # Retrieve base layers
-
     """
     layers = [
         {
@@ -262,7 +277,8 @@ def sample_layers_openlayers():
     geo = Geoserver("http://localhost:8080/geoserver", username="admin", password="geoserver")
     layers = geo.get_layers()
     print(layers)
-    
+
+    layers = 1    
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
     
 if __name__ == "__main__":
