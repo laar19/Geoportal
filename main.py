@@ -1,29 +1,26 @@
+import json, base64, requests, hashlib
+
 import pandas    as pd
 import geopandas as gpd
 
-import json
-
-import base64
-
-import requests
-
-import hashlib
+from datetime import datetime as dtime
 
 from flask     import Flask, render_template, request, jsonify
 from flask_wtf import CSRFProtect
 
 from io import BytesIO
 
-from shapely.geometry         import Point
-from shapely.geometry.polygon import Polygon
+from shapely.geometry import Point, Polygon
 
-from datetime import datetime as dtime
+from sqlalchemy.orm import sessionmaker
 
 from geo.Geoserver import Geoserver
 
-from app.models.models import DatabaseConfig, check_satellite_images_db
-from app.functions     import *
-from app.config        import *
+#from app.models.models import DatabaseConfig, check_satellite_images_db
+from app.models.models                 import DatabaseConfig
+from app.models.satellite_images_table import *
+from app.functions                     import *
+from app.config                        import *
 
 # THIRD PARTY LIBRARIES
 # David Shea https://github.com/dashea/requests-file
@@ -33,22 +30,18 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
-# Globals
-db_credentials_path = "config/db_credentials.csv"
-DbConn              = DatabaseConfig(db_credentials_path, 1)
+# Check database
+db_credentials_path = "config/db_credentials_geoportal.csv"
+DbConn = DatabaseConfig(db_credentials_path)
+DbConn.check_database()
+
+# Check tables
+conn, engine = DbConn.connection()
+check_satellite_images_table(engine)
+conn.close()
 
 mapDiv             = MapDiv()
 default_map_config = mapDiv.main_config()
-
-# Abstract all geometry colums on database
-"""
-geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
-tables          = dict()
-for i in geometry_colums["f_table_name"]:
-    tables[i] = abs_table(DbConn, i)
-"""
-
-check_satellite_images_db()
 
 @app.route("/")
 @app.route("/index")
@@ -99,93 +92,74 @@ def search_image():
                         if j%2 == 0:
                             coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
                     coord_from_user.append(Polygon(coordinates))
-
-    # Retrieve images from database
-    conn, engine = DbConn.connection()
-    query        = DbConn.select_table("images", engine)
-    df_images    = pd.read_sql(query, con=engine)
-    #conn.close()
-
-    images  = list()
-    targets = list()
     
-    # Construct polygons from database images
-    for i in range(len(df_images)):
-        productUpperLeftLat   = df_images.loc[i, "productupperleftlat"]
-        productUpperLeftLong  = df_images.loc[i, "productupperleftlong"]
-        productUpperRightLat  = df_images.loc[i, "productupperrightlat"]
-        productUpperRightLong = df_images.loc[i, "productupperrightlong"]
-        productLowerLeftLat   = df_images.loc[i, "productlowerleftlat"]
-        productLowerLeftLong  = df_images.loc[i, "productlowerleftlong"]
-        productLowerRightLat  = df_images.loc[i, "productlowerrightlat"]
-        productLowerRightLong = df_images.loc[i, "productlowerrightlong"]
+    Session    = sessionmaker(bind=engine)
+    db_session = Session()
 
-        dataUpperLeftLat   = df_images.loc[i, "dataupperleftlat"]
-        dataUpperLeftLong  = df_images.loc[i, "dataupperleftlong"]
-        dataUpperRightLat  = df_images.loc[i, "dataupperrightlat"]
-        dataUpperRightLong = df_images.loc[i, "dataupperrightlong"]
-        dataLowerLeftLat   = df_images.loc[i, "datalowerleftlat"]
-        dataLowerLeftLong  = df_images.loc[i, "datalowerleftlong"]
-        dataLowerRightLat  = df_images.loc[i, "datalowerrightlat"]
-        dataLowerRightLong = df_images.loc[i, "datalowerrightlong"]
-        
-        polygon = Polygon(
-            [
-                (productUpperRightLong, productUpperRightLat),
-                (productLowerRightLong, productLowerRightLat),
-                (productLowerLeftLong, productLowerLeftLat),
-                (productUpperLeftLong, productUpperLeftLat)
-            ]
-        )
+    images = []
+    shapes = []
+    for i in coord_from_user:
+        result = intersect(db_session, i)
+        if result:
+            for j in result:
+                path = j[0]
+                
+                productupperleftlat   = j[1]
+                productupperleftlong  = j[2]
+                productupperrightlat  = j[3]
+                productupperrightlong = j[4]
+                productlowerleftlat   = j[5]
+                productlowerleftlong  = j[6]
+                productlowerrightlat  = j[7]
+                productlowerrightlong = j[8]
 
-        polygon_shapes = Polygon(
-            [
-                (dataUpperRightLong, dataUpperRightLat),
-                (dataLowerRightLong, dataLowerRightLat),
-                (dataLowerLeftLong, dataLowerLeftLat),
-                (dataUpperLeftLong, dataUpperLeftLat)
-            ]
-        )
-        
-        targets.append(
-            {
-                "polygon": polygon,
-                "shapes" : polygon_shapes,
-                "path"   : df_images.loc[i, "path"],
-                "extent" : [
-                    productLowerLeftLong,
-                    productLowerLeftLat,
-                    productUpperRightLong,
-                    productUpperRightLat
-                ]
-            }
-        )
+                dataupperleftlat   = j[9]
+                dataupperleftlong  = j[10]
+                dataupperrightlat  = j[11]
+                dataupperrightlong = j[12]
+                datalowerleftlat   = j[13]
+                datalowerleftlong  = j[14]
+                datalowerrightlat  = j[15]
+                datalowerrightlong = j[16]
 
-    #match_coordinates(DbConn, db_credentials_path, request, tables)
-    #match_coordinates(DbConn, db_credentials_path, request)
+                polygon = Polygon(
+                    [
+                        (productupperrightlong, productupperrightlat),
+                        (productlowerrightlong, productlowerrightlat),
+                        (productlowerleftlong, productlowerleftlat),
+                        (productupperleftlong, productupperleftlat)
+                    ]
+                )
 
-    # List of user polygons
-    shapes = list()
-
-    # Compare new constructed polygons and points against recieved from user
-    for i in targets:
-        for j in coord_from_user:
-            if i["polygon"].intersects(j):
-                # Convert polygons from user to list
-                tmp = list()
-                for k in range(len(i["shapes"].exterior.coords)):
-                    tmp.append(list(i["shapes"].exterior.coords[k]))
+                polygon_shapes = Polygon(
+                    [
+                        (dataupperrightlong, dataupperrightlat),
+                        (datalowerrightlong, datalowerrightlat),
+                        (datalowerleftlong, datalowerleftlat),
+                        (dataupperleftlong, dataupperleftlat)
+                    ]
+                )
+                tmp = []
+                for k in range(len(polygon_shapes.exterior.coords)):
+                    tmp.append(list(polygon_shapes.exterior.coords[k]))
                 shapes.append(tmp)
+
+                extent = [
+                    productlowerleftlong,
+                    productlowerleftlat,
+                    productupperrightlong,
+                    productupperrightlat
+                ]
 
                 # THIRD PARTY
                 # David Shea https://github.com/dashea/requests-file
                 s = requests.Session()
-                s.mount('file://', FileAdapter())
+                s.mount("file://", FileAdapter())
                 ### END THIRD PARTY
 
                 #resp = s.get('file:///path/to/file')
                 
-                url      = i["path"]
+                url      = path
                 #response = requests.get(url)
                 response = s.get(url)
                 image    = Image.open(BytesIO(response.content))
@@ -197,50 +171,18 @@ def search_image():
                 img   = buffer.getvalue()
                 image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
 
-                extent = i["extent"]
                 name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
                 images.append({"image": image, "extent": extent, "name": name})
-
-    """
-    from sqlalchemy.sql import text
-    stmt = select().where(
-        func.ST_Intersects(
-            'images.cutted_image_shape' \
-            ,'POLYGON ((-70.810267 10.300543, -70.872173 10.005507, -71.172781 10.064082, -71.111674 10.359124, -70.810267 10.300543))'
-        )
-    )
-    result = conn.execute(stmt)
-
-    rows = result.fetchall()
-    for i in rows:
-        print()
-        print(i)
-        print()
-
-    conn.close()
-
-    # Retrieve base layers
-    """
-    """
-    DbConn2              = DatabaseConfig(db_credentials_path)
-    layers = [
-        {
-            "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn2, db_credentials_path, "estados", proj_4326, proj_4326),
-        }
-    ]
-
-    layers = {"layers": layers}
-    """
+    
     layers = 1
 
     # If there were no match
     if len(images) == 0:
-        images = {"images": 1}
-        shapes = {"shapes": 1}
-        return render_template("index.html", layers=layers, result=images, shapes=shapes, map_config=default_map_config)
-    else:
-        return render_template("index.html", layers=layers, result={"images": images, "shapes": shapes}, map_config=map_config)
+        images = 1
+        shapes = 1
+
+    result = {"images": images, "shapes": shapes}
+    return render_template("index.html", layers=layers, result=result, map_config=map_config)
 
 @app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():

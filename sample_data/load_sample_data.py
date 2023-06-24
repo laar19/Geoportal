@@ -3,28 +3,19 @@ from os.path import isfile, join
 
 import pandas as pd
 
+"""
 import geopandas as gpd
 
-#from sqlalchemy import create_engine, MetaData, Table
-from sqlalchemy import MetaData, Table
-
 from glob import glob
+"""
 
 from xml.dom import minidom
 
 from shapely.geometry.polygon import Polygon
 
-# DB connection
-db_type  = "postgresql"
-host     = "localhost"
-#db_name  = "geoportal2"
-db_name  = "satellite_images"
-user     = "postgres"
-password = "root"
-port     = "5433"
-
-#engine = create_engine(f"{db_type}://{user}:{password}@{host}:{port}/{db_name}")
-engine = f"{db_type}://{user}:{password}@{host}:{port}/{db_name}"
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from app.models.models import DatabaseConfig
 
 """
 # Open shapefiles
@@ -45,11 +36,6 @@ for i in geometry:
     i["geom"].to_postgis(i["filename"], engine, schema="layers", index=True, index_label="Index")
 """
 
-# Upload raster to DB
-metadata = MetaData(engine)
-#raster   = Table("raster", metadata, autoload=True, autoload_with=engine, schema="satellite_images")
-raster   = Table("rasters", metadata)
-
 def get_tag_value(xml_file, tagname):
     tag = xml_file.getElementsByTagName(tagname)
 
@@ -64,7 +50,7 @@ jpg_files = []
 for i in onlyfiles:
     if ".xml" in i:
         xml_files.append(path+i)
-    if ".jpp" in i:
+    if ".jpg" in i:
         jpg_files.append(path+i)
 
 # XML tags
@@ -129,50 +115,17 @@ for i in range(0, len(xml_files)):
     if i > 0:
         data["image_coordinates"].append(str(image_coordinates))
         data["cutted_image_shape"].append(str(cutted_image_shape))
-        data["path"].append(xml_files[i])
+        data["path"].append(jpg_files[i])
         data["metadata_xml"].append(open(xml_files[i], "r").read())
     else:
         data["image_coordinates"]  = [str(image_coordinates)]
         data["cutted_image_shape"] = [str(cutted_image_shape)]
-        data["path"]               = [xml_files[i]]
+        data["path"]               = [jpg_files[i]]
         data["metadata_xml"]       = [open(xml_files[i], "r").read()]
 
 df = pd.DataFrame(data)
+df.columns = [i.lower() for i in df.columns] # Set all columns to lowercase
 
-"""
-drop_columns = [
-    "productUpperLeftLat",
-    "productUpperLeftLong",
-    "productUpperRightLat",
-    "productUpperRightLong",
-    "productLowerLeftLat",
-    "productLowerLeftLong",
-    "productLowerRightLat",
-    "productLowerRightLong",
-    "dataUpperLeftLat",
-    "dataUpperLeftLong",
-    "dataUpperRightLat",
-    "dataUpperRightLong",
-    "dataLowerLeftLat",
-    "dataLowerLeftLong",
-    "dataLowerRightLat",
-    "dataLowerRightLong"
-]
-
-for i in drop_columns:
-    df.pop(i)
-"""
-
-#df.to_sql("raster", con=engine, schema="satellite_images", if_exists="append", index=False)
-df.to_sql("rasters", con=engine, if_exists="append", index=False)
-
-"""
-raster.insert().execute([
-    {"date": "2021-08-20",
-    "satellite": "VRSS-2",
-    "sensor": "MSS",
-    "image_coordinates": "POLYGON((-67.592493 6.984074, -66.68561 6.278721, -64.871844 7.487898, -63.043683 7.574268, -61.402657 6.969679 , -59.93437 6.235536, -59.488126 7.804587, -62.525465 9.08574, -62.942919 8.092487, -65.735543 8.524336, -66.383316 7.041654, -67.491729 7.300763, -67.592493 6.984074))",
-    "path": "http://localhost/geoportal/testing/data/image1.jpg",
-    "metadata_xml": "some data"}
-])
-"""
+db = DatabaseConfig("db_credentials_geoportal.csv")
+conn, engine = db.connection()
+df.to_sql("satellite_images", con=engine, if_exists="append", index=False)
