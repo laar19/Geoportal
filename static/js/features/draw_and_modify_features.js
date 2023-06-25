@@ -1,12 +1,16 @@
 var decimal_places = document.getElementById("precision").value;
 
-var draw; // global so we can remove it later
-var value_draw; // global so we can remove it later
+// globals so we can remove them later
+var draw;
+var value_draw;
+var vector_layer_draw;
+var name = "custom_name";
 
 var typeSelect = document.getElementById("draw_type");
-value_draw     = typeSelect.value;
+//value_draw     = typeSelect.value;
+value_draw     = "Polygon";
 
-function add_draw_interaction() {    
+function add_draw_interaction() {
     value_draw = typeSelect.value;
 
     if (value_draw !== "None") {
@@ -16,17 +20,16 @@ function add_draw_interaction() {
         
         draw = new ol.interaction.Draw({
             source: source_draw,
-            type  : typeSelect.value,
+            //type  : typeSelect.value // NEVER DELTE THIS ONE
+            type  : value_draw
         });
 
-        draw.on("drawend", function(e) {
-            var name = new Date().toLocaleString() + new Date().getTime();
-
+        draw.on("drawend", function(e) {            
+            //var name = new Date().toLocaleString() + new Date().getTime(); // NEVER DELETE THIS ONE
             var vector_layer_draw = new ol.layer.Vector({
                 source: source_draw,
                 name  : name
             });
-            mapDiv.addLayer(vector_layer_draw);
 
             //var coordinates = e.feature.getGeometry().getExtent());
             
@@ -39,14 +42,14 @@ function add_draw_interaction() {
 
             // POINT or LINESTRING
             if(coordinates.length == 2) {
-                addMarker(mapDiv, coordinates, main_projection, name);
+                //addMarker(mapDiv, coordinates, main_projection, name); // NEVER DELETE THIS ONE
                 new_coordinates = round_coordinates(coordinates, decimal_places);
             }
             // SO FAR POLYGON
             else {
                 for(var i=0; i<=(coordinates.length)-1; i++) {
                     for(var j=0; j<=(coordinates[i].length)-1; j++) {
-                        addMarker(mapDiv, coordinates[i][j], main_projection, name);
+                        //addMarker(mapDiv, coordinates[i][j], main_projection, name); // NEVER DELETE THIS ONE
                         new_coordinates.push(round_coordinates(coordinates[i][j], decimal_places));
                     }
                 }
@@ -63,7 +66,8 @@ function add_draw_interaction() {
                 }
             }
             var input_hidden = "<input type='hidden' name="+'matchme'+new_coordinates+" value="+new_coordinates+">";
-
+            
+            $(".list-group-coordinates").empty();
             $(".list-group-coordinates").append(
                 "<li class='list-group-item d-flex justify-content-between align-items-center border-bottom'>"
                     +"<a href='#' id='list-item-closer' class='ol-popup-closer' onClick='remove_coordinate(this, "+'"'+name+'"'+")'></a>"
@@ -73,7 +77,9 @@ function add_draw_interaction() {
                         +coordinate_results
                     +"</div>"
                 +"</li>"
+                +"<script> remove_coordinate(this, "+'"'+name+'"'+") </script>"
             );
+            mapDiv.addLayer(vector_layer_draw);
         })
         mapDiv.addInteraction(draw);
     }

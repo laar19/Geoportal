@@ -11,6 +11,7 @@ function map_view(center, zoom) {
 }
 
 // Show coordinate points on the map
+// NEVER DELETE THIS ONE
 //function display_layer(data, title, map) {
 /*
 function display_layer(data, title) {
@@ -68,11 +69,13 @@ function display_base64_image_onmap(base64_image, extent, name, map, proj) {
     $(".list-group-result").append(
         "<li class='list-group-item d-flex justify-content-between align-items-center'>"
             +"<input type='checkbox' id="+name+" value="+name+" checked='checked' onchange='change_layer_visibility(this, mapDiv)'/>"
-            +"<label for="+name+"> <strong> Some data </strong> etc </label>"
+            +"<label> <strong> Random ID from backend</strong> <br> "+name+" </label>" // This should be replaced <br> with useful information
+            +"<label for="+name+">"
             +"<div class='image-parent'>"
                 +"<img src="+base64_image.src+" class='img-fluid'>"
                 +"<div class='image-parent' id='placeholder'></div>"
             +"</div>"
+            +"</label>"
         +"</li>"
     );
 
@@ -83,6 +86,7 @@ function display_base64_image_onmap(base64_image, extent, name, map, proj) {
 }
 
 // Show base 64 image on div
+// NEVER DELETE THIS ONE
 /*
 function display_base64_image_ondiv(div, base64_image) {
     var image = document.createElement("img");
@@ -94,6 +98,8 @@ function display_base64_image_ondiv(div, base64_image) {
 }
 */
 
+/*
+// NEVER DELETE THIS ONE
 function transform_projection(coordinates, original_proj, target_proj) {
     var new_coordinates = Array();
 
@@ -110,8 +116,10 @@ function transform_projection(coordinates, original_proj, target_proj) {
     
     return new_coordinates;
 }
+*/
 
 // Round decimal numbers
+// NEVER DELETE THIS ONE
 function round_coordinates(coordinates, decimal_places) {
     var new_coordinates = Array();
     
@@ -148,9 +156,12 @@ function change_layer_visibility(element, map) {
 }
 
 // Get map config
+// NEVER DELETE THIS ONE
+/*
 function get_map_config(map) {
     center = map.getView().getCenter();
 }
+*/
 
 // Draw user selection alongside with the results
 function display_user_selection(map, coordinates) {

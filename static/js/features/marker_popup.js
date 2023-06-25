@@ -21,6 +21,8 @@ var popup = new ol.Overlay({
 mapDiv.addOverlay(popup);
 
 // display popup on click
+// NEVER DELETE THIS ONE
+/*
 mapDiv.on("click", function(evt) {
     var feature = mapDiv.forEachFeatureAtPixel(evt.pixel, function(feature) {
         return feature;
@@ -31,8 +33,9 @@ mapDiv.on("click", function(evt) {
         popup.setPosition(evt.coordinate);
     }
 });
+*/
 
-// change mouse cursor when over marker
+// change mouse cursor when hover marker
 mapDiv.on("pointermove", function(e) {
     var pixel = mapDiv.getEventPixel(e.originalEvent);
     var hit   = mapDiv.hasFeatureAtPixel(pixel);
@@ -47,6 +50,8 @@ mapDiv.on("movestart", function() {
 */
 
 // Add marker on polygon draw or point
+// NEVER DELETE THIS ONE
+/*
 function addMarker(mapDiv, coordinates, proj, name) {
     var marker;
     
@@ -66,19 +71,6 @@ function addMarker(mapDiv, coordinates, proj, name) {
             rainfall  : 500
         });
     }
-    /*
-    marker.setStyle(new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: 5,
-            stroke: new ol.style.Stroke({
-                color: "blue"
-            }),
-            fill: new ol.style.Fill({
-                color: [57, 228, 193, 0.84]
-            })
-        })
-    }));
-    */
 
     // Change icon
     marker.setStyle(new ol.style.Style({
@@ -90,11 +82,6 @@ function addMarker(mapDiv, coordinates, proj, name) {
         })
     }));
 
-    /*
-    var markers_list = Array();
-    markers_list.push(marker);
-    */
-
     var layer_marker = new ol.layer.Vector({
         source: new ol.source.Vector({
             //features: markers_list
@@ -105,3 +92,4 @@ function addMarker(mapDiv, coordinates, proj, name) {
 
     mapDiv.addLayer(layer_marker);
 }
+*/

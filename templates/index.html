@@ -256,7 +256,7 @@
                                     <label><a>Geometry type</a> &nbsp;</label>
                                     <select id="draw_type" disabled>
                                         <option value="Polygon" selected="selected"> Polygon </option>
-                                        <option value="Point"> Point </option>
+                                        <!-- option value="Point"> Point </option -->
                                     </select>
                                 </form>
                                 <br>
@@ -312,6 +312,11 @@
                         <div id="polygons">
                             <br>
                             <ul class="list-group list-group-result" id="coordinates-list">
+
+                                <!-- img src="http://localhost:8080/geoserver/wms?request=GetMap&service=WMS&version=1.1.0&layers=nurc%3AImg_Sample&format=image%2Fpng" -->
+
+                                <img src="http://localhost:8080/geoserver/wms/reflect?layers=nurc:Img_Sample" width="100" height="100">
+                                
                             </ul>
                         </div>
                     </div>
@@ -473,17 +478,28 @@
               });
             mapDiv.addLayer(wmsLayer);
         */
-        var wmsSource = new ol.source.TileWMS({
-                url: 'http://localhost:8080/geoserver/test_workspace/wms',
-                params: {'LAYERS': 'test_workspace:Estados', 'TILED': true},
-                serverType: 'geoserver',
-                crossOrigin: 'anonymous'
-              });
+            /*
+            var wmsSource = new ol.source.TileWMS({
+                    url: 'http://localhost:8080/geoserver/test_workspace/wms',
+                    params: {'LAYERS': 'test_workspace:Estados', 'TILED': true},
+                    serverType: 'geoserver',
+                    crossOrigin: 'anonymous'
+                  });
+              */
 
-              var wmsLayer = new ol.layer.Tile({
-                source: wmsSource
+                var format = 'image/png';
+              var eeuu = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                  ratio: 1,
+                  url: 'http://localhost:8080/geoserver/nurc/wms',
+                  params: {'FORMAT': format,
+                           //'VERSION': '1.1.1',  
+                        "LAYERS": 'nurc:Img_Sample',
+                        //"exceptions": 'application/vnd.ogc.se_inimage',
+                  }
+                })
               });
-            //mapDiv.addLayer(wmsLayer);
+              mapDiv.addLayer(eeuu);
 
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, {reverse: false});
         mapDiv.addControl(sidebar);
