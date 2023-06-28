@@ -433,7 +433,6 @@
         }
 
         // If there is layers to show
-        console.log(layers["layers"]);
         /*
         if(layers["layers"] != 1) {
             layers_data = Array();
@@ -488,18 +487,19 @@
               */
 
                 var format = 'image/png';
-              var eeuu = new ol.layer.Image({
+              var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
-                  url: 'http://localhost:8080/geoserver/nurc/wms',
+                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
-                        "LAYERS": 'nurc:Img_Sample',
+                        "LAYERS": 'custom_rasters:test', // name of workspace and raster name
                         //"exceptions": 'application/vnd.ogc.se_inimage',
-                  }
+                  },
+                  //projection: 'EPSG:4326',
                 })
               });
-              mapDiv.addLayer(eeuu);
+              mapDiv.addLayer(untiled);
 
         ol.control.LayerSwitcher.renderPanel(mapDiv, toc, {reverse: false});
         mapDiv.addControl(sidebar);
