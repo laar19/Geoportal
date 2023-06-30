@@ -75,5 +75,12 @@ workspace = "custom_rasters"
 print(geo.create_workspace(workspace=workspace))
 
 # For uploading raster data to the geoserver
-path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/data/satellite_images/test.tif"
+#path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/data/satellite_images/test.tif"
+path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/geoserver/output2.tif"
+geo.create_coveragestore(layer_name="output2", path=path, workspace=workspace)
+
+path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/geoserver/output3.tif"
+geo.create_coveragestore(layer_name="output3", path=path, workspace=workspace)
+
+path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/geoserver/test.tif"
 geo.create_coveragestore(layer_name="test", path=path, workspace=workspace)

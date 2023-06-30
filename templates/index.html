@@ -490,10 +490,55 @@
               var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
+                  url: 'http://localhost:8080/geoserver/nurc/wms', // name of workspace
+                  params: {'FORMAT': format,
+                           //'VERSION': '1.1.1',  
+                        "LAYERS": 'nurc:Img_Sample', // name of workspace and raster name
+                        //"exceptions": 'application/vnd.ogc.se_inimage',
+                  },
+                  //projection: 'EPSG:4326',
+                })
+              });
+              mapDiv.addLayer(untiled);
+              
+                var format = 'image/png';
+              var untiled = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                  ratio: 1,
                   url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
                         "LAYERS": 'custom_rasters:test', // name of workspace and raster name
+                        //"exceptions": 'application/vnd.ogc.se_inimage',
+                  },
+                  //projection: 'EPSG:4326',
+                })
+              });
+              mapDiv.addLayer(untiled);
+              
+                var format = 'image/png';
+              var untiled = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                  ratio: 1,
+                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
+                  params: {'FORMAT': format,
+                           //'VERSION': '1.1.1',  
+                        "LAYERS": 'custom_rasters:output2', // name of workspace and raster name
+                        //"exceptions": 'application/vnd.ogc.se_inimage',
+                  },
+                  //projection: 'EPSG:4326',
+                })
+              });
+              mapDiv.addLayer(untiled);
+              
+                var format = 'image/png';
+              var untiled = new ol.layer.Image({
+                source: new ol.source.ImageWMS({
+                  ratio: 1,
+                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
+                  params: {'FORMAT': format,
+                           //'VERSION': '1.1.1',  
+                        "LAYERS": 'custom_rasters:output3', // name of workspace and raster name
                         //"exceptions": 'application/vnd.ogc.se_inimage',
                   },
                   //projection: 'EPSG:4326',
