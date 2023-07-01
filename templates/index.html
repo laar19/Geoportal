@@ -313,9 +313,9 @@
                             <br>
                             <ul class="list-group list-group-result" id="coordinates-list">
 
-                                <!-- img src="http://localhost:8080/geoserver/wms?request=GetMap&service=WMS&version=1.1.0&layers=nurc%3AImg_Sample&format=image%2Fpng" -->
+                                <!-- img src="http://172.25.0.3:8080/geoserver/wms?request=GetMap&service=WMS&version=1.1.0&layers=nurc%3AImg_Sample&format=image%2Fpng" -->
 
-                                <img src="http://localhost:8080/geoserver/wms/reflect?layers=nurc:Img_Sample" width="100" height="100">
+                                <img src="http://172.25.0.3:8080/geoserver/wms/reflect?layers=nurc:Img_Sample" width="100" height="100">
                                 
                             </ul>
                         </div>
@@ -479,7 +479,7 @@
         */
             /*
             var wmsSource = new ol.source.TileWMS({
-                    url: 'http://localhost:8080/geoserver/test_workspace/wms',
+                    url: 'http://172.25.0.3:8080/geoserver/test_workspace/wms',
                     params: {'LAYERS': 'test_workspace:Estados', 'TILED': true},
                     serverType: 'geoserver',
                     crossOrigin: 'anonymous'
@@ -490,7 +490,7 @@
               var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
-                  url: 'http://localhost:8080/geoserver/nurc/wms', // name of workspace
+                  url: 'http://172.25.0.3:8080/geoserver/nurc/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
                         "LAYERS": 'nurc:Img_Sample', // name of workspace and raster name
@@ -505,7 +505,7 @@
               var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
-                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
+                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
                         "LAYERS": 'custom_rasters:test', // name of workspace and raster name
@@ -520,7 +520,7 @@
               var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
-                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
+                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
                         "LAYERS": 'custom_rasters:output2', // name of workspace and raster name
@@ -535,7 +535,7 @@
               var untiled = new ol.layer.Image({
                 source: new ol.source.ImageWMS({
                   ratio: 1,
-                  url: 'http://localhost:8080/geoserver/custom_rasters/wms', // name of workspace
+                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
                   params: {'FORMAT': format,
                            //'VERSION': '1.1.1',  
                         "LAYERS": 'custom_rasters:output3', // name of workspace and raster name

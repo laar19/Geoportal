@@ -118,7 +118,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+#.env
 .venv
 env/
 venv/
@@ -152,5 +152,3 @@ cython_debug/
 
 # static files generated from Django application using `collectstatic`
 media
-
-
