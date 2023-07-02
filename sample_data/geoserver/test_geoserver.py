@@ -68,7 +68,7 @@ print(geo.create_shp_datastore(path=path, store_name="test_datastore", workspace
 # Upload raster
 
 # Credentials
-geo = Geoserver("http://172.25.0.3:8080/geoserver", username="admin", password="admin")
+geo = Geoserver("http://localhost:8600/geoserver", username="admin", password="admin")
 
 # Create workspace
 workspace = "custom_rasters"
