@@ -8,7 +8,7 @@ services:
    db:
       image: kartoza/postgis:${POSTGIS_VERSION_TAG}
       volumes:
-        - geo-db-data:/var/lib/postgresql
+        - geo-db-data:/var/lib/postgresql/data
       ports:
         - ${POSTGRES_PORT}:5432
       environment:
@@ -24,7 +24,7 @@ services:
    geoserver:
       image: kartoza/geoserver:${GS_VERSION}
       volumes:
-        - geoserver-data:/opt/geoserver/data_dir
+        - geoserver-data:/opt/geoserver
       restart: on-failure
       environment:
         - GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}
@@ -33,6 +33,7 @@ services:
         - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
         - INITIAL_MEMORY=${INITIAL_MEMORY}
         - MAXIMUM_MEMORY=${MAXIMUM_MEMORY}
+        - SAMPLE_DATA=true
       depends_on:
         db:
           condition: service_healthy

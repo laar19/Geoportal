@@ -1,0 +1,38 @@
+version: '3.3'
+
+volumes:
+    geoportal_db_data:
+
+services:
+    # DATABASE
+    geoportal_db:
+        image  : postgis/postgis
+        restart: always
+
+        environment:
+            POSTGRES_DB      : geoportal
+            POSTGRES_USER    : root
+            POSTGRES_PASSWORD: root
+
+        ports:
+            - 15432:5432
+        networks:
+            - geoportal_db_network
+        volumes:
+            - geoportal_db_data:/var/lib/postgresql/data
+
+    # ADMINER
+    adminer_geoportal:
+        image  : adminer
+        restart: always
+        
+        depends_on:
+            - geoportal_db
+        ports:
+            - 18080:8080
+        networks:
+            - geoportal_db_network
+
+networks:
+    geoportal_db_network:
+        driver: bridge
