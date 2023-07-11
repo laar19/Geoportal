@@ -222,7 +222,147 @@ def sample_layers_openlayers():
 
     layers = 1    
     return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
+
+@app.route("/index_leaflet")
+def index_leaflet():
+    layers = 1
+    images = {"images": 1}
+    return render_template("index_leaflet.html", layers=layers, result=images, map_config=default_map_config)
+
+@app.route("/search_image_leaflet", methods=["POST"])
+def search_image_leaflet():
+    # Retrieve coordinates from user
+    if request.method == "POST":
+        previous_map_config = {
+            "zoom_level"   : request.form["zoom_level"],
+            "view"         : request.form["view"],
+            "search_status": bool(request.form["search_status"])
+        }
+
+        print()
+        print(request.form["coordinates"])
+        print()
+        coord_from_user =  request.form["coordinates"].split(",")
+        print()
+        print(coord_from_user)
+        print()
+
+    if previous_map_config["search_status"]:
+        print("GREAT")
+        map_config = previous_map_config
+    else:
+        map_config = default_map_config
+
+    """
+        
+        for i in request.form:
+            if "matchme" in i:
+                tmp = get_coord_from_js(request.form.getlist(i)[0])
+
+                # If there is only two coordinates
+                if len(tmp) == 2:
+                    coord_from_user.append(Point(tmp))
+                # More than two
+                else:
+                    coordinates = list()
+                    for j in range(len(tmp)-1):
+                        if j%2 == 0:
+                            coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
+                    coord_from_user.append(Polygon(coordinates))
+    
+    Session    = sessionmaker(bind=engine)
+    db_session = Session()
+
+    images = []
+    shapes = []
+    for i in coord_from_user:
+        result = intersect(db_session, i)
+        if result:
+            for j in result:
+                path = j[0]
+                
+                productupperleftlat   = j[1]
+                productupperleftlong  = j[2]
+                productupperrightlat  = j[3]
+                productupperrightlong = j[4]
+                productlowerleftlat   = j[5]
+                productlowerleftlong  = j[6]
+                productlowerrightlat  = j[7]
+                productlowerrightlong = j[8]
+
+                dataupperleftlat   = j[9]
+                dataupperleftlong  = j[10]
+                dataupperrightlat  = j[11]
+                dataupperrightlong = j[12]
+                datalowerleftlat   = j[13]
+                datalowerleftlong  = j[14]
+                datalowerrightlat  = j[15]
+                datalowerrightlong = j[16]
+
+                polygon = Polygon(
+                    [
+                        (productupperrightlong, productupperrightlat),
+                        (productlowerrightlong, productlowerrightlat),
+                        (productlowerleftlong, productlowerleftlat),
+                        (productupperleftlong, productupperleftlat)
+                    ]
+                )
+
+                polygon_shapes = Polygon(
+                    [
+                        (dataupperrightlong, dataupperrightlat),
+                        (datalowerrightlong, datalowerrightlat),
+                        (datalowerleftlong, datalowerleftlat),
+                        (dataupperleftlong, dataupperleftlat)
+                    ]
+                )
+                tmp = []
+                for k in range(len(polygon_shapes.exterior.coords)):
+                    tmp.append(list(polygon_shapes.exterior.coords[k]))
+                shapes.append(tmp)
+
+                extent = [
+                    productlowerleftlong,
+                    productlowerleftlat,
+                    productupperrightlong,
+                    productupperrightlat
+                ]
+
+                # THIRD PARTY
+                # David Shea https://github.com/dashea/requests-file
+                s = requests.Session()
+                s.mount("file://", FileAdapter())
+                ### END THIRD PARTY
+
+                #resp = s.get('file:///path/to/file')
+                
+                url      = path
+                #response = requests.get(url)
+                response = s.get(url)
+                image    = Image.open(BytesIO(response.content))
+                image    = black_to_transparency(image)
+                #image = np.array(image)
+
+                buffer = BytesIO()
+                image.save(buffer, format="PNG")
+                img   = buffer.getvalue()
+                image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
+
+                name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
+                images.append({"image": image, "extent": extent, "name": name})
+    """
+    
+    layers = 1
+    images = []
+
+    # If there were no match
+    if len(images) == 0:
+        images = 1
+        shapes = 1
+
+    result = {"images": images, "shapes": shapes}
+    return render_template("index_leaflet.html", layers=layers, result=result, map_config=map_config)
     
 if __name__ == "__main__":
     csrf.init_app(app)
-    app.run(debug=True)
+    app.run(host="192.168.92.19", port=5000, debug=True)
