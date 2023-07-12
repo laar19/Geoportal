@@ -169,7 +169,7 @@
 
                     <input type="hidden" id="coordinates" name="coordinates" value="">
                     <input type="hidden" id="zoom_level" name="zoom_level" value="">
-                    <input type="hidden" id="view" name="view" value="">
+                    <input type="hidden" id="center" name="center" value="">
                     <input type="hidden" id="search_status" name="search_status" value="False">
                     
                     <button type="submit">Search</button>
@@ -198,10 +198,12 @@
 
     <script>
         var map_config = {{ map_config|tojson }};
-        map.setView(
-            [map_config["view"][0], map_config["view"][1]],
-            map_config["zoom_level"]
-        );
+        if(map_config["search_status"]) {
+            map.setView(
+                map_config["center"].split(","),
+                map_config["zoom_level"]
+            );
+        }
     </script>
 </body>
 

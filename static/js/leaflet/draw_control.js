@@ -56,16 +56,16 @@ map.on(L.Draw.Event.CREATED, function (e) {
     // Coordinates
     var coordinates = layer.toGeoJSON().geometry.coordinates;
     $("#coordinates").val(coordinates);
+    console.log(coordinates);
 
     // Zoom
     $("#zoom_level").val(map._zoom);
 
     // View
-    //map.on('dragend', function onDragEnd(){
+    /*
+    map.on('dragend', function onDragEnd(){
     var width  = map.getBounds().getEast() - map.getBounds().getWest();
     var height = map.getBounds().getNorth() - map.getBounds().getSouth();
-
-    /*
     alert (
         'center:' + map.getCenter() +'\n'+
         'width:' + width +'\n'+
@@ -73,7 +73,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
         'size in pixels:' + map.getSize()
     )});
     */
-    $("#view").val([width, height]);
+    $("#center").val([map.getCenter()["lat"], map.getCenter()["lng"]]);
 
     $("#search_status").val("True");
 });

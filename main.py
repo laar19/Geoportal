@@ -225,9 +225,16 @@ def sample_layers_openlayers():
 
 @app.route("/index_leaflet")
 def index_leaflet():
+
+    map_config = {
+        "zoom_level"   : default_map_config["zoom"],
+        "view"         : default_map_config["center"],
+        "search_status": False
+    }
+    
     layers = 1
     images = {"images": 1}
-    return render_template("index_leaflet.html", layers=layers, result=images, map_config=default_map_config)
+    return render_template("index_leaflet.html", layers=layers, result=images, map_config=map_config)
 
 @app.route("/search_image_leaflet", methods=["POST"])
 def search_image_leaflet():
@@ -235,17 +242,16 @@ def search_image_leaflet():
     if request.method == "POST":
         previous_map_config = {
             "zoom_level"   : request.form["zoom_level"],
-            "view"         : request.form["view"],
+            "center"         : request.form["center"],
             "search_status": bool(request.form["search_status"])
         }
 
-        print()
-        print(request.form["coordinates"])
-        print()
         coord_from_user =  request.form["coordinates"].split(",")
-        print()
-        print(coord_from_user)
-        print()
+
+        formatted_coord_from_user1 = [i for i in zip(coord_from_user[::2], coord_from_user[1::2])]
+        formatted_coord_from_user2 = []
+        for i in formatted_coord_from_user1:
+            formatted_coord_from_user2.append(list(i))
 
     if previous_map_config["search_status"]:
         print("GREAT")
