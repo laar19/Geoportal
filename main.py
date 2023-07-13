@@ -73,10 +73,12 @@ def search_image():
     # Retrieve coordinates from user
     coord_from_user = list()
     if request.method == "POST":
+        """
         map_config = {
             "center": get_coord_from_js(request.form["center"]),
             "zoom"  : float(request.form["level-zoom"])
         }
+        """
         
         for i in request.form:
             if "matchme" in i:
@@ -100,6 +102,10 @@ def search_image():
     shapes = []
     for i in coord_from_user:
         result = intersect(db_session, i)
+        print()
+        print("result")
+        print(result)
+        print()
         if result:
             for j in result:
                 path = j[0]
@@ -182,7 +188,8 @@ def search_image():
         shapes = 1
 
     result = {"images": images, "shapes": shapes}
-    return render_template("index.html", layers=layers, result=result, map_config=map_config)
+    #return render_template("index.html", layers=layers, result=result, map_config=map_config)
+    return render_template("index.html", layers=layers, result=result, map_config=default_map_config)
 
 @app.route("/sample_layers_openlayers")
 def sample_layers_openlayers():
@@ -238,125 +245,110 @@ def index_leaflet():
 
 @app.route("/search_image_leaflet", methods=["POST"])
 def search_image_leaflet():
+    map_config = default_map_config
+    
     # Retrieve coordinates from user
     if request.method == "POST":
         previous_map_config = {
             "zoom_level"   : request.form["zoom_level"],
-            "center"         : request.form["center"],
+            "center"       : request.form["center"],
             "search_status": bool(request.form["search_status"])
         }
 
-        coord_from_user =  request.form["coordinates"].split(",")
+        # If there is an image search
+        if previous_map_config["search_status"]:
+            map_config = previous_map_config
+            
+            # Coordinates are received as string, so they are splited by comma
+            # and converted into list of tuples wich contains coordinate pairs
+            # The list of tuples is converted then into list of lists
+            coord_from_user =  request.form["coordinates"].split(",")
+            formatted_coord_from_user1 = [i for i in zip(coord_from_user[::2], coord_from_user[1::2])]
+            formatted_coord_from_user2 = []
+            for i in formatted_coord_from_user1:
+                formatted_coord_from_user2.append(list(i))
 
-        formatted_coord_from_user1 = [i for i in zip(coord_from_user[::2], coord_from_user[1::2])]
-        formatted_coord_from_user2 = []
-        for i in formatted_coord_from_user1:
-            formatted_coord_from_user2.append(list(i))
+            formatted_coord_from_user3 = Polygon(formatted_coord_from_user2)
 
-    if previous_map_config["search_status"]:
-        print("GREAT")
-        map_config = previous_map_config
-    else:
-        map_config = default_map_config
+            Session    = sessionmaker(bind=engine)
+            db_session = Session()
 
-    """
-        
-        for i in request.form:
-            if "matchme" in i:
-                tmp = get_coord_from_js(request.form.getlist(i)[0])
+            images = []
+            shapes = []
+            result = intersect(db_session, formatted_coord_from_user3)
+            if result:
+                for j in result:
+                    path = j[0]
+                    
+                    productupperleftlat   = j[1]
+                    productupperleftlong  = j[2]
+                    productupperrightlat  = j[3]
+                    productupperrightlong = j[4]
+                    productlowerleftlat   = j[5]
+                    productlowerleftlong  = j[6]
+                    productlowerrightlat  = j[7]
+                    productlowerrightlong = j[8]
 
-                # If there is only two coordinates
-                if len(tmp) == 2:
-                    coord_from_user.append(Point(tmp))
-                # More than two
-                else:
-                    coordinates = list()
-                    for j in range(len(tmp)-1):
-                        if j%2 == 0:
-                            coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
-                    coord_from_user.append(Polygon(coordinates))
-    
-    Session    = sessionmaker(bind=engine)
-    db_session = Session()
+                    dataupperleftlat   = j[9]
+                    dataupperleftlong  = j[10]
+                    dataupperrightlat  = j[11]
+                    dataupperrightlong = j[12]
+                    datalowerleftlat   = j[13]
+                    datalowerleftlong  = j[14]
+                    datalowerrightlat  = j[15]
+                    datalowerrightlong = j[16]
 
-    images = []
-    shapes = []
-    for i in coord_from_user:
-        result = intersect(db_session, i)
-        if result:
-            for j in result:
-                path = j[0]
-                
-                productupperleftlat   = j[1]
-                productupperleftlong  = j[2]
-                productupperrightlat  = j[3]
-                productupperrightlong = j[4]
-                productlowerleftlat   = j[5]
-                productlowerleftlong  = j[6]
-                productlowerrightlat  = j[7]
-                productlowerrightlong = j[8]
+                    polygon = Polygon(
+                        [
+                            (productupperrightlong, productupperrightlat),
+                            (productlowerrightlong, productlowerrightlat),
+                            (productlowerleftlong, productlowerleftlat),
+                            (productupperleftlong, productupperleftlat)
+                        ]
+                    )
 
-                dataupperleftlat   = j[9]
-                dataupperleftlong  = j[10]
-                dataupperrightlat  = j[11]
-                dataupperrightlong = j[12]
-                datalowerleftlat   = j[13]
-                datalowerleftlong  = j[14]
-                datalowerrightlat  = j[15]
-                datalowerrightlong = j[16]
+                    polygon_shapes = Polygon(
+                        [
+                            (dataupperrightlong, dataupperrightlat),
+                            (datalowerrightlong, datalowerrightlat),
+                            (datalowerleftlong, datalowerleftlat),
+                            (dataupperleftlong, dataupperleftlat)
+                        ]
+                    )
+                    tmp = []
+                    for k in range(len(polygon_shapes.exterior.coords)):
+                        tmp.append(list(polygon_shapes.exterior.coords[k]))
+                    shapes.append(tmp)
 
-                polygon = Polygon(
-                    [
-                        (productupperrightlong, productupperrightlat),
-                        (productlowerrightlong, productlowerrightlat),
-                        (productlowerleftlong, productlowerleftlat),
-                        (productupperleftlong, productupperleftlat)
+                    extent = [
+                        productlowerleftlong,
+                        productlowerleftlat,
+                        productupperrightlong,
+                        productupperrightlat
                     ]
-                )
 
-                polygon_shapes = Polygon(
-                    [
-                        (dataupperrightlong, dataupperrightlat),
-                        (datalowerrightlong, datalowerrightlat),
-                        (datalowerleftlong, datalowerleftlat),
-                        (dataupperleftlong, dataupperleftlat)
-                    ]
-                )
-                tmp = []
-                for k in range(len(polygon_shapes.exterior.coords)):
-                    tmp.append(list(polygon_shapes.exterior.coords[k]))
-                shapes.append(tmp)
+                    # THIRD PARTY
+                    # David Shea https://github.com/dashea/requests-file
+                    s = requests.Session()
+                    s.mount("file://", FileAdapter())
+                    ### END THIRD PARTY
 
-                extent = [
-                    productlowerleftlong,
-                    productlowerleftlat,
-                    productupperrightlong,
-                    productupperrightlat
-                ]
+                    #resp = s.get('file:///path/to/file')
+                    
+                    url      = path
+                    #response = requests.get(url)
+                    response = s.get(url)
+                    image    = Image.open(BytesIO(response.content))
+                    image    = black_to_transparency(image)
+                    #image = np.array(image)
 
-                # THIRD PARTY
-                # David Shea https://github.com/dashea/requests-file
-                s = requests.Session()
-                s.mount("file://", FileAdapter())
-                ### END THIRD PARTY
+                    buffer = BytesIO()
+                    image.save(buffer, format="PNG")
+                    img   = buffer.getvalue()
+                    image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
 
-                #resp = s.get('file:///path/to/file')
-                
-                url      = path
-                #response = requests.get(url)
-                response = s.get(url)
-                image    = Image.open(BytesIO(response.content))
-                image    = black_to_transparency(image)
-                #image = np.array(image)
-
-                buffer = BytesIO()
-                image.save(buffer, format="PNG")
-                img   = buffer.getvalue()
-                image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
-
-                name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
-                images.append({"image": image, "extent": extent, "name": name})
-    """
+                    name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
+                    images.append({"image": image, "extent": extent, "name": name})
     
     layers = 1
     images = []

@@ -198,6 +198,9 @@
 
     <script>
         var map_config = {{ map_config|tojson }};
+
+        // If there was an image search, set the las user view at the moment
+        // of the search
         if(map_config["search_status"]) {
             map.setView(
                 map_config["center"].split(","),
