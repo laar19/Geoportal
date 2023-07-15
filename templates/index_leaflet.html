@@ -171,8 +171,6 @@
                     <input type="hidden" id="zoom_level" name="zoom_level" value="">
                     <input type="hidden" id="center" name="center" value="">
                     <input type="hidden" id="search_status" name="search_status" value="False">
-                    
-                    <button type="submit">Search</button>
                 </form>
             </div>
         </div>
@@ -193,21 +191,9 @@
         });
     </script>
 
+    <script> var map_config = {{ map_config|tojson }}; </script>
     <script src="{{ url_for('static', filename='js/leaflet/map.js') }}"></script>
     <script src="{{ url_for('static', filename='js/leaflet/draw_control.js') }}"></script>
-
-    <script>
-        var map_config = {{ map_config|tojson }};
-
-        // If there was an image search, set the las user view at the moment
-        // of the search
-        if(map_config["search_status"]) {
-            map.setView(
-                map_config["center"].split(","),
-                map_config["zoom_level"]
-            );
-        }
-    </script>
 </body>
 
 </html>

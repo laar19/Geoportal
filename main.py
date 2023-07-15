@@ -16,7 +16,6 @@ from sqlalchemy.orm import sessionmaker
 
 from geo.Geoserver import Geoserver
 
-#from app.models.models import DatabaseConfig, check_satellite_images_db
 from app.models.models                 import DatabaseConfig
 from app.models.satellite_images_table import *
 from app.functions                     import *
@@ -30,18 +29,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
-# Check database
 db_credentials_path = "config/db_credentials_geoportal.csv"
-DbConn = DatabaseConfig(db_credentials_path)
-DbConn.check_database()
 
-# Check tables
-conn, engine = DbConn.connection()
-check_satellite_images_table(engine)
-conn.close()
-
-mapDiv             = MapDiv()
-default_map_config = mapDiv.main_config()
+map_config_path = "config/map_config.csv"
+map_config      = get_map_config(map_config_path)
 
 @app.route("/")
 @app.route("/index")
@@ -64,7 +55,7 @@ def index():
     """
     layers = 1
     images = {"images": 1}
-    return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
+    return render_template("index.html", layers=layers, result=images, map_config=map_config)
 
 @app.route("/search_image", methods=["POST"])
 def search_image():
@@ -232,21 +223,12 @@ def sample_layers_openlayers():
 
 @app.route("/index_leaflet")
 def index_leaflet():
-
-    map_config = {
-        "zoom_level"   : default_map_config["zoom"],
-        "view"         : default_map_config["center"],
-        "search_status": False
-    }
-    
     layers = 1
     images = {"images": 1}
     return render_template("index_leaflet.html", layers=layers, result=images, map_config=map_config)
 
 @app.route("/search_image_leaflet", methods=["POST"])
 def search_image_leaflet():
-    map_config = default_map_config
-    
     # Retrieve coordinates from user
     if request.method == "POST":
         previous_map_config = {
@@ -270,8 +252,10 @@ def search_image_leaflet():
 
             formatted_coord_from_user3 = Polygon(formatted_coord_from_user2)
 
-            Session    = sessionmaker(bind=engine)
-            db_session = Session()
+            DbConn       = DatabaseConfig(db_credentials_path)
+            conn, engine = DbConn.connection()
+            Session      = sessionmaker(bind=engine)
+            db_session   = Session()
 
             images = []
             shapes = []
@@ -363,4 +347,4 @@ def search_image_leaflet():
     
 if __name__ == "__main__":
     csrf.init_app(app)
-    app.run(host="192.168.92.19", port=5000, debug=True)
+    app.run(host="localhost", port=5000, debug=True)

@@ -84,14 +84,14 @@ L.Control.Button = L.Control.extend({
         position: 'topleft'
     },
     onAdd: function (map) {
-        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-        var button = L.DomUtil.create('a', 'leaflet-control-button', container);
+        var container   = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+        var button      = L.DomUtil.create('a', 'leaflet-control-button', container);
         L.DomEvent.disableClickPropagation(button);
         L.DomEvent.on(button, 'click', function(){
             document.getElementById("search_image_leaflet").submit();
         });
 
-        container.title = "Title";
+        container.title = "Search";
 
         return container;
     },

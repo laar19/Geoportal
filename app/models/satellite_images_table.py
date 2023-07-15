@@ -8,6 +8,9 @@ from sqlalchemy.orm   import declarative_base
 from geoalchemy2       import Geometry
 from geoalchemy2.shape import from_shape
 
+db_tables = []
+
+"""
 Base = declarative_base()
 table_name = "satellite_images"
 class SatelliteImages(Base):
@@ -40,6 +43,19 @@ class SatelliteImages(Base):
     datalowerrightlat     = Column(VARCHAR)
     datalowerrightlong    = Column(VARCHAR)
     create_date           = Column(DateTime, default=datetime.now)
+"""
+
+Base = declarative_base()
+table_name = "satellite_images"
+db_tables.append(table_name)
+class SatelliteImages(Base):
+    __tablename__ = table_name
+    
+    id                         = Column(Integer, primary_key=True, autoincrement=True)
+    id_hashed                  = Column(VARCHAR)
+    geoserver_url_html_preview = Column(VARCHAR)
+    geoserver_url_map_preview  = Column(VARCHAR)
+    create_date           = Column(DateTime, default=datetime.now)
 
 def intersect(db_session, polygon):
     return db_session.query(
@@ -65,7 +81,7 @@ def intersect(db_session, polygon):
     ).all()
 
 # Check if table exist
-def check_satellite_images_table(engine):
+def check_satellite_images_table(engine, table_name):
     insp = db.inspect(engine)
     
     if not insp.has_table(table_name, schema="public"):

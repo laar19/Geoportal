@@ -10,7 +10,7 @@ services:
         restart: always
 
         environment:
-            POSTGRES_DB      : geoportal
+            POSTGRES_DB      : db_geoportal
             POSTGRES_USER    : root
             POSTGRES_PASSWORD: root
 
