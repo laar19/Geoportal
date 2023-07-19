@@ -29,7 +29,7 @@ services:
         depends_on:
             - geoportal_db
         ports:
-            - 18080:8080
+            - 18082:8080
         networks:
             - geoportal_db_network
 
