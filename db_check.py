@@ -9,5 +9,5 @@ DbConn.check_database()
 # Check database tables
 conn, engine = DbConn.connection()
 for i in db_tables:
-    check_satellite_images_table(engine, i)
+    check_satellite_images_table(engine, db_tables, i)
 conn.close()

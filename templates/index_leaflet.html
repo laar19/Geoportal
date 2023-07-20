@@ -64,10 +64,11 @@
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-home"></i>
                         Home
-                    </a>
+                    </a>                    
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
                             <a href="#">Home 1</a>
+                            <img src="http://172.19.0.2:8080/geoserver/wms/reflect?layers=satellite_images:0c1ddbe086110822796ae5e1fca039d1" width="100" height="100">
                         </li>
                         <li>
                             <a href="#">Home 2</a>
@@ -194,6 +195,17 @@
     <script> var map_config = {{ map_config|tojson }}; </script>
     <script src="{{ url_for('static', filename='js/leaflet/map.js') }}"></script>
     <script src="{{ url_for('static', filename='js/leaflet/draw_control.js') }}"></script>
+
+    <script>
+        var wmsLayer = L.tileLayer.wms("http://172.19.0.2:8080/geoserver/satellite_images/wms", {
+            layers     : "satellite_images:0c1ddbe086110822796ae5e1fca039d1",
+            format     : "image/png",
+            transparent: true,
+            //version    : '1.1.0',
+            //attribution: "country layer"
+        });
+        wmsLayer.addTo(map);
+    </script>
 </body>
 
 </html>
