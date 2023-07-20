@@ -17,7 +17,7 @@ class SatelliteImages(Base):
     __tablename__ = table_name
     
     id                         = Column(Integer, primary_key=True, autoincrement=True)
-    custom_id                  = Column(VARCHAR)
+    custom_id                  = Column(VARCHAR, unique=True)
     #compressed_file_hash       = Column(VARCHAR, nullable=True)
     satellite                  = Column(VARCHAR)
     sensor                     = Column(VARCHAR)

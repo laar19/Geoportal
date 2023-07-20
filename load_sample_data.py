@@ -159,19 +159,30 @@ if __name__ == "__main__":
 
     # Para cada uno de los archivos de imagenes, se extraen los xml
     lista_nombres_comprimidos = []
-    lista_de_xml = []
-    lista_de_thumb = []
-    compressed_file_list = []
+    lista_de_xml              = []
+    lista_de_thumb            = []
+    compressed_file_list      = []
+    folder_names              = []
     for archivo in lista_de_archivos:
+        folder_name = hashlib.md5(str(os.path.basename(archivo[:-9])).encode()).hexdigest()
+        folder_names.append(folder_name)
+        
         #lista_nombres_comprimidos.append(archivo.split("\\")[1])
         lista_nombres_comprimidos.append(archivo.split("\\")[0])
+        
         #lista_de_xml.append("xml/"+unpackXML(archivo, "xml"))
-        lista_de_xml.append(archivo[:-9]+"/"+unpackXML(archivo, archivo[:-9]))
+        #lista_de_xml.append(archivo[:-9]+"/"+unpackXML(archivo, archivo[:-9]))
+        lista_de_xml.append(carpeta_imagenes+"/"+folder_name+"/"+unpackXML(archivo, carpeta_imagenes+"/"+folder_name))
+        
         #lista_de_thumb.append("thumbnails/"+unpackThumb(archivo, "thumbnails"))
-        lista_de_thumb.append(archivo[:-9]+"/"+unpackThumb(archivo, archivo[:-9]))
+        #lista_de_thumb.append(archivo[:-9]+"/"+unpackThumb(archivo, archivo[:-9]))
+        lista_de_thumb.append(carpeta_imagenes+"/"+folder_name+"/"+unpackThumb(archivo, carpeta_imagenes+"/"+folder_name))
 
-        shutil.move(archivo, archivo[:-9]+"/"+os.path.basename(archivo))
-        compressed_file_list.append(archivo[:-9]+"/"+os.path.basename(archivo))
+        #shutil.move(archivo, archivo[:-9]+"/"+os.path.basename(archivo))
+        shutil.move(archivo, carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
+        
+        #compressed_file_list.append(archivo[:-9]+"/"+os.path.basename(archivo))
+        compressed_file_list.append(carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
         
     # Ahora, listamos los archivos presentes en la carpeta xml
     #lista_de_xml = []
@@ -191,7 +202,7 @@ if __name__ == "__main__":
         
         print(f"Procesando archivo {i+1} de {len(lista_de_xml)}")
 
-        custom_id = hashlib.md5(str(dtime.now()).encode()).hexdigest()
+        custom_id = folder_names[i]
 
         compressed_file_path = compressed_file_list[i]
         
@@ -312,8 +323,26 @@ if __name__ == "__main__":
     conn, engine = db.connection()
 
     for index, row in df.iterrows():
+        # Upload to database
         tmp_df = row.to_frame().T
         tmp_df.to_sql("satellite_images", con=engine, if_exists="append", index=False)
+
+        # Upload to geoserver
+        # Upload raster
+        # Credentials
+        geo = Geoserver("http://172.24.0.3:8080/geoserver", username="admin", password="admin")
+        
+        # Create workspace
+        workspace = "satellite_images"
+        print(geo.create_workspace(workspace=workspace))
+
+        # For uploading raster data to the geoserver
+        #path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/data/satellite_images/test.tif"
+        path       = tmp_df["geothumb_path"]
+        layer_name = tmp_df["custom_id"]
+        geo.create_coveragestore(layer_name=layer_name, path=path, workspace=workspace)
+
+        
         
 
     """
