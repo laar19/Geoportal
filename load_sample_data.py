@@ -12,10 +12,9 @@ from osgeo import gdal, osr
 
 from shapely.geometry.polygon import Polygon
 
-from app.models.models import DatabaseConfig
+from geo.Geoserver import Geoserver
 
-# Leemos el shapefile de los estados de Venezuela    
-#estados_venezuela = gpd.read_file("vzla_exterior.zip")
+from app.models.models import DatabaseConfig
 
 def create_folder(folder_name):
     if not os.path.exists(folder_name):
@@ -134,21 +133,6 @@ def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
     
 # Aca comienza script
 if __name__ == "__main__":
-    """
-    # En primer lugar, verifica si existe la carpeta "xml" y la crea si no existe
-    if not os.path.exists("xml"):
-        # Crea el directorio
-        os.mkdir("xml")
-        
-    if not os.path.exists("thumbnails"):
-        # Crea el directorio
-        os.mkdir("thumbnails")
-        
-    if not os.path.exists("geothumbs"):
-        # Crea el directorio
-        os.mkdir("geothumbs")
-    """
-        
     # Lista los archivos comprimidos de imagenes presentes en la carpeta imagenes
     carpeta_imagenes = "sample_data"
     
@@ -167,39 +151,20 @@ if __name__ == "__main__":
         folder_name = hashlib.md5(str(os.path.basename(archivo[:-9])).encode()).hexdigest()
         folder_names.append(folder_name)
         
-        #lista_nombres_comprimidos.append(archivo.split("\\")[1])
         lista_nombres_comprimidos.append(archivo.split("\\")[0])
         
-        #lista_de_xml.append("xml/"+unpackXML(archivo, "xml"))
-        #lista_de_xml.append(archivo[:-9]+"/"+unpackXML(archivo, archivo[:-9]))
         lista_de_xml.append(carpeta_imagenes+"/"+folder_name+"/"+unpackXML(archivo, carpeta_imagenes+"/"+folder_name))
         
-        #lista_de_thumb.append("thumbnails/"+unpackThumb(archivo, "thumbnails"))
-        #lista_de_thumb.append(archivo[:-9]+"/"+unpackThumb(archivo, archivo[:-9]))
         lista_de_thumb.append(carpeta_imagenes+"/"+folder_name+"/"+unpackThumb(archivo, carpeta_imagenes+"/"+folder_name))
 
-        #shutil.move(archivo, archivo[:-9]+"/"+os.path.basename(archivo))
+        # Move the compressed file to the new folder
         shutil.move(archivo, carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
         
-        #compressed_file_list.append(archivo[:-9]+"/"+os.path.basename(archivo))
         compressed_file_list.append(carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
-        
-    # Ahora, listamos los archivos presentes en la carpeta xml
-    #lista_de_xml = []
-    #for (dirpath, dirnames, filenames) in os.walk("xml"):
-    #    lista_de_xml += [os.path.join(dirpath, file) for file in filenames]
-    #    lista_de_xml = sorted(lista_de_xml)
-        
-    # Listamos los archivos presentes en thumbnails
-    #lista_de_thumb = []
-    #for (dirpath, dirnames, filenames) in os.walk("thumbnails"):
-    #    lista_de_thumb += [os.path.join(dirpath, file) for file in filenames]
-    #    lista_de_thumb = sorted(lista_de_thumb)
         
     # Para cada xml, hay que extraer los datos de interes
     registros = []
-    for i in range(len(lista_de_xml)):
-        
+    for i in range(len(lista_de_xml)):        
         print(f"Procesando archivo {i+1} de {len(lista_de_xml)}")
 
         custom_id = folder_names[i]
@@ -207,11 +172,9 @@ if __name__ == "__main__":
         compressed_file_path = compressed_file_list[i]
         
         # Primero, extraemos el nombre de archivo comprimido original
-        #nombre_comprimido = lista_de_archivos[i].split("\\")[1]
         compressed_name = lista_nombres_comprimidos[i]
         
         # Extraemos la ruta del thumbnail
-        #ruta_thumb = "<img src='"+lista_de_thumb[i]+"' width='100'>"
         ruta_thumb = lista_de_thumb[i]
         
         # Luego, extraemos del parse del xml cada campo de interes
@@ -219,26 +182,26 @@ if __name__ == "__main__":
         root = tree.getroot()   
         
         rawdatafn = tree.find("RawdataFileName").text.split("/")[5]
-        satelite = tree.find("satelliteId").text
-        sensor = tree.find("sensorId").text
-        escena = int(tree.find("sceneId").text)
-        orbita = int(tree.find("orbitId").text)
+        satelite  = tree.find("satelliteId").text
+        sensor    = tree.find("sensorId").text
+        escena    = int(tree.find("sceneId").text)
+        orbita    = int(tree.find("orbitId").text)
         
         fecha_captura = tree.find("Scene_imagingStartTime").text
-        ano = int(fecha_captura.split(" ")[0])
-        mes = int(fecha_captura.split(" ")[1])
-        dia = int(fecha_captura.split(" ")[2])
-        capture_date = "{}-{}-{}".format(ano, mes, dia)
+        ano           = int(fecha_captura.split(" ")[0])
+        mes           = int(fecha_captura.split(" ")[1])
+        dia           = int(fecha_captura.split(" ")[2])
+        capture_date  = "{}-{}-{}".format(ano, mes, dia)
         
-        lat_central = float(tree.find("sceneCenterLat").text)
+        lat_central  = float(tree.find("sceneCenterLat").text)
         long_central = float(tree.find("sceneCenterLong").text)
-        data_ul_lat = float(tree.find("dataUpperLeftLat").text)
+        data_ul_lat  = float(tree.find("dataUpperLeftLat").text)
         data_ul_long = float(tree.find("dataUpperLeftLong").text)
-        data_ur_lat = float(tree.find("dataUpperRightLat").text)
+        data_ur_lat  = float(tree.find("dataUpperRightLat").text)
         data_ur_long = float(tree.find("dataUpperRightLong").text)
-        data_ll_lat = float(tree.find("dataLowerLeftLat").text)
+        data_ll_lat  = float(tree.find("dataLowerLeftLat").text)
         data_ll_long = float(tree.find("dataLowerLeftLong").text)
-        data_lr_lat = float(tree.find("dataLowerRightLat").text)
+        data_lr_lat  = float(tree.find("dataLowerRightLat").text)
         data_lr_long = float(tree.find("dataLowerRightLong").text)
 
         image_coordinates = Polygon(
@@ -259,65 +222,49 @@ if __name__ == "__main__":
             ]
         )
         
-        elevacion_solar = float(tree.find("sunElevation").text)
-        azimuth_solar = float(tree.find("sunAzimuth").text)  
-        porcentaje_nubes = int(tree.find("cloudCoverage").text)
+        elevacion_solar   = float(tree.find("sunElevation").text)
+        azimuth_solar     = float(tree.find("sunAzimuth").text)  
+        porcentaje_nubes  = int(tree.find("cloudCoverage").text)
         irradiancia_solar = float(tree.find("SolarIrradiance").text)
+        
         K = float(float(root[93][0].text)) # Ojo, esto sale de la posicion en el archivo xml
-        B = float(float(root[93][1].text)) # Ojo, esto sale de la posicion en el archivo xml 
-        altitud_satelite = float(tree.find("Satellite_Altitude").text)
-        angulo_zenit_satelite = float(tree.find("satZenithAngle").text)
+        B = float(float(root[93][1].text)) # Ojo, esto sale de la posicion en el archivo xml
+        
+        altitud_satelite        = float(tree.find("Satellite_Altitude").text)
+        angulo_zenit_satelite   = float(tree.find("satZenithAngle").text)
         angulo_azimuth_satelite = float(tree.find("satAzimuthAngle").text)
-        angulo_roll = float(tree.find("satOffNadir").text)
+        angulo_roll             = float(tree.find("satOffNadir").text)
         
         # Para cada uno, genero el geothumb
-        #thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, "geothumbs/"+lista_de_thumb[i].split("/")[2].split(".")[0]+".tif")
-        
-        #thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i].split("/")[2].split(".")[0]+".tif")
         thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i]+".tif")
         
         #ruta_geothumb = "geothumbs/"+lista_de_thumb[i].split("/")[2].split(".")[0]+".tif"
         ruta_geothumb = lista_de_thumb[i]+".tif"
+
+        metadata_xml = str(open(lista_de_xml[i], "r").read())
         
         # Construimos un dataframe con estos datos
-        """
-        datos = [satelite, sensor, orbita, escena, ano, mes, dia, long_central, lat_central,
-                 data_ul_long, data_ul_lat, data_ur_long, data_ur_lat, data_lr_long, data_lr_lat,
-                 data_ll_long, data_ll_lat, elevacion_solar, azimuth_solar, porcentaje_nubes, irradiancia_solar,
-                 K, B, altitud_satelite, angulo_zenit_satelite, angulo_azimuth_satelite, angulo_roll, nombre_comprimido,
-                 rawdatafn, ruta_thumb, ruta_geothumb]
-        """
-                 
         datos = [
             custom_id, satelite, sensor, orbita, escena, capture_date, str(image_coordinates),
             str(cutted_image_shape), elevacion_solar, azimuth_solar, porcentaje_nubes,
             irradiancia_solar, K, B, altitud_satelite, angulo_zenit_satelite,
             angulo_azimuth_satelite, angulo_roll, compressed_name, rawdatafn,
-            ruta_thumb, ruta_geothumb, compressed_file_path
+            ruta_thumb, ruta_geothumb, compressed_file_path, metadata_xml
         ]
         
         # Agregamos a la lista de registros
         registros.append(datos)
         
     # Convertimos la lista de listas a dataframe
-    """
-    columnas = ["satelite", "sensor", "orbita", "escena", "ano", "mes", "dia", "long_central",
-                "lat_central", "data_ul_long", "data_ul_lat", "data_ur_long", "data_ur_lat", 
-                "data_lr_long", "data_lr_lat", "data_ll_long", "data_ll_lat", "elevacion_solar", 
-                "azimuth_solar", "porcentaje_nubes", "irradiancia_solar", "K", "B", "altitud_satelite",
-                "angulo_zenit_satelite", "angulo_azimuth_satelite", "angulo_roll", "nombre_comprimido",
-                "rawdata", "thumbnail", "geothumbnail"]
-    """
     columns = [
         "custom_id", "satellite", "sensor", "orbit", "escene", "capture_date", "image_coordinates",
         "cutted_image_shape", "solar_elevation", "solar_azimuth", "cloud_percentage",
         "solar_irradiance", "k_val", "b_val", "satellite_altitude", "zenit_satellite_angle",
         "satellite_azimuth_angle", "roll_angle", "compressed_name", "rawdatafn",
-        "thumb_path", "geothumb_path", "compressed_file_path"
+        "thumb_path", "geothumb_path", "compressed_file_path", "metadata_xml"
     ]
     
     df = pd.DataFrame(registros, columns=columns)
-    #df.to_csv("file1.csv")
 
     db = DatabaseConfig("config/db_credentials_geoportal.csv")
     conn, engine = db.connection()
@@ -325,56 +272,27 @@ if __name__ == "__main__":
     for index, row in df.iterrows():
         # Upload to database
         tmp_df = row.to_frame().T
+        tmp_df = tmp_df.reset_index(drop=True)
         tmp_df.to_sql("satellite_images", con=engine, if_exists="append", index=False)
 
         # Upload to geoserver
-        # Upload raster
         # Credentials
-        geo = Geoserver("http://172.24.0.3:8080/geoserver", username="admin", password="admin")
-        
-        # Create workspace
-        workspace = "satellite_images"
-        print(geo.create_workspace(workspace=workspace))
+        geo = Geoserver("http://172.18.0.3:8080/geoserver", username="admin", password="admin")
 
-        # For uploading raster data to the geoserver
-        #path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/data/satellite_images/test.tif"
-        path       = tmp_df["geothumb_path"]
-        layer_name = tmp_df["custom_id"]
-        geo.create_coveragestore(layer_name=layer_name, path=path, workspace=workspace)
+        try:
+            # Create workspace
+            workspace = "satellite_images"
+            tmp       = geo.create_workspace(workspace=workspace)
+        except Exception as e:
+            if "409" in str(e):
+                print("Workspace already exist")
+                print("Continue...")
+        finally:
+            # For uploading raster data to the geoserver
+            #path      = r"/home/zurg/Desktop/code_testing/geoportal/sample_data/data/satellite_images/test.tif"
+            path       = tmp_df["geothumb_path"][0]
+            layer_name = tmp_df["custom_id"][0]
 
-        
-        
-
-    """
-    # Vamos a agregar la fecha como columna YYYY-MM-DD
-    df["year"] = df["ano"]
-    df["month"] = df["mes"]
-    df["day"] = df["dia"]
-    serie_fecha = pd.to_datetime(df[["year", "month", "day"]])
-    df["fecha"] = serie_fecha.dt.strftime('%Y-%m-%d')
-    # Movemos la fecha a la 7ma columna y la borramos del final
-    df.insert(7, "fecha", df.pop("fecha"))
-    df.pop("year")
-    df.pop("month")
-    df.pop("day")
-
-    # Vamos a incorporar la informacion de los estados que coinciden con la coord central de la imagen
-    gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.long_central, df.lat_central))
-    gdf.crs = "EPSG:4326"
-    
-    # Se hace el join con el shapefile
-    #joined = gpd.sjoin(estados_venezuela, gdf, how="right")
-
-    # Eliminamos las columnas innecesarias
-    joined = joined.drop(columns=["index_left", "ID", "geometry"])
-    
-    # Escribimos el dataframe como csv
-    joined = joined.rename(columns={"ESTADO":"estado"})
-    
-    joined.to_csv("registros_VRSS.csv", index=False, encoding="utf-16")
-    
-    # Borramos la carpeta xml con su contenido
-    shutil.rmtree("xml")
-    """
+            geo.create_coveragestore(layer_name=layer_name, path=path, workspace=workspace)
 
     print("Procesamiento finalizado!")    

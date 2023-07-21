@@ -1,553 +1,230 @@
 <!DOCTYPE html>
-<html lang="es" class="h-100">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <!-- OpenLayers CSS and JS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+    <title>Geoportal</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" integrity="sha512-usVBAd66/NpVNfBge19gws2j6JZinnca12rAe2l+d+QkLU9fiG02O1X8Q6hepIpr/EYKZvKx/I9WsnujJuOmBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js" integrity="sha512-a6ctI6w1kg3J4dSjknHj3aWLEbjitAXAjLDRUxo2wyYmDFRcz2RJuQr5M3Kt8O/TtUSp8n2rAyaXYy1sjoKmrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script -->
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="sidebar.css">
 
-    <!-- Fontawesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 
-    <!-- JQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- LEAFLET -->
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+     
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+     <!-- AREA SELECTION PLUGIN -->
+     <link rel="stylesheet" href="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.css" />
+     <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
 
     <!-- local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol3-sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/ol-layerswitcher.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/features/features.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
 
-    <title>Geoportal</title>
 </head>
 
-<body class="d-flex flex-column h-100">
-    <!-- header>
-        <!-- Fixed navbar ->
-        <nav class="navbar navbar-expand-md fixed-top navigationbar">
-        <!-- nav class="navbar navbar-expand-md navbar-dark bg-dark" ->
-            <div class="container-fluid">
-                <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}">
-                </a>
+<body>
 
-                <a class="navbar-brand" href="{{ url_for('sample_layers_openlayers') }}">Sample layers</a>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <button type="button" id="sidebarCollapse" class="btn btn-info btn-lg">
+                    <i class="fas fa-align-left"></i>
+                    <!-- span>Menu</span -->
+                </button>
+
+                <br>
+                <br>
                 
-                <a class="navbar-brand" href="#">About us</a>
-
-                <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </form>
-                </div>
+                <h3>Bootstrap Sidebar</h3>
+                <strong>BS</strong>
             </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </a>                    
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <div id="previews" href="#">Previews</div>
+                        </li>
+                        <li>
+                            <a href="#">Home 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Home 3</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-briefcase"></i>
+                        About
+                    </a>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-copy"></i>
+                        Pages
+                    </a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li>
+                            <a href="#">Page 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Page 2</a>
+                        </li>
+                        <li>
+                            <a href="#">Page 3</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-image"></i>
+                        Portfolio
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-question"></i>
+                        FAQ
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-paper-plane"></i>
+                        Contact
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                </li>
+                <li>
+                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                </li>
+            </ul>
         </nav>
-    </header -->
 
-    <!-- Begin page content -->
-    <main class="flex-shrink-0">
+        <!-- Page Content  -->
+        <div id="content">
 
-        <!-- Start of sidebar div -->
-        <div id="sidebar" class="sidebar collapsed">
-            <!-- Nav tabs -->
-            <div class="sidebar-tabs">
-                <ul role="tablist">
-                    <li>
-                        <a href="{{ url_for('index') }}"><i class="fa fa-home"></i></a>
-                    </li>
-                    
-                    <li>
-                        <a href="#home" role="tab"><i class="fa fa-bars"></i></a>
-                    </li>
-                    
-                    <li>
-                        <a href="#search" role="tab"><i class="fas fa-search"></i></a>
-                    </li>
-                    
-                    <li>
-                        <a href="#tools" role="tab"><i class="fas fa-drafting-compass"></i></a>
-                    </li>
-                    
-                    <li>
-                        <a href="#results" role="tab"><i class="fas fa-poll-h"></i></a>
-                    </li>
+            <!-- nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
 
-                    <li>
-                        <a href="#profile" role="tab"><i class="fa fa-user"></i></a>
-                    </li>
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-align-left"></i>
+                        <span>Toggle Sidebar</span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
 
-                    <li class="disabled">
-                        <a href="#messages" role="tab"><i class="fa fa-envelope"></i></a>
-                    </li>
-                </ul>
-
-                <ul role="tablist">
-                    <li>
-                        <a href="#settings" role="tab"><i class="fas fa-cog"></i></a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Tab panes -->
-            <div class="sidebar-content" id="sidebar-content">
-                <div class="sidebar-pane" id="home">
-                    <h1 class="sidebar-header">
-                        Layers
-                        <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                        
-                    </h1>
-
-                    <!-- !!! HERE WILL GO THE CONTENT OF LAYERSWITCHER !!! -->
-                    <div id="layers" class="layer-switcher"></div>
-
-                    <div id="layers2" class="layer-switcher"></div>
-                </div>
-
-                <div class="sidebar-pane" id="search">
-                    <h1 class="sidebar-header">
-                        Search<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-
-                    <div class="container">
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <form>
-                                    <label for="projection"> Projection </label>
-                                    <select id="projection">
-                                        <option value="EPSG:4326"> EPSG:4326 </option>
-                                        <option value="EPSG:3857"> EPSG:3857 </option>
-                                    </select>
-                                    <label for="precision"> Precision </label>
-                                    <input id="precision" class="precision" type="number" min="0" max="12" value="6" size="3"/>
-                                </form>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <br>
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        <br>
-                                        <h6> Mouse Position: </h6>
-                                    </div>
-                                    <div class="col">
-                                        <div id="mouse-position"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        <h6> Zoom Level: </h6>
-                                    </div>
-                                    <div class="col">
-                                        <div id="zoom-level"></div>
-                                        <br>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="enable_select"><a> Enable feature selection </a></label>
-                                <input type="checkbox" name="enable_select" id="enable_select" onClick="enable_select_interaction()">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <form>
-                                    <label for="satelite"> Satélite </label>
-                                    <select id="satelite">
-                                        <option value="vrss1"> Miranda VRSS-1 </option>
-                                        <option value="vrss2"> Sucre   VRSS-2 </option>
-                                    </select>
-                                </form>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="sensor"><a> Sensor </a></label>
-                                <br>
-                                <br>
-                                <label for="mss"><a> MSS </a></label>
-                                <input type="checkbox" name="mss" id="mss">
-                                <br>
-                                <label for="pan"><a> PAN </a></label>
-                                <input type="checkbox" name="pan" id="pan">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="orbit"><a> Órbita </a></label>
-                                <input type="text">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="sceneid"><a> Scene ID </a></label>
-                                <input type="text">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="date"><a> Fecha </a></label>
-                                <input type="date">
-                                <input type="date">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="date"><a> Roll </a></label>
-                                <div class="slidecontainer">
-                                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-                                    <p>Valor: <span id="myRangeValue"></span></p>
-                                </div>
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="nubosity"><a> Porcentaje de nubosidad </a></label>
-                                <input id="nubosity" type="number" min="0" max="100" value="10" size="3"/>
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <label for="enable_draw"><a> Enable </a></label>
-                                <input type="checkbox" name="enable_draw" id="enable_draw" onClick="enable_draw_interaction()">
-                                <form class="form-inline">
-                                    <label><a>Geometry type</a> &nbsp;</label>
-                                    <select id="draw_type" disabled>
-                                        <option value="Polygon" selected="selected"> Polygon </option>
-                                        <!-- option value="Point"> Point </option -->
-                                    </select>
-                                </form>
-                                <br>
-                            </div>
-                        </div>
-                        <div class="row border-bottom">
-                            <div class="col">
-                                <br>
-                                <a> Coordinates </a>
-
-                                <form method="POST" action="/search_image">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                                    <div id="polygons">
-                                        <ul class="list-group list-group-coordinates" id="coordinates-list">
-                                            <!-- li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <strong> Coordinates </strong> (etc)
-                                                <div class="image-parent">
-                                                    <div class="image-parent" id="placeholder"></div>
-                                                </div>
-                                            </li -->
-                                            <!-- li class="list-group-item"><strong>Signature
-                                                Accommodations</strong>(1480m)
-                                            </li -->
-                                        </ul>
-                                    </div>
-
-                                    <input type="hidden" id="level-zoom" name="level-zoom" value="">
-                                    <input type="hidden" id="center" name="center" value="">
-                                    <button type="submit">Search</button>
-                                </form>
-                                <br>
-                            </div>
-                        </div>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav ml-auto">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">Page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Page</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
+            </nav -->
 
-                <div class="sidebar-pane" id="tools">
-                    <h1 class="sidebar-header">
-                        Tools<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-                </div>
-                
-                <div class="sidebar-pane" id="results">
-                    <h1 class="sidebar-header">
-                        Results<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
+            <div id="map" class="map"></div>
 
-                    <br>
-                    <b><span id="number-images"></span> images found</b>
+            <div>
+                <form id="search" method="POST" action="/search">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <div class="col">
-                        <div id="polygons">
-                            <br>
-                            <ul class="list-group list-group-result" id="coordinates-list">
-
-                                <!-- img src="http://172.25.0.3:8080/geoserver/wms?request=GetMap&service=WMS&version=1.1.0&layers=nurc%3AImg_Sample&format=image%2Fpng" -->
-
-                                <img src="http://172.25.0.3:8080/geoserver/wms/reflect?layers=nurc:Img_Sample" width="100" height="100">
-                                
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="sidebar-pane" id="profile">
-                    <h1 class="sidebar-header">
-                        Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-                </div>
-
-                <div class="sidebar-pane" id="messages">
-                    <h1 class="sidebar-header">
-                        Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-                </div>
-
-                <div class="sidebar-pane" id="settings">
-                    <h1 class="sidebar-header">
-                        Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                    </h1>
-
-                </div>
+                    <input type="hidden" id="coordinates" name="coordinates" value="">
+                    <input type="hidden" id="zoom_level" name="zoom_level" value="">
+                    <input type="hidden" id="center" name="center" value="">
+                    <input type="hidden" id="search_status" name="search_status" value="False">
+                </form>
             </div>
         </div>
-        <!-- End of sidebar div -->
-    </main>
-
-    <div id="mapDiv" class="mapDiv sidebar-map">
-        <!-- div id="popup"></div -->
     </div>
 
-    <div id="popup" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
-        <div id="popup-content"></div>
-    </div>
-    
-
-    <!-- footer class="footer mt-auto py-3 bg-light">
-        <div class="container">
-            <span class="text-muted">Place sticky footer content here.</span>
-        </div>
-    </footer -->
-
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-72WD92hLs7T5FAXn3vkNZflWG6pglUDDpm87TeQmfSg8KnrymL2G30R7as4FmTwhgu9H7eSzDCX3mjitSecKnw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
-    <script src="{{ url_for('static', filename='js/globals.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/functions.js') }}"></script>
-
-    <script>
-        var slider = document.getElementById("myRange");
-        var output = document.getElementById("myRangeValue");
-        output.innerHTML = slider.value;
-
-        slider.oninput = function() {
-          output.innerHTML = this.value;
-        }
-    </script>
-    
-    <script>
-        var map_config = {{ map_config|tojson }};
-        var view = map_view(map_config["center"], map_config["zoom"]);
-    </script>
-
-    <!-- Start sidebar -->
-    <script>
-        // TEMP sidebar-v2 requires ol.inherits which was removed in ol v6.0
-        if (window.ol && !window.ol.inherits) {
-            ol.inherits = function inherits(childCtor, parentCtor) {
-                childCtor.prototype = Object.create(parentCtor.prototype);
-                childCtor.prototype.constructor = childCtor;
-            };
-        }
-    </script>
-    <script src="{{ url_for('static', filename='js/sidebar/ol3-sidebar.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/sidebar/ol-layerswitcher.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/sidebar/sidebar.js') }}"></script>
-    <!-- End sidebar -->
-
-    <!-- Start features -->
-    <script src="{{ url_for('static', filename='js/features/mouse_position_control.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/features/draw_and_modify_features.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/features/marker_popup.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/features/select_feature.js') }}"></script>
-    <!-- End features -->
-    
-    <script src="{{ url_for('static', filename='js/layer_styles.js') }}"></script>
-
-    <script>
-        var layers = {{ layers|tojson }};
-        var result = {{ result|tojson }};
-
-        // Set the number of images found in database
-        if(Object.keys(result["images"]).length == 0) {
-            document.getElementById("number-images").innerHTML = 0;
-        }
-        else {
-            document.getElementById("number-images").innerHTML = Object.keys(result["images"]).length;
-        }
-
-        // If there is images to show
-        if(result["images"] != 1) {
-            for(var i=0; i<=(result["images"].length)-1; i++) {
-                var base64_image = new Image();
-                base64_image.src = result["images"][i]["image"];
-                
-                display_base64_image_onmap(base64_image, result["images"][i]["extent"], result["images"][i]["name"], mapDiv, main_projection);
-            }
-
-            for(var i=0; i<=(result["shapes"].length)-1; i++) {
-                display_user_selection(mapDiv, result["shapes"][i]);
-            }
-        }
-
-        // If there is layers to show
-        /*
-        if(layers["layers"] != 1) {
-            layers_data = Array();
-
-            for(var i=0; i<=(layers["layers"]["layer"].length)-1; i++) {
-                //layers_data.push(display_layer(layers["layers"][i]["data"], layers["layers"][i]["title"], mapDiv));
-                console.log(layers["layers"]["layer"][i]["href"]);
-                layers_data.push(display_layer(layers["layers"]["layer"][i]["href"], layers["layers"]["layer"][i]["name"], mapDiv));
-            }
-
-            var ven_layers = new ol.layer.Group({
-                // A layer must have a title to appear in the layerswitcher
-                title: "Venezuela data",
-                // Adding a "fold" property set to either "open" or "close" makes the group layer
-                // collapsible
-                fold: "open",
-                layers: layers_data
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
             });
+        });
+    </script>
 
-            var my_data = new ol.layer.Group({
-                // A layer must have a title to appear in the layerswitcher
-                title: "Data",
-                // Adding a "fold" property set to either "open" or "close" makes the group layer
-                // collapsible
-                fold: "open",
-                //layers: [uk_layers, ven_layers]
-                layers: [ven_layers]
-            });
-            mapDiv.addLayer(my_data);
+    <script> var map_config = {{ map_config|tojson }}; </script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/draw_control.js') }}"></script>
+
+    <script>
+        var result = {{ geoserver_info|tojson }};
+        
+        if(result) {
+            var layers = {{ layers|tojson }};
+            
+            var workspace     = result["workspace"];
+            var service       = result["service"];
+            var geoserver_url = result["geoserver_url"] + "/" + workspace + "/" + service;
+            var format        = result["format"];
+            var transparent   = result["transparent"];
+
+            for(let key in layers) {
+                var wmsLayer = L.tileLayer.wms(geoserver_url, {
+                    layers     : workspace + ":" + layers[key],
+                    format     : format,
+                    transparent: transparent,
+                    //version    : '1.1.0',
+                    //attribution: "country layer"
+                });
+                wmsLayer.addTo(map);
+
+                var url = result["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key];
+                $("#previews").append('<br><br><img id='+layers[key]+' src='+url+' width="100" height="100">');
+            }
         }
-        */
-        /*
-        var wmsSource = new ol.source.TileWMS({
-                url: 'https://ahocevar.com/geoserver/wms',
-                params: {'LAYERS': '', 'TILED': true},
-                serverType: 'geoserver',
-                crossOrigin: 'anonymous'
-              });
-
-              var wmsLayer = new ol.layer.Tile({
-                source: wmsSource
-              });
-            mapDiv.addLayer(wmsLayer);
-        */
-            /*
-            var wmsSource = new ol.source.TileWMS({
-                    url: 'http://172.25.0.3:8080/geoserver/test_workspace/wms',
-                    params: {'LAYERS': 'test_workspace:Estados', 'TILED': true},
-                    serverType: 'geoserver',
-                    crossOrigin: 'anonymous'
-                  });
-              */
-
-                var format = 'image/png';
-              var untiled = new ol.layer.Image({
-                source: new ol.source.ImageWMS({
-                  ratio: 1,
-                  url: 'http://172.25.0.3:8080/geoserver/nurc/wms', // name of workspace
-                  params: {'FORMAT': format,
-                           //'VERSION': '1.1.1',  
-                        "LAYERS": 'nurc:Img_Sample', // name of workspace and raster name
-                        //"exceptions": 'application/vnd.ogc.se_inimage',
-                  },
-                  //projection: 'EPSG:4326',
-                })
-              });
-              mapDiv.addLayer(untiled);
-              
-                var format = 'image/png';
-              var untiled = new ol.layer.Image({
-                source: new ol.source.ImageWMS({
-                  ratio: 1,
-                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
-                  params: {'FORMAT': format,
-                           //'VERSION': '1.1.1',  
-                        "LAYERS": 'custom_rasters:test', // name of workspace and raster name
-                        //"exceptions": 'application/vnd.ogc.se_inimage',
-                  },
-                  //projection: 'EPSG:4326',
-                })
-              });
-              mapDiv.addLayer(untiled);
-              
-                var format = 'image/png';
-              var untiled = new ol.layer.Image({
-                source: new ol.source.ImageWMS({
-                  ratio: 1,
-                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
-                  params: {'FORMAT': format,
-                           //'VERSION': '1.1.1',  
-                        "LAYERS": 'custom_rasters:output2', // name of workspace and raster name
-                        //"exceptions": 'application/vnd.ogc.se_inimage',
-                  },
-                  //projection: 'EPSG:4326',
-                })
-              });
-              mapDiv.addLayer(untiled);
-              
-                var format = 'image/png';
-              var untiled = new ol.layer.Image({
-                source: new ol.source.ImageWMS({
-                  ratio: 1,
-                  url: 'http://172.25.0.3:8080/geoserver/custom_rasters/wms', // name of workspace
-                  params: {'FORMAT': format,
-                           //'VERSION': '1.1.1',  
-                        "LAYERS": 'custom_rasters:output3', // name of workspace and raster name
-                        //"exceptions": 'application/vnd.ogc.se_inimage',
-                  },
-                  //projection: 'EPSG:4326',
-                })
-              });
-              mapDiv.addLayer(untiled);
-
-        ol.control.LayerSwitcher.renderPanel(mapDiv, toc, {reverse: false});
-        mapDiv.addControl(sidebar);
     </script>
 </body>
+
 </html>

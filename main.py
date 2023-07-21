@@ -18,12 +18,7 @@ from geo.Geoserver import Geoserver
 
 from app.models.models                 import DatabaseConfig
 from app.models.satellite_images_table import *
-from app.functions                     import *
 from app.config                        import *
-
-# THIRD PARTY LIBRARIES
-# David Shea https://github.com/dashea/requests-file
-from app.third_party.david_shea.requests_file import FileAdapter
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -36,199 +31,11 @@ map_config      = get_map_config(map_config_path)
 
 @app.route("/")
 @app.route("/index")
-def index():
-    # Retrieve base layers
-    """
-    geometry_colums = get_all_geometry_colums(DbConn, db_credentials_path)
-
-    layers = list()
-
-    for i in geometry_colums["f_table_name"]:
-        layers.append(
-            {
-                "title": i,
-                "data" : get_layer_from_db(DbConn, db_credentials_path, i, proj_4326, proj_4326)
-            }
-        )
-
-    layers = {"layers": layers}
-    """
-    layers = 1
-    images = {"images": 1}
-    return render_template("index.html", layers=layers, result=images, map_config=map_config)
-
-@app.route("/search_image", methods=["POST"])
-def search_image():
-    map_config = dict()
-    
-    # Retrieve coordinates from user
-    coord_from_user = list()
-    if request.method == "POST":
-        """
-        map_config = {
-            "center": get_coord_from_js(request.form["center"]),
-            "zoom"  : float(request.form["level-zoom"])
-        }
-        """
-        
-        for i in request.form:
-            if "matchme" in i:
-                tmp = get_coord_from_js(request.form.getlist(i)[0])
-
-                # If there is only two coordinates
-                if len(tmp) == 2:
-                    coord_from_user.append(Point(tmp))
-                # More than two
-                else:
-                    coordinates = list()
-                    for j in range(len(tmp)-1):
-                        if j%2 == 0:
-                            coordinates.append(tuple([float(tmp[j]), float(tmp[j+1])]))
-                    coord_from_user.append(Polygon(coordinates))
-    
-    Session    = sessionmaker(bind=engine)
-    db_session = Session()
-
-    images = []
-    shapes = []
-    for i in coord_from_user:
-        result = intersect(db_session, i)
-        print()
-        print("result")
-        print(result)
-        print()
-        if result:
-            for j in result:
-                path = j[0]
-                
-                productupperleftlat   = j[1]
-                productupperleftlong  = j[2]
-                productupperrightlat  = j[3]
-                productupperrightlong = j[4]
-                productlowerleftlat   = j[5]
-                productlowerleftlong  = j[6]
-                productlowerrightlat  = j[7]
-                productlowerrightlong = j[8]
-
-                dataupperleftlat   = j[9]
-                dataupperleftlong  = j[10]
-                dataupperrightlat  = j[11]
-                dataupperrightlong = j[12]
-                datalowerleftlat   = j[13]
-                datalowerleftlong  = j[14]
-                datalowerrightlat  = j[15]
-                datalowerrightlong = j[16]
-
-                polygon = Polygon(
-                    [
-                        (productupperrightlong, productupperrightlat),
-                        (productlowerrightlong, productlowerrightlat),
-                        (productlowerleftlong, productlowerleftlat),
-                        (productupperleftlong, productupperleftlat)
-                    ]
-                )
-
-                polygon_shapes = Polygon(
-                    [
-                        (dataupperrightlong, dataupperrightlat),
-                        (datalowerrightlong, datalowerrightlat),
-                        (datalowerleftlong, datalowerleftlat),
-                        (dataupperleftlong, dataupperleftlat)
-                    ]
-                )
-                tmp = []
-                for k in range(len(polygon_shapes.exterior.coords)):
-                    tmp.append(list(polygon_shapes.exterior.coords[k]))
-                shapes.append(tmp)
-
-                extent = [
-                    productlowerleftlong,
-                    productlowerleftlat,
-                    productupperrightlong,
-                    productupperrightlat
-                ]
-
-                # THIRD PARTY
-                # David Shea https://github.com/dashea/requests-file
-                s = requests.Session()
-                s.mount("file://", FileAdapter())
-                ### END THIRD PARTY
-
-                #resp = s.get('file:///path/to/file')
-                
-                url      = path
-                #response = requests.get(url)
-                response = s.get(url)
-                image    = Image.open(BytesIO(response.content))
-                image    = black_to_transparency(image)
-                #image = np.array(image)
-
-                buffer = BytesIO()
-                image.save(buffer, format="PNG")
-                img   = buffer.getvalue()
-                image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
-
-                name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
-                images.append({"image": image, "extent": extent, "name": name})
-    
-    layers = 1
-
-    # If there were no match
-    if len(images) == 0:
-        images = 1
-        shapes = 1
-
-    result = {"images": images, "shapes": shapes}
-    #return render_template("index.html", layers=layers, result=result, map_config=map_config)
-    return render_template("index.html", layers=layers, result=result, map_config=default_map_config)
-
-@app.route("/sample_layers_openlayers")
-def sample_layers_openlayers():
-    # Retrieve base layers
-    """
-    layers = [
-        {
-            "title": "Estados de Venezuela",
-            "data" : get_layer_from_db(DbConn, engine, "estados", proj_4326, proj_4326)
-        },
-        {
-            "title": "Centros poblados",
-            "data" : get_layer_from_db(DbConn, engine, "centros_pob_wgs84", proj_4326, proj_4326)
-        },
-        {
-            "title": "Vías troncales",
-            "data" : get_layer_from_db(DbConn, engine, "vialidad_troncal", proj_4326, proj_4326)
-        },
-        {
-            "title": "Arco minero del Orinoco",
-            "data" : get_layer_from_db(DbConn, engine, "amo_gwgs84", proj_4326, proj_4326)
-        },
-        {
-            "title": "índice ?",
-            "data" : get_layer_from_db(DbConn, engine, "indice_pr_vrss2", proj_4326, proj_4326)
-        },
-    ]
-
-    layers = {"layers": layers}
-    """
-
-    images = {"images": 1}
-
-    geo = Geoserver("http://localhost:8080/geoserver", username="admin", password="geoserver")
-    layers = geo.get_layers()
-    print(layers)
-
-    layers = 1    
-    return render_template("index.html", layers=layers, result=images, map_config=default_map_config)
-
-@app.route("/index_leaflet")
 def index_leaflet():
-    layers = 1
-    images = {"images": 1}
-    return render_template("index_leaflet.html", layers=layers, result=images, map_config=map_config)
+    return render_template("index.html", geoserver_info=False, layers=False, map_config=map_config)
 
-@app.route("/search_image_leaflet", methods=["POST"])
-def search_image_leaflet():
+@app.route("/search", methods=["POST"])
+def search():
     # Retrieve coordinates from user
     if request.method == "POST":
         previous_map_config = {
@@ -257,93 +64,48 @@ def search_image_leaflet():
             Session      = sessionmaker(bind=engine)
             db_session   = Session()
 
-            images = []
-            shapes = []
+            geoserver_info = {}
+            geoserver_info["return"]        = False
+            geoserver_info["geoserver_url"] = None
+            geoserver_info["workspace"]     = None
+            geoserver_info["service"]       = None
+            geoserver_info["format"]        = None
+            geoserver_info["transparent"]   = None
+            
+            layers = {}
+            
             result = intersect(db_session, formatted_coord_from_user3)
             if result:
-                for j in result:
-                    path = j[0]
-                    
-                    productupperleftlat   = j[1]
-                    productupperleftlong  = j[2]
-                    productupperrightlat  = j[3]
-                    productupperrightlong = j[4]
-                    productlowerleftlat   = j[5]
-                    productlowerleftlong  = j[6]
-                    productlowerrightlat  = j[7]
-                    productlowerrightlong = j[8]
+                layers_ = {}
+                aux     = 0
+                
+                for i in result:
+                    if geoserver_info["return"] == False:
+                        geoserver_info["return"] = True
+                        
+                    if geoserver_info["geoserver_url"] == None:
+                        geoserver_info["geoserver_url"] = i[0]
+                        
+                    if geoserver_info["workspace"] == None:
+                        geoserver_info["workspace"] = i[1]
+                        
+                    if geoserver_info["service"] == None:
+                        geoserver_info["service"] = i[2]
 
-                    dataupperleftlat   = j[9]
-                    dataupperleftlong  = j[10]
-                    dataupperrightlat  = j[11]
-                    dataupperrightlong = j[12]
-                    datalowerleftlat   = j[13]
-                    datalowerleftlong  = j[14]
-                    datalowerrightlat  = j[15]
-                    datalowerrightlong = j[16]
+                    if geoserver_info["format"] == None:
+                        geoserver_info["format"] = i[3]
 
-                    polygon = Polygon(
-                        [
-                            (productupperrightlong, productupperrightlat),
-                            (productlowerrightlong, productlowerrightlat),
-                            (productlowerleftlong, productlowerleftlat),
-                            (productupperleftlong, productupperleftlat)
-                        ]
-                    )
+                    if geoserver_info["transparent"] == None:
+                        geoserver_info["transparent"] = i[4]
 
-                    polygon_shapes = Polygon(
-                        [
-                            (dataupperrightlong, dataupperrightlat),
-                            (datalowerrightlong, datalowerrightlat),
-                            (datalowerleftlong, datalowerleftlat),
-                            (dataupperleftlong, dataupperleftlat)
-                        ]
-                    )
-                    tmp = []
-                    for k in range(len(polygon_shapes.exterior.coords)):
-                        tmp.append(list(polygon_shapes.exterior.coords[k]))
-                    shapes.append(tmp)
-
-                    extent = [
-                        productlowerleftlong,
-                        productlowerleftlat,
-                        productupperrightlong,
-                        productupperrightlat
-                    ]
-
-                    # THIRD PARTY
-                    # David Shea https://github.com/dashea/requests-file
-                    s = requests.Session()
-                    s.mount("file://", FileAdapter())
-                    ### END THIRD PARTY
-
-                    #resp = s.get('file:///path/to/file')
-                    
-                    url      = path
-                    #response = requests.get(url)
-                    response = s.get(url)
-                    image    = Image.open(BytesIO(response.content))
-                    image    = black_to_transparency(image)
-                    #image = np.array(image)
-
-                    buffer = BytesIO()
-                    image.save(buffer, format="PNG")
-                    img   = buffer.getvalue()
-                    image = "data:image/png;base64,"+base64.b64encode(img).decode("utf-8")
-
-                    name   = hashlib.md5(str(dtime.now()).encode()).hexdigest()
-                    images.append({"image": image, "extent": extent, "name": name})
+                    layers[aux] = i[5]
+                    aux += 1
     
-    layers = 1
-    images = []
+    if geoserver_info["return"] == False:
+        geoserver_info = False
+        layers         = False
 
-    # If there were no match
-    if len(images) == 0:
-        images = 1
-        shapes = 1
-
-    result = {"images": images, "shapes": shapes}
-    return render_template("index_leaflet.html", layers=layers, result=result, map_config=map_config)
+    return render_template("index.html", geoserver_info=geoserver_info, layers=layers, map_config=map_config)
     
 if __name__ == "__main__":
     csrf.init_app(app)

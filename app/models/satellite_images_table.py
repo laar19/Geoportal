@@ -41,18 +41,10 @@ class SatelliteImages(Base):
     rawdatafn                  = Column(VARCHAR)
     thumb_path                 = Column(VARCHAR)
     geothumb_path              = Column(VARCHAR)
-    metadata_xml               = Column(Text, nullable=True) # REMOVE NULLABLE
     compressed_file_path       = Column(VARCHAR, nullable=True)
+    metadata_xml               = Column(Text)
     create_date                = Column(DateTime, default=datetime.now)
 db_tables[table_name] = SatelliteImages
-
-def intersect(db_session, polygon):
-    return db_session.query(
-        SatelliteImages.geoserver_url_html_preview,
-        SatelliteImages.geoserver_url_map_preview
-    ).filter(
-        func.ST_Intersects(SatelliteImages.cutted_image_shape, from_shape(polygon))
-    ).all()
 
 table_name = "geoserver_config"
 class GeoserverConfig(Base):
@@ -66,6 +58,18 @@ class GeoserverConfig(Base):
     transparent = Column(VARCHAR)
     create_date = Column(DateTime, default=datetime.now)
 db_tables[table_name] = GeoserverConfig
+
+def intersect(db_session, polygon):
+    return db_session.query(
+        GeoserverConfig.url,
+        GeoserverConfig.workspace,
+        GeoserverConfig.service,
+        GeoserverConfig.format_,
+        GeoserverConfig.transparent,
+        SatelliteImages.custom_id,
+    ).filter(
+        func.ST_Intersects(SatelliteImages.cutted_image_shape, from_shape(polygon))
+    ).all()
 
 # Check if table exist
 """
