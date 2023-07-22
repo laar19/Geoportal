@@ -1,13 +1,21 @@
-from app.models.models                 import DatabaseConfig
+from app.models.models                 import *
 from app.models.satellite_images_table import *
+from app.models.geoserver_table        import *
+
+# Check if table exist
+def check_table(engine, db_tables, i):
+    insp = db.inspect(engine)
+    
+    if not insp.has_table(i, schema="public"):
+        db_tables[i].__table__.create(engine)
 
 # Check database
-db_credentials_path = "config/db_credentials_geoportal.csv"
+db_credentials_path = "config/db_geoportal_credentials.csv"
 DbConn = DatabaseConfig(db_credentials_path)
 DbConn.check_database()
 
 # Check database tables
 conn, engine = DbConn.connection()
 for i in db_tables:
-    check_satellite_images_table(engine, db_tables, i)
+    check_table(engine, db_tables, i)
 conn.close()

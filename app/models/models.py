@@ -2,15 +2,22 @@ import sys
 
 import pandas as pd
 
-from datetime import datetime
-
 import sqlalchemy as db
-from sqlalchemy       import MetaData, create_engine
+from sqlalchemy       import MetaData, create_engine, Column, func
+from sqlalchemy.orm   import declarative_base
+from sqlalchemy.types import *
 
 from sqlalchemy_utils import database_exists
 
-#######################################################################
-# Start DB set up
+from geoalchemy2       import Geometry
+from geoalchemy2.shape import from_shape
+
+from datetime import datetime as dtime
+
+Base = declarative_base()
+
+db_tables = {}
+
 class DatabaseConfig:
     def __init__(self, path, position=0):
         self.path     = path

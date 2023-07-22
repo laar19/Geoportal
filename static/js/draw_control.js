@@ -35,10 +35,12 @@ var options = {
         }
         */
     },
+    /*
     edit: {
         featureGroup: editableLayers, //REQUIRED!!
         remove: false
     }
+    */
 };
 var drawControl = new L.Control.Draw(options);
 map.addControl(drawControl);

@@ -3,10 +3,7 @@ import os, zipfile, re, shutil, hashlib
 
 import lxml.etree as ET
 
-import pandas    as pd
-import geopandas as gpd
-
-from datetime import datetime as dtime
+import pandas as pd
 
 from osgeo import gdal, osr
 
@@ -266,7 +263,7 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(registros, columns=columns)
 
-    db = DatabaseConfig("config/db_credentials_geoportal.csv")
+    db = DatabaseConfig("config/db_geoportal_credentials.csv")
     conn, engine = db.connection()
 
     for index, row in df.iterrows():
@@ -277,7 +274,12 @@ if __name__ == "__main__":
 
         # Upload to geoserver
         # Credentials
-        geo = Geoserver("http://172.18.0.3:8080/geoserver", username="admin", password="admin")
+        geoserver_credentils = pd.read_csv("config/geoserver_credentials.csv")
+        geo = Geoserver(
+            str(geoserver_credentils["url"][0]),
+            username = str(geoserver_credentils["username"][0]),
+            password = str(geoserver_credentils["password"][0])
+        )
 
         try:
             # Create workspace

@@ -1,30 +1,21 @@
-import json, base64, requests, hashlib
-
-import pandas    as pd
-import geopandas as gpd
-
-from datetime import datetime as dtime
-
-from flask     import Flask, render_template, request, jsonify
+from flask     import Flask, render_template, request
 from flask_wtf import CSRFProtect
 
-from io import BytesIO
-
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Polygon
 
 from sqlalchemy.orm import sessionmaker
 
-from geo.Geoserver import Geoserver
-
 from app.models.models                 import DatabaseConfig
-from app.models.satellite_images_table import *
+#from app.models.satellite_images_table import *
+#from app.models.geoserver_table        import *
+from app.models.functions              import *
 from app.config                        import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
-db_credentials_path = "config/db_credentials_geoportal.csv"
+db_credentials_path = "config/db_geoportal_credentials.csv"
 
 map_config_path = "config/map_config.csv"
 map_config      = get_map_config(map_config_path)
