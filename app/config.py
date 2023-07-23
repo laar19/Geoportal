@@ -1,9 +1,4 @@
-import json
-
 import pandas as pd
-
-import sqlalchemy as db
-from sqlalchemy_utils import create_database, database_exists
 
 from datetime import datetime as dtime
 
@@ -11,13 +6,12 @@ from werkzeug.security import generate_password_hash
 
 SECRET_KEY = generate_password_hash(str(dtime.now()))
 
-proj_4326 = 4326
-#proj_3857 = 3857
-main_projection = proj_4326;
+def get_map_config(path, position=0):
+    data       = pd.read_csv(path)
 
-class MapDiv:
-    def main_config(self):
-        center = [-65.89003678746177, 8.016859315038008]
-        zoom   = 5.5
+    map_config = {
+        "zoom_level": int(data["zoom_level"][position]),
+        "center"    : [float(data["lat"][position]), float(data["long"][position])]
+    }
 
-        return {"center": center, "zoom": zoom}
+    return map_config

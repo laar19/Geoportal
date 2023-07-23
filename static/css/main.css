@@ -1,22 +1,16 @@
-/* Main map */
-.mapDiv {
-    width : 100%;
+body {
+    padding: 0;
+    margin: 0;
+}
+/*
+html, body, #map {
     height: 100%;
+    width: 100vw;
 }
+*/
 
-/* Zoom control */
-.ol-zoom {
-    left      : unset;
-    right     : 8px;
-    margin-top: 6%;
-}
-
-/* Image search results */
-.list-group-result {
-    max-height: 600px !important;
-}
-
-/* Main navbar */
-.navigationbar {
-    background-color: white;
+#map {
+    /*width : 78vw;*/
+    width : 100%;
+    height: 94vh;
 }
