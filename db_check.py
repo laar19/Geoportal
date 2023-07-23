@@ -12,7 +12,7 @@ def check_table(engine, db_tables, i):
         db_tables[i].__table__.create(engine)
 
 # Check database
-db_credentials_path = "config/db_geoportal_credentials.csv"
+db_credentials_path = "config/geoportal_db_credentials.csv"
 DbConn = DatabaseConfig(db_credentials_path)
 DbConn.check_database()
 

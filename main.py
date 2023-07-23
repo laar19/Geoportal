@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
-db_credentials_path = "config/db_geoportal_credentials.csv"
+db_credentials_path = "config/geoportal_db_credentials.csv"
 
 map_config_path = "config/map_config.csv"
 map_config      = get_map_config(map_config_path)

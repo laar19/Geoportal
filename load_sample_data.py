@@ -263,7 +263,7 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(registros, columns=columns)
 
-    db = DatabaseConfig("config/db_geoportal_credentials.csv")
+    db = DatabaseConfig("config/geoportal_db_credentials.csv")
     conn, engine = db.connection()
 
     for index, row in df.iterrows():
