@@ -199,20 +199,21 @@
     <script src="{{ url_for('static', filename='js/draw_control.js') }}"></script>
 
     <script>
-        var result = {{ geoserver_info|tojson }};
+        var geoserver_info = {{ geoserver_info|tojson }};
         
-        if(result) {
+        if(geoserver_info) {
             var layers = {{ layers|tojson }};
             
-            var workspace     = result["workspace"];
-            var service       = result["service"];
-            var geoserver_url = result["geoserver_url"] + "/" + workspace + "/" + service;
-            var format        = result["format"];
-            var transparent   = result["transparent"];
+            var workspace     = geoserver_info["workspace"];
+            var service       = geoserver_info["service"];
+            var geoserver_url = geoserver_info["geoserver_url"] + "/" + workspace + "/" + service;
+            var format        = geoserver_info["format"];
+            var transparent   = geoserver_info["transparent"];
 
+            var aux = 0;
             for(let key in layers) {
                 var wmsLayer = L.tileLayer.wms(geoserver_url, {
-                    layers     : workspace + ":" + layers[key],
+                    layers     : workspace + ":" + layers[key]["custom_id"],
                     format     : format,
                     transparent: transparent,
                     //version    : '1.1.0',
@@ -220,8 +221,36 @@
                 });
                 wmsLayer.addTo(map);
 
-                var url = result["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key];
-                $("#previews").append('<br><br><img id='+layers[key]+' src='+url+' width="100" height="100">');
+                var url = geoserver_info["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key]["custom_id"];
+                
+                $("#previews").append('<div id=div_preview_'+aux+'></div>');
+
+                $('#div_preview_'+aux+'').append('<br><br><img id='+layers[key]["custom_id"]+' src='+url+' width="100" height="100">');
+                $('#div_preview_'+aux+'').append('<div>Satellite: '+layers[key]["satellite"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Sensor: '+layers[key]["sensor"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Capture date: '+layers[key]["capture_date"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Solar Elevation: '+layers[key]["solar_elevation"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Solar Azimuth: '+layers[key]["solar_azimuth"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Cloud percentage: '+layers[key]["cloud_percentage"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Solar irradiance: '+layers[key]["solar_irradiance"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>K: '+layers[key]["k_val"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>B: '+layers[key]["b_val"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Satellite altitude: '+layers[key]["satellite_altitude"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Zenit satellite angle: '+layers[key]["zenit_satellite_angle"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Satellite azimuth angle: '+layers[key]["satellite_azimuth_angle"]+'</div>');
+                $('#div_preview_'+aux+'').append('<div>Roll angle: '+layers[key]["roll_angle"]+'</div>');
+                $('#div_preview_'+aux+'').append('<a href='+layers[key]["compressed_file_path"]+'>Download</a>');
+
+                var coords = JSON.parse(layers[key]["cutted_image_shape"])["coordinates"];
+                //var coords =  [[48,-3],[50,5],[44,11],[48,-3]] ;
+                console.log(coords);
+                
+                var polygon = L.polygon(coords, {color: 'red'});
+                polygon.addTo(map);
+
+                map.fitBounds(polygon.getBounds());
+
+                aux = aux + 1;
             }
         }
     </script>

@@ -11,6 +11,10 @@ from shapely.geometry.polygon import Polygon
 
 from geo.Geoserver import Geoserver
 
+from sqlalchemy import insert
+
+from app.models.satellite_images_table import *
+
 from app.models.models import DatabaseConfig
 
 def create_folder(folder_name):
@@ -40,7 +44,8 @@ def unpackXML(filename, carpeta):
             # Extraemos solo el archivo de metadatos principal
             if re.search('\d.xml$', name):
                 print("Extrayendo archivo {}".format(name))
-                zip.extract(name, './'+carpeta)
+                #zip.extract(name, './'+carpeta)
+                zip.extract(name, carpeta)
                 print("Extraccion de archivo finalizada!\n")
                 return name
                 
@@ -66,7 +71,8 @@ def unpackThumb(filename, carpeta):
             # Extraemos solo el archivo de metadatos principal
             if re.search('_THUMB.jpg', name):
                 print("Extrayendo archivo {}".format(name))
-                zip.extract(name, './'+carpeta)
+                #zip.extract(name, './'+carpeta)
+                zip.extract(name, carpeta)
                 print("Extraccion de archivo finalizada!\n")
                 return name
 
@@ -131,7 +137,11 @@ def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
 # Aca comienza script
 if __name__ == "__main__":
     # Lista los archivos comprimidos de imagenes presentes en la carpeta imagenes
-    carpeta_imagenes = "sample_data"
+    source_dir_      = "/load_data"
+    carpeta_imagenes = os.path.expanduser("~") + source_dir_
+
+    target_dir_ = "/data"
+    target_dir  = os.path.expanduser("~") + target_dir_
     
     lista_de_archivos = []
     for (dirpath, dirnames, filenames) in os.walk(carpeta_imagenes):
@@ -161,15 +171,16 @@ if __name__ == "__main__":
         
     # Para cada xml, hay que extraer los datos de interes
     registros = []
-    for i in range(len(lista_de_xml)):        
+    for i in range(len(lista_de_xml)):
         print(f"Procesando archivo {i+1} de {len(lista_de_xml)}")
 
         custom_id = folder_names[i]
 
-        compressed_file_path = compressed_file_list[i]
+        compressed_file_path_ = compressed_file_list[i]
+        compressed_file_path = compressed_file_path_.replace(source_dir_, target_dir_)
         
         # Primero, extraemos el nombre de archivo comprimido original
-        compressed_name = lista_nombres_comprimidos[i]
+        #compressed_name = lista_nombres_comprimidos[i]
         
         # Extraemos la ruta del thumbnail
         ruta_thumb = lista_de_thumb[i]
@@ -242,11 +253,12 @@ if __name__ == "__main__":
         
         # Construimos un dataframe con estos datos
         datos = [
-            custom_id, satelite, sensor, orbita, escena, capture_date, str(image_coordinates),
-            str(cutted_image_shape), elevacion_solar, azimuth_solar, porcentaje_nubes,
-            irradiancia_solar, K, B, altitud_satelite, angulo_zenit_satelite,
-            angulo_azimuth_satelite, angulo_roll, compressed_name, rawdatafn,
-            ruta_thumb, ruta_geothumb, compressed_file_path, metadata_xml
+            custom_id, satelite, sensor, orbita, escena, capture_date,
+            str(image_coordinates), str(cutted_image_shape), elevacion_solar,
+            azimuth_solar, porcentaje_nubes, irradiancia_solar, K, B,
+            altitud_satelite, angulo_zenit_satelite, angulo_azimuth_satelite,
+            angulo_roll, rawdatafn, ruta_thumb, ruta_geothumb, compressed_file_path,
+            metadata_xml
         ]
         
         # Agregamos a la lista de registros
@@ -254,11 +266,12 @@ if __name__ == "__main__":
         
     # Convertimos la lista de listas a dataframe
     columns = [
-        "custom_id", "satellite", "sensor", "orbit", "escene", "capture_date", "image_coordinates",
-        "cutted_image_shape", "solar_elevation", "solar_azimuth", "cloud_percentage",
-        "solar_irradiance", "k_val", "b_val", "satellite_altitude", "zenit_satellite_angle",
-        "satellite_azimuth_angle", "roll_angle", "compressed_name", "rawdatafn",
-        "thumb_path", "geothumb_path", "compressed_file_path", "metadata_xml"
+        "custom_id", "satellite", "sensor", "orbit", "escene", "capture_date",
+        "image_coordinates", "cutted_image_shape", "solar_elevation",
+        "solar_azimuth", "cloud_percentage", "solar_irradiance", "k_val",
+        "b_val", "satellite_altitude", "zenit_satellite_angle",
+        "satellite_azimuth_angle", "roll_angle", "rawdatafn", "thumb_path",
+        "geothumb_path", "compressed_file_path", "metadata_xml"
     ]
     
     df = pd.DataFrame(registros, columns=columns)
@@ -270,11 +283,39 @@ if __name__ == "__main__":
         # Upload to database
         tmp_df = row.to_frame().T
         tmp_df = tmp_df.reset_index(drop=True)
-        tmp_df.to_sql("satellite_images", con=engine, if_exists="append", index=False)
+        #tmp_df.to_sql("satellite_images", con=engine, if_exists="append", index=False)
+
+        stmt = insert(SatelliteImages).values(
+            custom_id               = tmp_df["custom_id"][0],
+            satellite               = tmp_df["satellite"][0],
+            sensor                  = tmp_df["sensor"][0],
+            orbit                   = tmp_df["orbit"][0],
+            escene                  = tmp_df["escene"][0],
+            capture_date            = tmp_df["capture_date"][0],
+            image_coordinates       = tmp_df["image_coordinates"][0],
+            cutted_image_shape      = tmp_df["cutted_image_shape"][0],
+            solar_elevation         = tmp_df["solar_elevation"][0],
+            solar_azimuth           = tmp_df["solar_azimuth"][0],
+            cloud_percentage        = tmp_df["cloud_percentage"][0],
+            solar_irradiance        = tmp_df["solar_irradiance"][0],
+            k_val                   = tmp_df["k_val"][0],
+            b_val                   = tmp_df["b_val"][0],
+            satellite_altitude      = tmp_df["satellite_altitude"][0],
+            zenit_satellite_angle   = tmp_df["zenit_satellite_angle"][0],
+            satellite_azimuth_angle = tmp_df["satellite_azimuth_angle"][0],
+            roll_angle              = tmp_df["roll_angle"][0],
+            #compressed_name         = tmp_df["compressed_name"][0],
+            rawdatafn               = tmp_df["rawdatafn"][0],
+            thumb_path              = tmp_df["thumb_path"][0],
+            geothumb_path           = tmp_df["geothumb_path"][0],
+            compressed_file_path    = tmp_df["compressed_file_path"][0],
+            metadata_xml            = tmp_df["metadata_xml"][0],
+        )
+        result = conn.execute(stmt)
+        conn.commit()
 
         # Upload to geoserver
-        # Credentials
-        geoserver_credentils = pd.read_csv("config/geoserver_credentials.csv")
+        geoserver_credentils = pd.read_csv("config/geoserver_credentials.csv") # Credentials
         geo = Geoserver(
             str(geoserver_credentils["url"][0]),
             username = str(geoserver_credentils["username"][0]),
@@ -296,5 +337,10 @@ if __name__ == "__main__":
             layer_name = tmp_df["custom_id"][0]
 
             geo.create_coveragestore(layer_name=layer_name, path=path, workspace=workspace)
+    conn.close()
+
+    file_names = os.listdir(carpeta_imagenes)
+    for file_name in file_names:
+        shutil.move(os.path.join(carpeta_imagenes, file_name), target_dir)
 
     print("Procesamiento finalizado!")    

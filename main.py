@@ -67,8 +67,7 @@ def search():
             
             result = intersect(db_session, formatted_coord_from_user3)
             if result:
-                layers_ = {}
-                aux     = 0
+                #aux = 0
                 
                 for i in result:
                     if geoserver_info["return"] == False:
@@ -89,14 +88,37 @@ def search():
                     if geoserver_info["transparent"] == None:
                         geoserver_info["transparent"] = i[4]
 
-                    layers[aux] = i[5]
-                    aux += 1
+                    #layers[aux] = {
+                    layers[i[5]] = {
+                        "custom_id"              : i[5],
+                        "satellite"              : i[6],
+                        "sensor"                 : i[7],
+                        "capture_date"           : i[8],
+                        "cutted_image_shape"     : i[9],
+                        "solar_elevation"        : i[10],
+                        "solar_azimuth"          : i[11],
+                        "cloud_percentage"       : i[12],
+                        "solar_irradiance"       : i[13],
+                        "k_val"                  : i[14],
+                        "b_val"                  : i[15],
+                        "satellite_altitude"     : i[16],
+                        "zenit_satellite_angle"  : i[17],
+                        "satellite_azimuth_angle": i[18],
+                        "roll_angle"             : i[19],
+                        "compressed_file_path"   : i[20],
+                    }
+                    #aux += 1
     
     if geoserver_info["return"] == False:
         geoserver_info = False
         layers         = False
 
-    return render_template("index.html", geoserver_info=geoserver_info, layers=layers, map_config=map_config)
+    return render_template(
+        "index.html",
+        geoserver_info = geoserver_info,
+        layers         = layers,
+        map_config     = map_config
+    )
     
 if __name__ == "__main__":
     csrf.init_app(app)
