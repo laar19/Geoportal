@@ -14,6 +14,8 @@ var options = {
             }
         },
         */
+        polygon: false,
+        /*
         polygon: {
             allowIntersection: false, // Restricts shapes to simple polygons
             drawError: {
@@ -25,15 +27,15 @@ var options = {
                 color: 'red'
             }
         },
+        */
         circle: false, // Turns off this drawing tool
-        rectangle: false,
-        /*
+        //rectangle: false,
         rectangle: {
             shapeOptions: {
-                clickable: false
+                clickable: false,
+                color: 'red'
             }
         }
-        */
     },
     /*
     edit: {
@@ -58,7 +60,6 @@ map.on(L.Draw.Event.CREATED, function (e) {
     // Coordinates
     var coordinates = layer.toGeoJSON().geometry.coordinates;
     $("#coordinates").val(coordinates);
-    //console.log(coordinates);
 
     // Zoom
     $("#zoom_level").val(map._zoom);

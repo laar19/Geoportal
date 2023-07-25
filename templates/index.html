@@ -243,12 +243,15 @@
 
                 var coords = JSON.parse(layers[key]["cutted_image_shape"])["coordinates"];
                 //var coords =  [[48,-3],[50,5],[44,11],[48,-3]] ;
-                console.log(coords);
                 
-                var polygon = L.polygon(coords, {color: 'red'});
+                var coordinates = [[]];
+                for (var i=0; i<coords[0].length; i++) {
+                    coordinates[0].push([coords[0][i][1], coords[0][i][0]])
+                }
+                
+                var polygon = L.polygon(coordinates, {color: 'red'});
                 polygon.addTo(map);
-
-                map.fitBounds(polygon.getBounds());
+                //map.fitBounds(polygon.getBounds());
 
                 aux = aux + 1;
             }
