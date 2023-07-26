@@ -6,8 +6,6 @@ from shapely.geometry import Polygon
 from sqlalchemy.orm import sessionmaker
 
 from app.models.models                 import DatabaseConfig
-#from app.models.satellite_images_table import *
-#from app.models.geoserver_table        import *
 from app.models.functions              import *
 from app.config                        import *
 
@@ -122,4 +120,4 @@ def search():
     
 if __name__ == "__main__":
     csrf.init_app(app)
-    app.run(host="localhost", port=5000, debug=True)
+    app.run(host="localhost", port=8892, debug=True)

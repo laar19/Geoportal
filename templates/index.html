@@ -212,6 +212,16 @@
 
             var aux = 0;
             for(let key in layers) {
+                /*
+                var test = L.tileLayer.wms("http://172.20.0.3:8080/geoserver/satellite_images/wms", {
+                    layers     : "satellite_images:VRSS-2_MSS_0288_0330_20221022_L2A_404132008447_THUMB_modified",
+                    format     : "image/png",
+                    transparent: true,
+                    //version    : '1.1.0',
+                    //attribution: "country layer"
+                });
+                test.addTo(map);
+                */
                 var wmsLayer = L.tileLayer.wms(geoserver_url, {
                     layers     : workspace + ":" + layers[key]["custom_id"],
                     format     : format,

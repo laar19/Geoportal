@@ -23,7 +23,7 @@ for i in db_tables:
 
 # Add geoserver configuration
 stmt = insert(GeoserverConfig).values(
-    url         = "http://172.18.0.3:8080/geoserver",
+    url         = "http://localhost:8894/geoserver",
     workspace   = "satellite_images",
     service     = "wms",
     format_     = "image/png",
