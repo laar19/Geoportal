@@ -1,0 +1,22 @@
+# Flask
+FLAS_HOST=localhost
+FLAS_PORT=5000
+FLAS_DEBUG=true
+
+# Database
+DB=postgresql
+DB_HOST=localhost
+DB_NAME=geoportal_db
+DB_USER=root
+DB_PASSWORD=root
+DB_PORT=8896
+
+# Geoserver
+GEOSERVER_URL=http://localhost:8894/geoserver
+GEOSERVER_USER=admin
+GEOSERVER_PASSWORD=admin
+
+# Map config
+MAP_ZOOM_LEVEL=6
+MAP_LAT=6.717710140513336
+MAP_LONG=-64.07226562500001

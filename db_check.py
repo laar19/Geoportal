@@ -1,3 +1,8 @@
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from sqlalchemy import insert
 
 from app.models.models                 import *
@@ -12,8 +17,14 @@ def check_table(engine, db_tables, i):
         db_tables[i].__table__.create(engine)
 
 # Check database
-db_credentials_path = "config/geoportal_db_credentials.csv"
-DbConn = DatabaseConfig(db_credentials_path)
+DB          = os.getenv("DB")
+DB_HOST     = os.getenv("DB_HOST")
+DB_NAME     = os.getenv("DB_NAME")
+DB_USER     = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PORT     = os.getenv("DB_PORT")
+
+DbConn = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 DbConn.check_database()
 
 # Check database tables

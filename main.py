@@ -1,3 +1,8 @@
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask     import Flask, render_template, request
 from flask_wtf import CSRFProtect
 
@@ -13,15 +18,16 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
 
-db_credentials_path = "config/geoportal_db_credentials.csv"
-
-map_config_path = "config/map_config.csv"
-map_config      = get_map_config(map_config_path)
+# Default map config
+MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
+MAP_LAT        = os.getenv("MAP_LAT")
+MAP_LONG       = os.getenv("MAP_LONG")
+map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
 
 @app.route("/")
 @app.route("/index")
 def index_leaflet():
-    return render_template("index.html", geoserver_info=False, layers=False, map_config=map_config)
+    return render_template("index.html", geoserver_info=False, layers=False, map_config=map_config, error_=False)
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -46,9 +52,28 @@ def search():
             for i in formatted_coord_from_user1:
                 formatted_coord_from_user2.append(list(i))
 
-            formatted_coord_from_user3 = Polygon(formatted_coord_from_user2)
+            try:
+                formatted_coord_from_user3 = Polygon(formatted_coord_from_user2)
+            except Exception as e:
+                geoserver_info = False
+                layers         = False
+                
+                return render_template(
+                    "index.html",
+                    geoserver_info = geoserver_info,
+                    layers         = layers,
+                    map_config     = map_config,
+                    error_         = True
+                )
 
-            DbConn       = DatabaseConfig(db_credentials_path)
+            DB          = os.getenv("DB")
+            DB_HOST     = os.getenv("DB_HOST")
+            DB_NAME     = os.getenv("DB_NAME")
+            DB_USER     = os.getenv("DB_USER")
+            DB_PASSWORD = os.getenv("DB_PASSWORD")
+            DB_PORT     = os.getenv("DB_PORT")
+            
+            DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
             conn, engine = DbConn.connection()
             Session      = sessionmaker(bind=engine)
             db_session   = Session()
@@ -106,18 +131,25 @@ def search():
                         "compressed_file_path"   : i[20],
                     }
                     #aux += 1
+    error_ = False
     
     if geoserver_info["return"] == False:
         geoserver_info = False
         layers         = False
+        error_         = False
 
     return render_template(
         "index.html",
         geoserver_info = geoserver_info,
         layers         = layers,
-        map_config     = map_config
+        map_config     = map_config,
+        error_         = error_
     )
     
 if __name__ == "__main__":
     csrf.init_app(app)
-    app.run(host="localhost", port=8892, debug=True)
+
+    FLAS_HOST  = os.getenv("FLAS_HOST")
+    FLAS_PORT  = os.getenv("FLAS_PORT")
+    FLAS_DEBUG = os.getenv("FLAS_DEBUG")
+    app.run(host=FLAS_HOST, port=FLAS_PORT, debug=FLAS_DEBUG)

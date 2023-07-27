@@ -266,6 +266,12 @@
                 aux = aux + 1;
             }
         }
+        else {
+            var error_ = {{ error_|tojson }};
+            if(error_) {
+                alert("Wrong area");
+            }
+        }
     </script>
 </body>
 

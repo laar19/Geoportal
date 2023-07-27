@@ -19,24 +19,16 @@ Base = declarative_base()
 db_tables = {}
 
 class DatabaseConfig:
-    def __init__(self, path, position=0):
-        self.path     = path
-        self.position = position
+    def __init__(self, db, db_user, db_password, db_host, db_port, db_name):
+        self.db          = db
+        self.db_user     = db_user
+        self.db_password = db_password
+        self.db_host     = db_host
+        self.db_port     = db_port
+        self.db_name     = db_name
         
     def get_credentials(self):
-        credentials = pd.read_csv(self.path)
-
-        # Credentials
-        c = {}
-
-        c["database"] = credentials["database"][self.position]
-        c["host"]     = credentials["host"][self.position]
-        c["db_name"]  = credentials["db_name"][self.position]
-        c["user"]     = credentials["user"][self.position]
-        c["password"] = credentials["password"][self.position]
-        c["port"]     = credentials["port"][self.position]
-
-        target_db_uri = f"{c['database']}://{c['user']}:{c['password']}@{c['host']}:{c['port']}/{c['db_name']}"
+        target_db_uri = f"{self.db}://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
         #main_db_uri   = f"{c['database']}://{c['user']}:{c['password']}@{c['host']}"
 
         #return main_db_uri, target_db_uri

@@ -1,9 +1,11 @@
-# Procesar archivos 2A para extraer informacion de metadata y crear .csv con datos
 import os, zipfile, re, shutil, hashlib
 
 import lxml.etree as ET
 
 import pandas as pd
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from osgeo import gdal, osr
 
@@ -43,10 +45,10 @@ def unpackXML(filename, carpeta):
         for name in file_names:
             # Extraemos solo el archivo de metadatos principal
             if re.search('\d.xml$', name):
-                print("Extrayendo archivo {}".format(name))
+                #print("Extrayendo archivo {}".format(name))
                 #zip.extract(name, './'+carpeta)
                 zip.extract(name, carpeta)
-                print("Extraccion de archivo finalizada!\n")
+                #print("Extraccion de archivo finalizada!\n")
                 return name
                 
 def unpackThumb(filename, carpeta):
@@ -70,10 +72,10 @@ def unpackThumb(filename, carpeta):
         for name in file_names:
             # Extraemos solo el archivo de metadatos principal
             if re.search('_THUMB.jpg', name):
-                print("Extrayendo archivo {}".format(name))
+                #print("Extrayendo archivo {}".format(name))
                 #zip.extract(name, './'+carpeta)
                 zip.extract(name, carpeta)
-                print("Extraccion de archivo finalizada!\n")
+                #print("Extraccion de archivo finalizada!\n")
                 return name
 
 # Funcion para crear geotiff a partir de thumbnail
@@ -155,19 +157,23 @@ if __name__ == "__main__":
     compressed_file_list      = []
     folder_names              = []
     for archivo in lista_de_archivos:
+        print("Procesing {}".format(archivo))
         folder_name = hashlib.md5(str(os.path.basename(archivo[:-9])).encode()).hexdigest()
         folder_names.append(folder_name)
         
         lista_nombres_comprimidos.append(archivo.split("\\")[0])
-        
+
+        print("Extracting .xml")
         lista_de_xml.append(carpeta_imagenes+"/"+folder_name+"/"+unpackXML(archivo, carpeta_imagenes+"/"+folder_name))
-        
+
+        print("Extracting .jpg")
         lista_de_thumb.append(carpeta_imagenes+"/"+folder_name+"/"+unpackThumb(archivo, carpeta_imagenes+"/"+folder_name))
 
         # Move the compressed file to the new folder
         shutil.move(archivo, carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
         
         compressed_file_list.append(carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
+        print("Done\n")
         
     # Para cada xml, hay que extraer los datos de interes
     registros = []
@@ -244,6 +250,7 @@ if __name__ == "__main__":
         angulo_roll             = float(tree.find("satOffNadir").text)
         
         # Para cada uno, genero el geothumb
+        print("Creating .tif")
         thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i]+".tif")
         
         #ruta_geothumb = "geothumbs/"+lista_de_thumb[i].split("/")[2].split(".")[0]+".tif"
@@ -276,8 +283,15 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(registros, columns=columns)
 
-    db = DatabaseConfig("config/geoportal_db_credentials.csv")
-    conn, engine = db.connection()
+    DB          = os.getenv("DB")
+    DB_HOST     = os.getenv("DB_HOST")
+    DB_NAME     = os.getenv("DB_NAME")
+    DB_USER     = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_PORT     = os.getenv("DB_PORT")
+    
+    DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+    conn, engine = DbConn.connection()
 
     for index, row in df.iterrows():
         # Upload to database
@@ -315,11 +329,14 @@ if __name__ == "__main__":
         conn.commit()
 
         # Upload to geoserver
-        geoserver_credentils = pd.read_csv("config/geoserver_credentials.csv") # Credentials
+        GEOSERVER_URL      = os.getenv("GEOSERVER_URL")
+        GEOSERVER_USER     = os.getenv("GEOSERVER_USER")
+        GEOSERVER_PASSWORD = os.getenv("GEOSERVER_PASSWORD")
+        
         geo = Geoserver(
-            str(geoserver_credentils["url"][0]),
-            username = str(geoserver_credentils["username"][0]),
-            password = str(geoserver_credentils["password"][0])
+            str(GEOSERVER_URL),
+            username = str(GEOSERVER_USER),
+            password = str(GEOSERVER_PASSWORD)
         )
 
         try:

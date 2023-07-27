@@ -6,12 +6,10 @@ from werkzeug.security import generate_password_hash
 
 SECRET_KEY = generate_password_hash(str(dtime.now()))
 
-def get_map_config(path, position=0):
-    data       = pd.read_csv(path)
-
+def get_map_config(zoom_level, lat, long_):
     map_config = {
-        "zoom_level": int(data["zoom_level"][position]),
-        "center"    : [float(data["lat"][position]), float(data["long"][position])]
+        "zoom_level": int(zoom_level),
+        "center"    : [float(lat), float(long_)]
     }
 
     return map_config
