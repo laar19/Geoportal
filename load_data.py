@@ -1,5 +1,7 @@
 import os, zipfile, re, shutil, hashlib
 
+import rasterio
+
 import lxml.etree as ET
 
 import pandas as pd
@@ -79,6 +81,26 @@ def unpackThumb(filename, carpeta):
                 return name
 
 # Funcion para crear geotiff a partir de thumbnail
+def thumb_to_geothumb(input_path, dataUpperLeftLong, dataUpperLeftLat,
+    dataLowerLeftLong, dataLowerLeftLat, dataUpperRightLong, dataUpperRightLat,
+    dataLowerRightLong, dataLowerRightLat, output_path):
+
+        src_ds = rasterio.open(input_path)
+
+        options = "-of GTiff\
+            -gcp {} {} {} {}\
+            -gcp {} {} {} {}\
+            -gcp {} {} {} {}\
+            -gcp {} {} {} {}\
+            gdalwarp -r near -co EPSG:4326".format(
+                0, 0, dataUpperLeftLong, dataUpperLeftLat,                         # Topleft
+                0, src_ds.height, dataLowerLeftLong, dataLowerLeftLat,             # Bottomleft
+                src_ds.width, 0, dataUpperRightLong, dataUpperRightLat,            # Topright
+                src_ds.width, src_ds.height, dataLowerRightLong, dataLowerRightLat # Bottomright
+            )
+
+        ds = gdal.Translate(output_path, input_path, options=options)
+
 def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
     
     # Abrimos el jpg segun la ruta
@@ -252,6 +274,17 @@ if __name__ == "__main__":
         # Para cada uno, genero el geothumb
         print("Creating .tif")
         thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i]+".tif")
+
+        """
+        thumb_to_geothumb(
+            lista_de_thumb[i],
+            float(tree.find("dataUpperLeftLong").text), float(tree.find("dataUpperLeftLat").text),
+            float(tree.find("dataLowerLeftLong").text), float(tree.find("dataLowerLeftLat").text),
+            float(tree.find("dataUpperRightLong").text), float(tree.find("dataUpperRightLat").text),
+            float(tree.find("dataLowerRightLong").text), float(tree.find("dataLowerRightLat").text),
+            lista_de_thumb[i]+".tif"
+        )
+        """
         
         #ruta_geothumb = "geothumbs/"+lista_de_thumb[i].split("/")[2].split(".")[0]+".tif"
         ruta_geothumb = lista_de_thumb[i]+".tif"
