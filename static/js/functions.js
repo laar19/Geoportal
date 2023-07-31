@@ -5,4 +5,4 @@ function toggleLayer(layerName, map) {
     else {
         map.addLayer(layerName);
     }
-} 
+}

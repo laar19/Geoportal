@@ -90,8 +90,6 @@ def search():
             
             result = intersect(db_session, formatted_coord_from_user3)
             if result:
-                #aux = 0
-                
                 for i in result:
                     if geoserver_info["return"] == False:
                         geoserver_info["return"] = True
@@ -111,7 +109,6 @@ def search():
                     if geoserver_info["transparent"] == None:
                         geoserver_info["transparent"] = i[4]
 
-                    #layers[aux] = {
                     layers[i[5]] = {
                         "custom_id"              : i[5],
                         "satellite"              : i[6],
@@ -130,7 +127,7 @@ def search():
                         "roll_angle"             : i[19],
                         "compressed_file_path"   : i[20],
                     }
-                    #aux += 1
+
     error_ = False
     
     if geoserver_info["return"] == False:
@@ -149,7 +146,7 @@ def search():
 if __name__ == "__main__":
     csrf.init_app(app)
 
-    FLAS_HOST  = os.getenv("FLAS_HOST")
-    FLAS_PORT  = os.getenv("FLAS_PORT")
-    FLAS_DEBUG = os.getenv("FLAS_DEBUG")
-    app.run(host=FLAS_HOST, port=FLAS_PORT, debug=FLAS_DEBUG)
+    FLASK_HOST  = os.getenv("FLASK_HOST")
+    FLASK_PORT  = os.getenv("FLASK_PORT")
+    FLASK_DEBUG = os.getenv("FLASK_DEBUG")
+    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)

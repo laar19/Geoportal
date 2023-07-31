@@ -1,6 +1,7 @@
 import os, zipfile, re, shutil, hashlib
 
 import rasterio
+from rasterio.transform import GroundControlPoint
 
 import lxml.etree as ET
 
@@ -80,7 +81,54 @@ def unpackThumb(filename, carpeta):
                 #print("Extraccion de archivo finalizada!\n")
                 return name
 
+# Create geotif from thumbnail
+def thumb_to_geothumb(input_path, dataUpperLeftLong, dataUpperLeftLat,
+    dataLowerLeftLong, dataLowerLeftLat, dataUpperRightLong, dataUpperRightLat,
+    dataLowerRightLong, dataLowerRightLat, output_path):
+        
+    with rasterio.open(input_path) as src_ds:
+
+        gcps = [
+            #GroundControlPoint(row=0, col=0, x=-67.431863, y=9.880736),
+            #GroundControlPoint(row=src_ds.height, col=0, x=-67.495767, y=9.582391),
+            #GroundControlPoint(row=0, col=src_ds.width, x=-67.101699, y=9.81232),
+            #GroundControlPoint(row=src_ds.height, col=src_ds.width, x=-67.165838, y=9.514058)
+
+            # Topleft
+            GroundControlPoint(
+                row=0, col=0, x=dataUpperLeftLong, y=dataUpperLeftLat
+            ),
+            # Bottomleft
+            GroundControlPoint(
+                row=src_ds.height, col=0, x=dataLowerLeftLong, y=dataLowerLeftLat
+            ),
+            # Topright
+            GroundControlPoint(
+                row=0, col=src_ds.width, x=dataUpperRightLong, y=dataUpperRightLat
+            ),
+            # Bottomright
+            GroundControlPoint(
+                row=src_ds.height, col=src_ds.width, x=dataLowerRightLong, y=dataLowerRightLat
+            )
+        ]
+        transform = rasterio.transform.from_gcps(gcps)
+        
+        with rasterio.open(
+            output_path,
+            "w",
+            driver = "GTiff",
+            height = src_ds.height,
+            width  = src_ds.width,
+            count  = src_ds.count,
+            dtype  = src_ds.read().dtype,
+        ) as dst:
+            crs     = rasterio.crs.CRS({"init": "epsg:4326"})
+            dst.crs = crs
+            dst.transform = transform
+            dst.write(src_ds.read())
+
 # Funcion para crear geotiff a partir de thumbnail
+"""
 def thumb_to_geothumb(input_path, dataUpperLeftLong, dataUpperLeftLat,
     dataLowerLeftLong, dataLowerLeftLat, dataUpperRightLong, dataUpperRightLat,
     dataLowerRightLong, dataLowerRightLat, output_path):
@@ -92,7 +140,8 @@ def thumb_to_geothumb(input_path, dataUpperLeftLong, dataUpperLeftLat,
             -gcp {} {} {} {}\
             -gcp {} {} {} {}\
             -gcp {} {} {} {}\
-            gdalwarp -r near -co EPSG:4326".format(
+            gdalwarp -r near -a_srs EPSG:4326".format(
+            #gdalwarp -r near -co EPSG:4326".format(
                 0, 0, dataUpperLeftLong, dataUpperLeftLat,                         # Topleft
                 0, src_ds.height, dataLowerLeftLong, dataLowerLeftLat,             # Bottomleft
                 src_ds.width, 0, dataUpperRightLong, dataUpperRightLat,            # Topright
@@ -100,7 +149,8 @@ def thumb_to_geothumb(input_path, dataUpperLeftLong, dataUpperLeftLat,
             )
 
         ds = gdal.Translate(output_path, input_path, options=options)
-
+"""
+"""
 def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
     
     # Abrimos el jpg segun la ruta
@@ -157,6 +207,7 @@ def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
     output_file.FlushCache()
     output_file = None
     jpg_file = None
+"""
     
 # Aca comienza script
 if __name__ == "__main__":
@@ -273,9 +324,7 @@ if __name__ == "__main__":
         
         # Para cada uno, genero el geothumb
         print("Creating .tif")
-        thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i]+".tif")
-
-        """
+        #thumb_a_geothumb(lista_de_thumb[i], data_ul_long, data_ul_lat, lista_de_thumb[i]+".tif")
         thumb_to_geothumb(
             lista_de_thumb[i],
             float(tree.find("dataUpperLeftLong").text), float(tree.find("dataUpperLeftLat").text),
@@ -284,7 +333,6 @@ if __name__ == "__main__":
             float(tree.find("dataLowerRightLong").text), float(tree.find("dataLowerRightLat").text),
             lista_de_thumb[i]+".tif"
         )
-        """
         
         #ruta_geothumb = "geothumbs/"+lista_de_thumb[i].split("/")[2].split(".")[0]+".tif"
         ruta_geothumb = lista_de_thumb[i]+".tif"
