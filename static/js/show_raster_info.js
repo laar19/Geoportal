@@ -31,7 +31,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
                 //version    : '1.1.0',
                 //attribution: "country layer"
             });
-            wmsLayer.addTo(map);
+            //wmsLayer.addTo(map);
             map_layers[id_] = wmsLayer;
 
             $("#previews").append('<div id='+id_+'></div>');
@@ -69,6 +69,48 @@ function show_raster_info(map, geoserver_info, layers, error) {
             var polygon = L.polygon(coordinates, {color: 'red'});
             polygon.addTo(map);
             //map.fitBounds(polygon.getBounds());
+
+            //var marker = L.marker([33.767675, -84.537291]).addTo(map);
+            //marker.bindPopup("Loading...");
+            //polygon.bindPopup("Loading...");
+            polygon.bindPopup(
+                "<div>"+
+                    "Satellite              : " + layers[key]["satellite"]               + "<br>"+
+                    "Sensor                 :  " + layers[key]["sensor"]                 + "<br>"+
+                    "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
+                    "Solar Elevation        : " + layers[key]["solar_elevation"]         + "<br>"+
+                    "Solar Azimuth          : " + layers[key]["solar_azimuth"]           + "<br>"+
+                    "Cloud percentage       : " + layers[key]["cloud_percentage"]        + "<br>"+
+                    "Solar irradiance       : " + layers[key]["solar_irradiance"]        + "<br>"+
+                    "K                      : " + layers[key]["k_val"]                   + "<br>"+
+                    "B                      : " + layers[key]["b_val"]                   + "<br>"+
+                    "Satellite altitude     : " + layers[key]["satellite_altitude"]      + "<br>"+
+                    "Satellite zenit angle  : " + layers[key]["zenit_satellite_angle"]   + "<br>"+
+                    "Satellite azimuth angle: " + layers[key]["satellite_azimuth_angle"] + "<br>"+
+                    "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
+                    "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
+                "</div>"
+            );
+
+            function show_popup(e) {
+                var popup = e.target.getPopup();
+
+
+                $.ajax({
+                    url: "myurl.html",
+                    })
+                    .done(function(data) {
+                        alert(data);
+                        popup.setContent(data);
+                        popup.update();
+                    })
+                    .fail(function(data) {
+                        alert("FAIL: "+data);
+                    });
+                };
+
+            //marker.on('click', onMapClick );
+            polygon.on("click", show_popup);
 
             aux = aux + 1;
         }
