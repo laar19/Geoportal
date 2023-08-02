@@ -42,7 +42,33 @@ function show_raster_info(map, geoserver_info, layers, error) {
 
             var url = geoserver_info["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key]["custom_id"];
             $("#"+id_+"").append('<br><br><img src='+url+' width="100" height="100">');
+
+            var html_layer_info = "<div>"+
+                "<button id=show_"+id_+">Show</button>"                              + "<br>"+
+                "Satellite              : " + layers[key]["satellite"]               + "<br>"+
+                "Sensor                 : " + layers[key]["sensor"]                  + "<br>"+
+                "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
+                "Solar Elevation        : " + layers[key]["solar_elevation"]         + "<br>"+
+                "Solar Azimuth          : " + layers[key]["solar_azimuth"]           + "<br>"+
+                "Cloud percentage       : " + layers[key]["cloud_percentage"]        + "<br>"+
+                "Solar irradiance       : " + layers[key]["solar_irradiance"]        + "<br>"+
+                "K                      : " + layers[key]["k_val"]                   + "<br>"+
+                "B                      : " + layers[key]["b_val"]                   + "<br>"+
+                "Satellite altitude     : " + layers[key]["satellite_altitude"]      + "<br>"+
+                "Satellite zenit angle  : " + layers[key]["zenit_satellite_angle"]   + "<br>"+
+                "Satellite azimuth angle: " + layers[key]["satellite_azimuth_angle"] + "<br>"+
+                "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
+                "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
+            "</div>";
+            $("#show_"+id_+"").click(function() {
+                var id_tmp = this.id;
+                var layer  = map_layers[this.id.slice(5, id_tmp.length)];
+                toggleLayer(map_layers[this.id.slice(5, id_tmp.length)], map);
+            });
             
+            $("#"+id_+"").append(html_layer_info);
+
+            /*
             $("#"+id_+"").append('<div>Satellite: '+layers[key]["satellite"]+'</div>');
             $("#"+id_+"").append('<div>Sensor: '+layers[key]["sensor"]+'</div>');
             $("#"+id_+"").append('<div>Capture date: '+layers[key]["capture_date"]+'</div>');
@@ -57,6 +83,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
             $("#"+id_+"").append('<div>Satellite azimuth angle: '+layers[key]["satellite_azimuth_angle"]+'</div>');
             $("#"+id_+"").append('<div>Roll angle: '+layers[key]["roll_angle"]+'</div>');
             $("#"+id_+"").append('<a href='+layers[key]["compressed_file_path"]+'>Download</a>');
+            */
 
             var coords = JSON.parse(layers[key]["cutted_image_shape"])["coordinates"];
             //var coords =  [[48,-3],[50,5],[44,11],[48,-3]] ;
@@ -73,41 +100,25 @@ function show_raster_info(map, geoserver_info, layers, error) {
             //var marker = L.marker([33.767675, -84.537291]).addTo(map);
             //marker.bindPopup("Loading...");
             //polygon.bindPopup("Loading...");
-            polygon.bindPopup(
-                "<div>"+
-                    "Satellite              : " + layers[key]["satellite"]               + "<br>"+
-                    "Sensor                 :  " + layers[key]["sensor"]                 + "<br>"+
-                    "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
-                    "Solar Elevation        : " + layers[key]["solar_elevation"]         + "<br>"+
-                    "Solar Azimuth          : " + layers[key]["solar_azimuth"]           + "<br>"+
-                    "Cloud percentage       : " + layers[key]["cloud_percentage"]        + "<br>"+
-                    "Solar irradiance       : " + layers[key]["solar_irradiance"]        + "<br>"+
-                    "K                      : " + layers[key]["k_val"]                   + "<br>"+
-                    "B                      : " + layers[key]["b_val"]                   + "<br>"+
-                    "Satellite altitude     : " + layers[key]["satellite_altitude"]      + "<br>"+
-                    "Satellite zenit angle  : " + layers[key]["zenit_satellite_angle"]   + "<br>"+
-                    "Satellite azimuth angle: " + layers[key]["satellite_azimuth_angle"] + "<br>"+
-                    "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
-                    "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
-                "</div>"
-            );
+            polygon.bindPopup(html_layer_info);
 
             function show_popup(e) {
                 var popup = e.target.getPopup();
 
-
                 $.ajax({
-                    url: "myurl.html",
-                    })
-                    .done(function(data) {
-                        alert(data);
-                        popup.setContent(data);
-                        popup.update();
-                    })
-                    .fail(function(data) {
-                        alert("FAIL: "+data);
-                    });
-                };
+                    //url: "myurl.html",
+                })
+                .done(function(data) {
+                    alert(data);
+                    popup.setContent(data);
+                    popup.update();
+                })
+                /*
+                .fail(function(data) {
+                    alert("FAIL: "+data);
+                });
+                */
+            };
 
             //marker.on('click', onMapClick );
             polygon.on("click", show_popup);
