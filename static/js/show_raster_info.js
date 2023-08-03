@@ -44,7 +44,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
             $("#"+id_+"").append('<br><br><img src='+url+' width="100" height="100">');
 
             var html_layer_info = "<div>"+
-                "<button id=show_"+id_+">Show</button>"                              + "<br>"+
+                //"<button id=show_"+id_+">Show</button>"                              + "<br>"+
                 "Satellite              : " + layers[key]["satellite"]               + "<br>"+
                 "Sensor                 : " + layers[key]["sensor"]                  + "<br>"+
                 "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
@@ -60,11 +60,13 @@ function show_raster_info(map, geoserver_info, layers, error) {
                 "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
                 "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
             "</div>";
+            /*
             $("#show_"+id_+"").click(function() {
                 var id_tmp = this.id;
                 var layer  = map_layers[this.id.slice(5, id_tmp.length)];
                 toggleLayer(map_layers[this.id.slice(5, id_tmp.length)], map);
             });
+            */
             
             $("#"+id_+"").append(html_layer_info);
 
