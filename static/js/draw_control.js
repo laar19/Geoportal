@@ -49,7 +49,7 @@ map.addControl(drawControl);
 
 // Get coordinates, view and zoom
 map.on(L.Draw.Event.CREATED, function (e) {
-    var type = e.layerType,
+    var type  = e.layerType,
         layer = e.layer;
         
     if(editableLayers && editableLayers.getLayers().length!==0) {
@@ -102,3 +102,41 @@ L.Control.Button = L.Control.extend({
 });
 var control = new L.Control.Button()
 control.addTo(map);
+
+/*
+new L.cascadeButtons([
+    {icon: 'bi bi-geo-alt-fill', ignoreActiveState:true , command: () =>{console.log('test') }},
+    {icon: 'bi bi-fullscreen', ignoreActiveState:true , command: () =>{console.log('test') }},
+], {position:'topleft', direction:'vertical'}).addTo(map);
+*/
+
+new L.cascadeButtons([
+    // {icon: 'fas fa-home', ignoreActiveState:true , command: () =>{console.log('test') }},
+    /*
+    {icon: 'bi bi-crop', items:[
+        {icon: 'bi bi-square', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-circle', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-pentagon', command: () =>{console.log('hola')}},
+       
+    ]},
+
+    {icon: 'bi bi-layers', items: [
+        {icon: 'bi bi-1-circle', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-2-circle', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-3-circle', command: () =>{console.log('hola')}},
+    ]},
+    */
+    
+    {icon: 'bi bi-share', items: [
+        {icon: 'bi bi-twitter', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-facebook', command: () =>{console.log('hola')}},
+        {icon: 'bi bi-instagram', command: () =>{console.log('hola')}},
+        {icon: 'fbi bi-whatsapp', command: () =>{console.log('hola')}},
+    ]},
+], {position:'topleft', direction:'vertical'}).addTo(map);
+
+//L.Control.geocoder().addTo(map);
+
+var sidebar = L.control.sidebar('sidebar').addTo(map);
+
+var sidebar = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);

@@ -34,7 +34,8 @@ function show_raster_info(map, geoserver_info, layers, error) {
             //wmsLayer.addTo(map);
             map_layers[id_] = wmsLayer;
 
-            $("#previews").append('<div id='+id_+'></div>');
+            //$("#previews").append('<div id='+id_+'></div>');
+            $("#informacion").append('<div id='+id_+'></div>');
             $("#"+id_+"").click(function() {
                 var layer = map_layers[this.id];
                 toggleLayer(layer, map);
