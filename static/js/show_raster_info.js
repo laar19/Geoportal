@@ -96,7 +96,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
                 coordinates[0].push([coords[0][i][1], coords[0][i][0]]);
             }
             
-            var polygon = L.polygon(coordinates, {color: 'red'});
+            var polygon = L.polyline(coordinates, {color: 'red'});
             polygon.addTo(map);
             //map.fitBounds(polygon.getBounds());
 

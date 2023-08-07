@@ -150,4 +150,4 @@ if __name__ == "__main__":
     FLASK_PORT  = os.getenv("FLASK_PORT")
     FLASK_DEBUG = os.getenv("FLASK_DEBUG")
     #app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
-    app.run(host="localhost", port=8892, debug=True)
+    app.run(host="192.168.88.8", port=8892, debug=True)
