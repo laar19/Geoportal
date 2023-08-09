@@ -3,8 +3,9 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask     import Flask, render_template, request
-from flask_wtf import CSRFProtect
+from flask           import Flask, render_template, request
+from flask_wtf       import CSRFProtect
+from flask_paginate  import Pagination, get_page_parameter
 
 from shapely.geometry import Polygon
 
@@ -27,12 +28,33 @@ map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
 @app.route("/")
 @app.route("/index")
 def index_leaflet():
-    return render_template("index.html", geoserver_info=False, layers=False, map_config=map_config, error_=False)
+    return render_template(
+        "index.html",
+        geoserver_info = False,
+        layers         = False,
+        map_config     = map_config,
+        error_         = False)
 
-@app.route("/search", methods=["POST"])
+@app.route("/search", methods=["POST", "GET"])
 def search():
-    # Retrieve coordinates from user
+    search = False
+    q      = request.args.get("q")
+    if q:
+        search = True
+        
     if request.method == "POST":
+        DB          = os.getenv("DB")
+        DB_HOST     = os.getenv("DB_HOST")
+        DB_NAME     = os.getenv("DB_NAME")
+        DB_USER     = os.getenv("DB_USER")
+        DB_PASSWORD = os.getenv("DB_PASSWORD")
+        DB_PORT     = os.getenv("DB_PORT")
+        
+        DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+        conn, engine = DbConn.connection()
+        Session      = sessionmaker(bind=engine)
+        db_session   = Session()
+        
         previous_map_config = {
             "zoom_level"   : request.form["zoom_level"],
             "center"       : request.form["center"],
@@ -66,18 +88,6 @@ def search():
                     error_         = True
                 )
 
-            DB          = os.getenv("DB")
-            DB_HOST     = os.getenv("DB_HOST")
-            DB_NAME     = os.getenv("DB_NAME")
-            DB_USER     = os.getenv("DB_USER")
-            DB_PASSWORD = os.getenv("DB_PASSWORD")
-            DB_PORT     = os.getenv("DB_PORT")
-            
-            DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
-            conn, engine = DbConn.connection()
-            Session      = sessionmaker(bind=engine)
-            db_session   = Session()
-
             geoserver_info = {}
             geoserver_info["return"]        = False
             geoserver_info["geoserver_url"] = None
@@ -89,6 +99,7 @@ def search():
             layers = {}
             
             result = intersect(db_session, formatted_coord_from_user3)
+            result_ = result+result+result+result+result
             if result:
                 for i in result:
                     if geoserver_info["return"] == False:
@@ -129,6 +140,22 @@ def search():
                     }
 
     error_ = False
+
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    #page     = request.args.get("page", type=int, default=1)
+    per_page = 10
+    
+    pagination = Pagination(
+        len(result_),
+        page          = page,
+        #page          = int(len(result)/2),
+        #total         = int(len(result)/2),
+        total         = len(result_),
+        search        = search,
+        per_page      = per_page,
+        record_name   = "Rasters",
+        css_framework = "bootstrap5"
+    )
     
     if geoserver_info["return"] == False:
         geoserver_info = False
@@ -138,8 +165,10 @@ def search():
     return render_template(
         "index.html",
         geoserver_info = geoserver_info,
-        layers         = layers,
+        #layers         = result[0:int(len(result)/2)],
+        layers         = result_,
         map_config     = map_config,
+        pagination     = pagination,
         error_         = error_
     )
     
@@ -150,4 +179,4 @@ if __name__ == "__main__":
     FLASK_PORT  = os.getenv("FLASK_PORT")
     FLASK_DEBUG = os.getenv("FLASK_DEBUG")
     #app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
-    app.run(host="192.168.88.8", port=8892, debug=True)
+    app.run(host="localhost", port=8892, debug=True)

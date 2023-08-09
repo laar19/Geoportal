@@ -69,7 +69,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
             });
             */
             
-            $("#"+id_+"").append(html_layer_info);
+            //$("#"+id_+"").append(html_layer_info);
 
             /*
             $("#"+id_+"").append('<div>Satellite: '+layers[key]["satellite"]+'</div>');

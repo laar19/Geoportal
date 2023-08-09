@@ -131,6 +131,7 @@ dependencies:
       - cycler==0.11.0
       - fiona==1.9.4.post1
       - flask==2.3.2
+      - flask-paginate==2022.1.8
       - flask-wtf==1.1.1
       - fonttools==4.40.0
       - geoalchemy2==0.13.3
