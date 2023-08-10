@@ -33,7 +33,8 @@ def index_leaflet():
         geoserver_info = False,
         layers         = False,
         map_config     = map_config,
-        error_         = False)
+        error_         = False
+    )
 
 @app.route("/search", methods=["POST", "GET"])
 def search():
@@ -42,7 +43,7 @@ def search():
     if q:
         search = True
         
-    if request.method == "POST":
+    if request.method == "POST" or request.method == "GET":
         DB          = os.getenv("DB")
         DB_HOST     = os.getenv("DB_HOST")
         DB_NAME     = os.getenv("DB_NAME")
@@ -54,12 +55,24 @@ def search():
         conn, engine = DbConn.connection()
         Session      = sessionmaker(bind=engine)
         db_session   = Session()
-        
-        previous_map_config = {
-            "zoom_level"   : request.form["zoom_level"],
-            "center"       : request.form["center"],
-            "search_status": bool(request.form["search_status"])
-        }
+
+        try:
+            previous_map_config = {
+                "zoom_level"   : request.form["zoom_level"],
+                "center"       : request.form["center"],
+                "search_status": bool(request.form["search_status"])
+            }
+        except Exception as e:
+            # Default map config
+            MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
+            MAP_LAT        = os.getenv("MAP_LAT")
+            MAP_LONG       = os.getenv("MAP_LONG")
+            map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
+            previous_map_config = {
+                "zoom_level"   : request.form["zoom_level"],
+                "center"       : request.form["center"],
+                "search_status": bool(request.form["search_status"])
+            }
 
         # If there is an image search
         if previous_map_config["search_status"]:
@@ -179,4 +192,4 @@ if __name__ == "__main__":
     FLASK_PORT  = os.getenv("FLASK_PORT")
     FLASK_DEBUG = os.getenv("FLASK_DEBUG")
     #app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
-    app.run(host="localhost", port=8892, debug=True)
+    app.run(host="192.168.88.8", port=8892, debug=True)
