@@ -36,14 +36,17 @@ def index_leaflet():
         error_         = False
     )
 
-@app.route("/search", methods=["POST", "GET"])
+@app.route("/search", methods=["GET"])
 def search():
+    """
     search = False
     q      = request.args.get("q")
     if q:
         search = True
+    """
+    search = True
         
-    if request.method == "POST" or request.method == "GET":
+    if request.method == "GET":
         DB          = os.getenv("DB")
         DB_HOST     = os.getenv("DB_HOST")
         DB_NAME     = os.getenv("DB_NAME")
@@ -56,23 +59,11 @@ def search():
         Session      = sessionmaker(bind=engine)
         db_session   = Session()
 
-        try:
-            previous_map_config = {
-                "zoom_level"   : request.form["zoom_level"],
-                "center"       : request.form["center"],
-                "search_status": bool(request.form["search_status"])
-            }
-        except Exception as e:
-            # Default map config
-            MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
-            MAP_LAT        = os.getenv("MAP_LAT")
-            MAP_LONG       = os.getenv("MAP_LONG")
-            map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
-            previous_map_config = {
-                "zoom_level"   : request.form["zoom_level"],
-                "center"       : request.form["center"],
-                "search_status": bool(request.form["search_status"])
-            }
+        previous_map_config = {
+            "zoom_level"   : request.args.get("zoom_level"),
+            "center"       : request.args.get("center"),
+            "search_status": bool(request.args.get("search_status"))
+        }
 
         # If there is an image search
         if previous_map_config["search_status"]:
@@ -81,7 +72,7 @@ def search():
             # Coordinates are received as string, so they are splited by comma
             # and converted into list of tuples wich contains coordinate pairs
             # The list of tuples is converted then into list of lists
-            coord_from_user =  request.form["coordinates"].split(",")
+            coord_from_user =  request.args.get("coordinates").split(",")
             formatted_coord_from_user1 = [i for i in zip(coord_from_user[::2], coord_from_user[1::2])]
             formatted_coord_from_user2 = []
             for i in formatted_coord_from_user1:
@@ -112,7 +103,6 @@ def search():
             layers = {}
             
             result = intersect(db_session, formatted_coord_from_user3)
-            result_ = result+result+result+result+result
             if result:
                 for i in result:
                     if geoserver_info["return"] == False:
@@ -159,11 +149,10 @@ def search():
     per_page = 10
     
     pagination = Pagination(
-        len(result_),
+        len(layers),
         page          = page,
         #page          = int(len(result)/2),
-        #total         = int(len(result)/2),
-        total         = len(result_),
+        total         = len(layers),
         search        = search,
         per_page      = per_page,
         record_name   = "Rasters",
@@ -179,7 +168,7 @@ def search():
         "index.html",
         geoserver_info = geoserver_info,
         #layers         = result[0:int(len(result)/2)],
-        layers         = result_,
+        layers         = layers,
         map_config     = map_config,
         pagination     = pagination,
         error_         = error_
@@ -191,5 +180,4 @@ if __name__ == "__main__":
     FLASK_HOST  = os.getenv("FLASK_HOST")
     FLASK_PORT  = os.getenv("FLASK_PORT")
     FLASK_DEBUG = os.getenv("FLASK_DEBUG")
-    #app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
-    app.run(host="192.168.88.8", port=8892, debug=True)
+    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)

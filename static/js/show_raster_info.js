@@ -8,7 +8,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
         var format        = geoserver_info["format"];
         var transparent   = geoserver_info["transparent"];
 
-        var aux = 0;
+        //var aux = 0;
         for(let key in layers) {
             /*
             var test = L.tileLayer.wms("http://172.20.0.3:8080/geoserver/satellite_images/wms", {
@@ -21,7 +21,8 @@ function show_raster_info(map, geoserver_info, layers, error) {
             test.addTo(map);
             */
 
-            var id_ = "layer_"+aux;
+            //var id_ = "layer_"+aux;
+            var id_ = layers[key]["custom_id"];
             
             var wmsLayer = L.tileLayer.wms(geoserver_url, {
                 layers     : workspace + ":" + layers[key]["custom_id"],
@@ -35,14 +36,16 @@ function show_raster_info(map, geoserver_info, layers, error) {
             map_layers[id_] = wmsLayer;
 
             //$("#previews").append('<div id='+id_+'></div>');
-            $("#informacion").append('<div id='+id_+'></div>');
-            $("#"+id_+"").click(function() {
+            //$("#informacion").append('<div id='+id_+'></div>');
+            $("#"+layers[key]["custom_id"]+"").click(function() {
                 var layer = map_layers[this.id];
                 toggleLayer(layer, map);
             });
 
+            /*
             var url = geoserver_info["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key]["custom_id"];
             $("#"+id_+"").append('<br><br><img src='+url+' width="100" height="100">');
+            */
 
             var html_layer_info = "<div>"+
                 //"<button id=show_"+id_+">Show</button>"                              + "<br>"+
@@ -61,15 +64,15 @@ function show_raster_info(map, geoserver_info, layers, error) {
                 "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
                 "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
             "</div>";
+
             /*
             $("#show_"+id_+"").click(function() {
                 var id_tmp = this.id;
                 var layer  = map_layers[this.id.slice(5, id_tmp.length)];
                 toggleLayer(map_layers[this.id.slice(5, id_tmp.length)], map);
             });
+            $("#"+id_+"").append(html_layer_info);
             */
-            
-            //$("#"+id_+"").append(html_layer_info);
 
             /*
             $("#"+id_+"").append('<div>Satellite: '+layers[key]["satellite"]+'</div>');
@@ -95,9 +98,18 @@ function show_raster_info(map, geoserver_info, layers, error) {
             for (var i=0; i<coords[0].length; i++) {
                 coordinates[0].push([coords[0][i][1], coords[0][i][0]]);
             }
+
+            var polygon_style = {
+                //"color"      : "red",
+                "weight"     : 0,
+                "fillOpacity": 0.0
+                //"opacity"    :0
+            };
             
-            var polygon = L.polyline(coordinates, {color: 'red'});
+            var polygon = L.polygon(coordinates, polygon_style);
+            var polyline = L.polyline(coordinates, {color: "red"});
             polygon.addTo(map);
+            polyline.addTo(map);
             //map.fitBounds(polygon.getBounds());
 
             //var marker = L.marker([33.767675, -84.537291]).addTo(map);
@@ -110,6 +122,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
 
                 $.ajax({
                     //url: "myurl.html",
+                    url: $(location).attr("host"),
                 })
                 .done(function(data) {
                     alert(data);
@@ -126,7 +139,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
             //marker.on('click', onMapClick );
             polygon.on("click", show_popup);
 
-            aux = aux + 1;
+            //aux = aux + 1;
         }
     }
     else {

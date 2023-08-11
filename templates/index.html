@@ -182,22 +182,22 @@
                                     <tr>
                                         <td>{{ loop.index + pagination.skip }}</td>
                                         
-                                        <td><img src={{geoserver_info["geoserver_url"] + "/" + geoserver_info["service"] + "/reflect?layers=" + geoserver_info["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
-                                        
-                                        <td>{{ layer.satellite }}</td>
-                                        <td>{{ layer.sensor }}</td>
-                                        <td>{{ layer.capture_date }}</td>
-                                        <td>{{ layer.solar_elevation }}</td>
-                                        <td>{{ layer.solar_azimuth }}</td>
-                                        <td>{{ layer.cloud_percentage }}</td>
-                                        <td>{{ layer.solar_irradiance }}</td>
-                                        <td>{{ layer.k_val }}</td>
-                                        <td>{{ layer.b_val }}</td>
-                                        <td>{{ layer.satellite_altitude }}</td>
-                                        <td>{{ layer.zenit_satellite_angle }}</td>
-                                        <td>{{ layer.satellite_azimuth_angle }}</td>
-                                        <td>{{ layer.roll_angle }}</td>
-                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>
+                                        <td><img id={{layers[layer].custom_id}} src={{geoserver_info["geoserver_url"] + "/" + geoserver_info["service"] + "/reflect?layers=" + geoserver_info["workspace"] + ":" + layers[layer].custom_id}} width="100" height="100"></td>
+
+                                        <td>{{ layers[layer].satellite }}</td>
+                                        <td>{{ layers[layer].sensor }}</td>
+                                        <td>{{ layers[layer].capture_date }}</td>
+                                        <td>{{ layers[layer].solar_elevation }}</td>
+                                        <td>{{ layers[layer].solar_azimuth }}</td>
+                                        <td>{{ layers[layer].cloud_percentage }}</td>
+                                        <td>{{ layers[layer].solar_irradiance }}</td>
+                                        <td>{{ layers[layer].k_val }}</td>
+                                        <td>{{ layers[layer].b_val }}</td>
+                                        <td>{{ layers[layer].satellite_altitude }}</td>
+                                        <td>{{ layers[layer].zenit_satellite_angle }}</td>
+                                        <td>{{ layers[layer].satellite_azimuth_angle }}</td>
+                                        <td>{{ layers[layer].roll_angle }}</td>
+                                        <td><a href={{layers[layer].compressed_file_path}}>Download</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -205,18 +205,6 @@
                         {{ pagination.links|safe }}
                     </div>
                 {% endif %}
-
-                <!-- 
-                <p>A responsive sidebar for mapping libraries like <a href="http://leafletjs.com/">Leaflet</a> or <a href="http://openlayers.org/">OpenLayers</a>.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-                -->
             </div>
         </div>
     </div>
@@ -224,7 +212,7 @@
     <div id="map" class="sidebar-map"></div>
 
     <div>
-        <form id="search" method="POST" action="/search">
+        <form id="search" method="GET" action="/search">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <input type="hidden" id="coordinates"   name="coordinates"   value="">
@@ -262,10 +250,10 @@
     <script>
         var geoserver_info = {{ geoserver_info|tojson }};
         var map_config     = {{ map_config|tojson }};
-        //var layers         = { { layers|tojson } };
+        var layers         = {{ layers|tojson }};
         var error_         = {{ error_|tojson }};
         
-        //show_raster_info(map, geoserver_info, layers, error_);
+        show_raster_info(map, geoserver_info, layers, error_);
 
         $("#coordinates").val(map_config["coordinates"])
         $("#zoom_level").val(map_config["zoom_level"])
