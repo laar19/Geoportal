@@ -99,10 +99,27 @@ def search():
             geoserver_info["service"]       = None
             geoserver_info["format"]        = None
             geoserver_info["transparent"]   = None
+
+            options = {}
+
+            if request.args.get("satellite") != "ALL":
+                options["satellite"] = request.args.get("satellite")
+            else:
+                options["satellite"] = False
+
+            if request.args.get("pan") != "false":
+                options["sensor_pan"] = request.args.get("pan")
+            else:
+                options["sensor_pan"] = False
+                
+            if request.args.get("mss") != "false":
+                options["sensor_mss"] = request.args.get("mss")
+            else:
+                options["sensor_mss"] = False
             
+            result = intersect(db_session, formatted_coord_from_user3, options)
+
             layers = {}
-            
-            result = intersect(db_session, formatted_coord_from_user3)
             if result:
                 for i in result:
                     if geoserver_info["return"] == False:

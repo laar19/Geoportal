@@ -82,15 +82,17 @@ map.on(L.Draw.Event.CREATED, function (e) {
 });
 
 // Custom control
+/*
 L.Control.Button = L.Control.extend({
     options: {
         position: 'topleft'
     },
     onAdd: function (map) {
         var container   = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-        var button      = L.DomUtil.create('a', 'leaflet-control-button', container);
+        var button      = L.DomUtil.create('a', 'search-button leaflet-control-button', container);
         L.DomEvent.disableClickPropagation(button);
         L.DomEvent.on(button, 'click', function(){
+            $("#satellite").val($("#select_satellite").val());
             document.getElementById("search").submit();
         });
 
@@ -102,6 +104,7 @@ L.Control.Button = L.Control.extend({
 });
 var control = new L.Control.Button()
 control.addTo(map);
+*/
 
 /*
 new L.cascadeButtons([
@@ -126,6 +129,27 @@ new L.cascadeButtons([
         {icon: 'bi bi-3-circle', command: () =>{console.log('hola')}},
     ]},
     */
+
+    {
+        icon: 'bi-search', command: () => {
+            $("#satellite").val($("#select_satellite").val());
+
+            if ($("#sensor_pan").is(":checked")) {
+                $("#pan").val($("#sensor_pan").val());
+            }
+            else {
+                $("#pan").val(false);
+            }
+            if ($("#sensor_mss").is(":checked")) {
+                $("#mss").val($("#sensor_mss").val());
+            }
+            else {
+                $("#mss").val(false);
+            }
+            
+            document.getElementById("search").submit();
+        }
+    },
     
     {icon: 'bi bi-share', items: [
         {icon: 'bi bi-twitter', command: () =>{console.log('hola')}},

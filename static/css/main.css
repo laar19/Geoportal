@@ -94,9 +94,18 @@ html, body, #map {
     background-color: rgb(255, 255, 255) !important;
 }
 
-.leaflet-control-button {
+/*
+.search-button {
+    /*
     background-image: url(https://images.uncyc.org/pt/3/39/Lupa_detetive.JPG);
+    */
+    /*
+    https://visualpharm.com/free-icons/google%20web%20search-595b40b85ba036ed117dd406
+    */
+    /*
+    background-image: url(../icons/noun-search-5949503.svg);
 }
+*/
 
 .leaflet-touch .leaflet-bar a {
     width: 36px !important;
@@ -249,4 +258,14 @@ html, body, #map {
 
 .leaflet-control-geocoder-address-context {
   color: #666;
+}
+
+.fa-satellite,
+.fa-solar-panel,
+.fa-camera,
+.fa-fingerprint,
+.fa-calendar,
+.fa-compass-drafting,
+.fa-cloud-sun {
+    color: #FFFFFF;
 }
