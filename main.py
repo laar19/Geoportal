@@ -3,17 +3,17 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask           import Flask, render_template, request
-from flask_wtf       import CSRFProtect
-from flask_paginate  import Pagination, get_page_parameter
+from flask          import Flask, render_template, request
+from flask_wtf      import CSRFProtect
+from flask_paginate import Pagination, get_page_parameter
 
 from shapely.geometry import Polygon
 
 from sqlalchemy.orm import sessionmaker
 
-from app.models.models                 import DatabaseConfig
-from app.models.functions              import *
-from app.config                        import *
+from app.models.models    import DatabaseConfig
+from app.models.functions import *
+from app.config           import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -161,17 +161,18 @@ def search():
 
     error_ = False
 
-    page = request.args.get(get_page_parameter(), type=int, default=1)
     #page     = request.args.get("page", type=int, default=1)
+    page     = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = 10
-    
+    offset   = (page - 1) * per_page,
+
     pagination = Pagination(
         len(layers),
         page          = page,
-        #page          = int(len(result)/2),
+        per_page      = per_page,
+        offset        = offset,
         total         = len(layers),
         search        = search,
-        per_page      = per_page,
         record_name   = "Rasters",
         css_framework = "bootstrap5"
     )
