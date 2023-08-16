@@ -133,7 +133,7 @@
         <!-- Nav tabs -->
         <div class="sidebar-tabs">
             <ul role="tablist">
-                <li><a href="#informacion" role="tab"><i class="bi bi-info-circle"></i></a></li>
+                <li id="information"><a href="#informacion" role="tab"><i class="bi bi-info-circle"></i></a></li>
             </ul>
         </div>
 
@@ -170,30 +170,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for layer in layers %}
+                                {% for layer in result %}
                                     <tr>
                                         <td>{{ loop.index + pagination.skip }}</td>
-                                        
-                                        <td><img id={{layers[layer].custom_id}} src={{geoserver_info["geoserver_url"] + "/" + geoserver_info["service"] + "/reflect?layers=" + geoserver_info["workspace"] + ":" + layers[layer].custom_id}} width="100" height="100"></td>
 
-                                        <td>{{ layers[layer].satellite }}</td>
-                                        <td>{{ layers[layer].sensor }}</td>
-                                        <td>{{ layers[layer].capture_date }}</td>
-                                        <td>{{ layers[layer].solar_elevation }}</td>
-                                        <td>{{ layers[layer].solar_azimuth }}</td>
-                                        <td>{{ layers[layer].cloud_percentage }}</td>
-                                        <td>{{ layers[layer].solar_irradiance }}</td>
-                                        <td>{{ layers[layer].k_val }}</td>
-                                        <td>{{ layers[layer].b_val }}</td>
-                                        <td>{{ layers[layer].satellite_altitude }}</td>
-                                        <td>{{ layers[layer].zenit_satellite_angle }}</td>
-                                        <td>{{ layers[layer].satellite_azimuth_angle }}</td>
-                                        <td>{{ layers[layer].roll_angle }}</td>
-                                        <td><a href={{layers[layer].compressed_file_path}}>Download</a></td>
+                                        <td><img id={{layer.custom_id}} src={{geoserver_info["geoserver_url"] + "/" + geoserver_info["service"] + "/reflect?layers=" + geoserver_info["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
+
+                                        <td>{{ layer.satellite }}</td>
+                                        <td>{{ layer.sensor }}</td>
+                                        <td>{{ layer.capture_date }}</td>
+                                        <td>{{ layer.solar_elevation }}</td>
+                                        <td>{{ layer.solar_azimuth }}</td>
+                                        <td>{{ layer.cloud_percentage }}</td>
+                                        <td>{{ layer.solar_irradiance }}</td>
+                                        <td>{{ layer.k_val }}</td>
+                                        <td>{{ layer.b_val }}</td>
+                                        <td>{{ layer.satellite_altitude }}</td>
+                                        <td>{{ layer.zenit_satellite_angle }}</td>
+                                        <td>{{ layer.satellite_azimuth_angle }}</td>
+                                        <td>{{ layer.roll_angle }}</td>
+                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>                                        
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                        <br>
                         {{ pagination.links|safe }}
                     </div>
                 {% endif %}

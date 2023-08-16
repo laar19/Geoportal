@@ -32,7 +32,9 @@ def index_leaflet():
         "index.html",
         geoserver_info = False,
         layers         = False,
+        result         = False,
         map_config     = map_config,
+        pagination     = pagination,
         error_         = False
     )
 
@@ -44,7 +46,11 @@ def search():
     if q:
         search = True
     """
-    search = True
+    search   = True
+    #page     = request.args.get("page", type=int, default=1)
+    page     = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 10
+    offset   = (page - 1) * per_page
         
     if request.method == "GET":
         DB          = os.getenv("DB")
@@ -116,12 +122,13 @@ def search():
                 options["sensor_mss"] = request.args.get("mss")
             else:
                 options["sensor_mss"] = False
-            
-            result = intersect(db_session, formatted_coord_from_user3, options)
+
+            result        = intersect(db_session, formatted_coord_from_user3, options)
+            result_render = result.limit(per_page).offset(offset)
 
             layers = {}
             if result:
-                for i in result:
+                for i in result.all():
                     if geoserver_info["return"] == False:
                         geoserver_info["return"] = True
                         
@@ -161,20 +168,18 @@ def search():
 
     error_ = False
 
-    #page     = request.args.get("page", type=int, default=1)
-    page     = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
-    offset   = (page - 1) * per_page,
-
     pagination = Pagination(
-        len(layers),
+        result.count(),
         page          = page,
         per_page      = per_page,
         offset        = offset,
-        total         = len(layers),
-        search        = search,
+        #total         = len(layers),
+        total         = result.count(),
+        search        = True,
+        #search_msg    = "Found {} results".format(len(layers)),
         record_name   = "Rasters",
-        css_framework = "bootstrap5"
+        css_framework = "bootstrap",
+        bs_version    = 5
     )
     
     if geoserver_info["return"] == False:
@@ -187,6 +192,7 @@ def search():
         geoserver_info = geoserver_info,
         #layers         = result[0:int(len(result)/2)],
         layers         = layers,
+        result         = result_render,
         map_config     = map_config,
         pagination     = pagination,
         error_         = error_

@@ -161,6 +161,6 @@ new L.cascadeButtons([
 
 //L.Control.geocoder().addTo(map);
 
-var sidebar = L.control.sidebar('sidebar').addTo(map);
+var sidebar1 = L.control.sidebar('sidebar').addTo(map);
 
-var sidebar = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);
+var sidebar2 = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);

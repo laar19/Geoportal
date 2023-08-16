@@ -51,4 +51,5 @@ def intersect(db_session, polygon, options):
         if options["sensor_mss"]:
             db_session_query = db_session_query.where(SatelliteImages.sensor==options["sensor_mss"])
 
-    return db_session_query.all()
+    #return db_session_query.all()
+    return db_session_query

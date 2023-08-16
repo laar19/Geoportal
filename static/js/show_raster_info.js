@@ -141,6 +141,9 @@ function show_raster_info(map, geoserver_info, layers, error) {
 
             //aux = aux + 1;
         }
+        sidebar2.open();
+        $("#sidebar1").removeClass("collapsed");
+        $("#information").addClass("active");
     }
     else {
         if(error_) {
