@@ -34,7 +34,7 @@ def index_leaflet():
         layers         = False,
         result         = False,
         map_config     = map_config,
-        pagination     = pagination,
+        pagination     = False,
         error_         = False
     )
 
@@ -49,7 +49,7 @@ def search():
     search   = True
     #page     = request.args.get("page", type=int, default=1)
     page     = request.args.get(get_page_parameter(), type=int, default=1)
-    per_page = 10
+    per_page = 5
     offset   = (page - 1) * per_page
         
     if request.method == "GET":
@@ -87,16 +87,7 @@ def search():
             try:
                 formatted_coord_from_user3 = Polygon(formatted_coord_from_user2)
             except Exception as e:
-                geoserver_info = False
-                layers         = False
-                
-                return render_template(
-                    "index.html",
-                    geoserver_info = geoserver_info,
-                    layers         = layers,
-                    map_config     = map_config,
-                    error_         = True
-                )
+                formatted_coord_from_user3 = False
 
             geoserver_info = {}
             geoserver_info["return"]        = False
@@ -106,24 +97,55 @@ def search():
             geoserver_info["format"]        = None
             geoserver_info["transparent"]   = None
 
-            options = {}
+            filters = {}
 
+            filters["coordinates"] = formatted_coord_from_user3
+                
             if request.args.get("satellite") != "ALL":
-                options["satellite"] = request.args.get("satellite")
+                filters["satellite"] = request.args.get("satellite")
             else:
-                options["satellite"] = False
+                filters["satellite"] = False
 
             if request.args.get("pan") != "false":
-                options["sensor_pan"] = request.args.get("pan")
+                filters["sensor_pan"] = request.args.get("pan")
             else:
-                options["sensor_pan"] = False
-                
-            if request.args.get("mss") != "false":
-                options["sensor_mss"] = request.args.get("mss")
-            else:
-                options["sensor_mss"] = False
+                filters["sensor_pan"] = False
 
-            result        = intersect(db_session, formatted_coord_from_user3, options)
+            if request.args.get("mss") != "false":
+                filters["sensor_mss"] = request.args.get("mss")
+            else:
+                filters["sensor_mss"] = False
+                
+            if request.args.get("orbit") != "false":
+                filters["orbit"] = request.args.get("orbit")
+            else:
+                filters["orbit"] = False
+                
+            if request.args.get("scene") != "false":
+                filters["scene"] = request.args.get("scene")
+            else:
+                filters["scene"] = False
+                
+            if request.args.get("start_date") != "false":
+                filters["start_date"] = request.args.get("start_date")
+            else:
+                filters["start_date"] = False
+                
+            if request.args.get("end_date") != "false":
+                filters["end_date"] = request.args.get("end_date")
+            else:
+                filters["end_date"] = False
+                
+            if request.args.get("roll_angle") != "false":
+                filters["roll_angle"] = request.args.get("roll_angle")
+            else:
+                filters["roll_angle"] = False
+
+            print()
+            print(request.args.get("roll_angle"))
+            print()
+
+            result        = intersect(db_session, filters)
             result_render = result.limit(per_page).offset(offset)
 
             layers = {}
@@ -151,19 +173,21 @@ def search():
                         "custom_id"              : i[5],
                         "satellite"              : i[6],
                         "sensor"                 : i[7],
-                        "capture_date"           : i[8],
-                        "cutted_image_shape"     : i[9],
-                        "solar_elevation"        : i[10],
-                        "solar_azimuth"          : i[11],
-                        "cloud_percentage"       : i[12],
-                        "solar_irradiance"       : i[13],
-                        "k_val"                  : i[14],
-                        "b_val"                  : i[15],
-                        "satellite_altitude"     : i[16],
-                        "zenit_satellite_angle"  : i[17],
-                        "satellite_azimuth_angle": i[18],
-                        "roll_angle"             : i[19],
-                        "compressed_file_path"   : i[20],
+                        "orbit"                  : i[8],
+                        "scene"                  : i[9],
+                        "capture_date"           : i[10],
+                        "cutted_image_shape"     : i[11],
+                        "solar_elevation"        : i[12],
+                        "solar_azimuth"          : i[13],
+                        "cloud_percentage"       : i[14],
+                        "solar_irradiance"       : i[15],
+                        "k_val"                  : i[16],
+                        "b_val"                  : i[17],
+                        "satellite_altitude"     : i[18],
+                        "zenit_satellite_angle"  : i[19],
+                        "satellite_azimuth_angle": i[20],
+                        "roll_angle"             : i[21],
+                        "compressed_file_path"   : i[22],
                     }
 
     error_ = False

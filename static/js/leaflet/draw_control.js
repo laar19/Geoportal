@@ -146,6 +146,12 @@ new L.cascadeButtons([
             else {
                 $("#mss").val(false);
             }
+
+            $("#orbit").val($("#orbit_").val());
+            $("#scene").val($("#scene_").val());
+            $("#start_date").val($("#start_date_").val());
+            $("#end_date").val($("#end_date_").val());
+            $("#roll_angle").val($("#roll_angle_value").val());
             
             document.getElementById("search").submit();
         }
