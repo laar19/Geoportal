@@ -152,6 +152,7 @@ new L.cascadeButtons([
             $("#start_date").val($("#start_date_").val());
             $("#end_date").val($("#end_date_").val());
             $("#roll_angle").val($("#roll_angle_value").val());
+            $("#cloud_percentage").val($("#cloud_percentage_value").val());
             
             document.getElementById("search").submit();
         }
@@ -170,3 +171,4 @@ new L.cascadeButtons([
 var sidebar1 = L.control.sidebar('sidebar').addTo(map);
 
 var sidebar2 = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);
+//var sidebar2 = L.control.sidebar('sidebar1').addTo(map);

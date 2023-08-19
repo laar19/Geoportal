@@ -1,7 +1,7 @@
 # Flask
-FLAS_HOST=localhost
-FLAS_PORT=5000
-FLAS_DEBUG=true
+FLASK_HOST=localhost
+FLASK_PORT=5000
+FLASK_DEBUG=true
 
 # Database
 DB=postgresql

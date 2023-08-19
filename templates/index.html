@@ -54,27 +54,30 @@
             <ul role="tablist">
                 <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
                 <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
+                <!--
                 <li><a href="#orbita" role="tab"><i class="fa-solid fa-solar-panel"></i></a></li>
                 <li><a href="#escena" role="tab"><i class="fa-solid fa-fingerprint"></i></a></li>
                 <li><a href="#fecha" role="tab"><i class="fa-regular fa-calendar"></i></a></li>
                 <li><a href="#roll" role="tab"><i class="fa-solid fa-compass-drafting"></i></a></li>
                 <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
+                -->
             </ul>
         </div>
 
         <!-- Tab panes -->
         <div class="sidebar-content">
             <div class="sidebar-pane" id="satelite">
-                <h1 class="sidebar-header">Satelite<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <h1 class="sidebar-header">Advanced<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <select id="select_satellite" name="select_satellite" class="form-select form-select-sm" aria-label=".form-select-sm example">
                     <option value="ALL">ALL</option>
                     <option value="VRSS-1">VRSS-1</option>
                     <option value="VRSS-2">VRSS-2</option>
                 </select>
-            </div>
+            <!--/div -->
 
-            <div class="sidebar-pane" id="sensor">
+            <!-- div class="sidebar-pane" id="sensor" -->
+                <br>
                 <h1 class="sidebar-header">Sensor<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <div class="form-check form-check-inline">
@@ -85,21 +88,25 @@
                     <input class="form-check-input" type="checkbox" id="sensor_mss" name="sensor_mss" value="MSS">
                     <label class="form-check-label" for="sensor_mss">MSS</label>
                 </div>
-            </div>
+            <!-- /div -->
 
-            <div class="sidebar-pane" id="orbita">
+            <!-- div class="sidebar-pane" id="orbita" -->
+                <br>
+                <br>
                 <h1 class="sidebar-header">Orbita<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <input id="orbit_" class="form-control form-control-sm" type="text" placeholder="Ingrese Orbita">
-            </div>
+            <!-- /div -->
 
-            <div class="sidebar-pane" id="escena">
+            <!-- div class="sidebar-pane" id="escena" -->
+                <br>
                 <h1 class="sidebar-header">Escena ID<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <input id="scene_" class="form-control form-control-sm" type="text" placeholder="Ingrese Scena ID">
-            </div>
+            <!-- /div -->
 
-            <div class="sidebar-pane" id="fecha">
+            <!-- div class="sidebar-pane" id="fecha" -->
+                <br>
                 <h1 class="sidebar-header">Rango de Fecha<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <div class="mb-3">
@@ -109,22 +116,88 @@
                     <label for="exampleInputEmail1" class="form-label">Fin</label>
                     <input id="end_date_" type="date" class="form-control">
                 </div>
-            </div>
+            <!-- /div -->
 
-            <div class="sidebar-pane" id="roll">
+            <!-- div class="sidebar-pane" id="roll" -->
+                <br>
                 <h1 class="sidebar-header">Roll<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <label for="" class="form-label">Roll Max</label>
                 <input id="roll_angle_" type="range" min="0" max="35" step="1" class="form-range">
-                <p>Val: <output id="roll_angle_value"></output></p>
-            </div>
+                <p>
+                    From <output id="roll_angle_value"></output>
+                    to <output id="roll_angle_negative_value"></output>
+                </p>
+            <!-- /div -->
 
-            <div class="sidebar-pane" id="nubosidad">
+            <!-- div class="sidebar-pane" id="nubosidad" -->
+                <br>
                 <h1 class="sidebar-header">% Nubosidad<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
-                <input class="form-control form-control-sm" type="number" placeholder="0" max="30">
-                <br><br>
-                <button type="button" class="btn btn-primary">Enviar</button>
+                <label for="" class="form-label">Maximum permitted</label>
+                <input id="cloud_percentage_" type="range" min="0" max="100" step="1" class="form-range">
+                <p>Value <output id="cloud_percentage_value"></output></p>
+                <!-- button type="button" class="btn btn-primary">Enviar</button -->
+            </div>
+            <div class="sidebar-pane" id="sensor">
+                {% if layers != False %}
+                    <div class="table-responsive">
+                        {{ pagination.info|safe }}
+                        {{ pagination.links|safe }}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Preview</th>
+                                    <th>Satellite</th>
+                                    <th>Sensor</th>
+                                    <th>Orbit</th>
+                                    <th>Scene</th>
+                                    <th>Capture date</th>
+                                    <th>Solar Elevation</th>
+                                    <th>Solar Azimuth</th>
+                                    <th>Cloud percentage</th>
+                                    <th>Solar irradiance</th>
+                                    <th>K</th>
+                                    <th>B</th>
+                                    <th>Satellite altitude</th>
+                                    <th>Satellite zenit angle</th>
+                                    <th>Satellite azimuth angle</th>
+                                    <th>Roll angle</th>
+                                    <th>Download</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for layer in result %}
+                                    <tr>
+                                        <td>{{ loop.index + pagination.skip }}</td>
+
+                                        <td><img id={{layer.custom_id}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"] + "/reflect?layers=" + geoserver_config["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
+
+                                        <td>{{ layer.satellite }}</td>
+                                        <td>{{ layer.sensor }}</td>
+                                        <td>{{ layer.orbit }}</td>
+                                        <td>{{ layer.escene }}</td>
+                                        <td>{{ layer.capture_date }}</td>
+                                        <td>{{ layer.solar_elevation }}</td>
+                                        <td>{{ layer.solar_azimuth }}</td>
+                                        <td>{{ layer.cloud_percentage }}</td>
+                                        <td>{{ layer.solar_irradiance }}</td>
+                                        <td>{{ layer.k_val }}</td>
+                                        <td>{{ layer.b_val }}</td>
+                                        <td>{{ layer.satellite_altitude }}</td>
+                                        <td>{{ layer.zenit_satellite_angle }}</td>
+                                        <td>{{ layer.satellite_azimuth_angle }}</td>
+                                        <td>{{ layer.roll_angle }}</td>
+                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>                                        
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                        {{ pagination.links|safe }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -178,7 +251,7 @@
                                     <tr>
                                         <td>{{ loop.index + pagination.skip }}</td>
 
-                                        <td><img id={{layer.custom_id}} src={{geoserver_info["geoserver_url"] + "/" + geoserver_info["service"] + "/reflect?layers=" + geoserver_info["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
+                                        <td><img id={{layer.custom_id}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"] + "/reflect?layers=" + geoserver_config["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
 
                                         <td>{{ layer.satellite }}</td>
                                         <td>{{ layer.sensor }}</td>
@@ -214,14 +287,15 @@
         <form id="search" method="GET" action="/search">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <input type="hidden" id="satellite"  name="satellite"  value="">
-            <input type="hidden" id="pan"        name="pan"        value="">
-            <input type="hidden" id="mss"        name="mss"        value="">
-            <input type="hidden" id="orbit"      name="orbit"      value="">
-            <input type="hidden" id="scene"      name="scene"      value="">
-            <input type="hidden" id="start_date" name="start_date" value="">
-            <input type="hidden" id="end_date"   name="end_date"   value="">
-            <input type="hidden" id="roll_angle" name="roll_angle" value="">
+            <input type="hidden" id="satellite"        name="satellite"        value="">
+            <input type="hidden" id="pan"              name="pan"              value="">
+            <input type="hidden" id="mss"              name="mss"              value="">
+            <input type="hidden" id="orbit"            name="orbit"            value="">
+            <input type="hidden" id="scene"            name="scene"            value="">
+            <input type="hidden" id="start_date"       name="start_date"       value="">
+            <input type="hidden" id="end_date"         name="end_date"         value="">
+            <input type="hidden" id="roll_angle"       name="roll_angle"       value="">
+            <input type="hidden" id="cloud_percentage" name="cloud_percentage" value="">
             
             <input type="hidden" id="coordinates"   name="coordinates"   value="">
             <input type="hidden" id="zoom_level"    name="zoom_level"    value="">
@@ -258,12 +332,12 @@
     <!-- script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script -->
 
     <script>
-        var geoserver_info = {{ geoserver_info|tojson }};
-        var map_config     = {{ map_config|tojson }};
-        var layers         = {{ layers|tojson }};
-        var error_         = {{ error_|tojson }};
+        var geoserver_config = {{ geoserver_config|tojson }};
+        var map_config       = {{ map_config|tojson }};
+        var layers           = {{ layers|tojson }};
+        var error_           = {{ error_|tojson }};
         
-        show_raster_info(map, geoserver_info, layers, error_);
+        show_raster_info(map, geoserver_config, layers, error_);
 
         $("#coordinates").val(map_config["coordinates"])
         $("#zoom_level").val(map_config["zoom_level"])

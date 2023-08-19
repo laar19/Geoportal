@@ -30,12 +30,12 @@ map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
 def index_leaflet():
     return render_template(
         "index.html",
-        geoserver_info = False,
-        layers         = False,
-        result         = False,
-        map_config     = map_config,
-        pagination     = False,
-        error_         = False
+        geoserver_config = False,
+        layers           = False,
+        result           = False,
+        map_config       = map_config,
+        pagination       = False,
+        error_           = False
     )
 
 @app.route("/search", methods=["GET"])
@@ -89,13 +89,13 @@ def search():
             except Exception as e:
                 formatted_coord_from_user3 = False
 
-            geoserver_info = {}
-            geoserver_info["return"]        = False
-            geoserver_info["geoserver_url"] = None
-            geoserver_info["workspace"]     = None
-            geoserver_info["service"]       = None
-            geoserver_info["format"]        = None
-            geoserver_info["transparent"]   = None
+            geoserver_config = {}
+            geoserver_config["return"]        = False
+            geoserver_config["geoserver_url"] = None
+            geoserver_config["workspace"]     = None
+            geoserver_config["service"]       = None
+            geoserver_config["format"]        = None
+            geoserver_config["transparent"]   = None
 
             filters = {}
 
@@ -140,54 +140,57 @@ def search():
                 filters["roll_angle"] = request.args.get("roll_angle")
             else:
                 filters["roll_angle"] = False
-
-            print()
-            print(request.args.get("roll_angle"))
-            print()
+                
+            if request.args.get("cloud_percentage") != "false":
+                filters["cloud_percentage"] = request.args.get("cloud_percentage")
+            else:
+                filters["cloud_percentage"] = False
 
             result        = intersect(db_session, filters)
             result_render = result.limit(per_page).offset(offset)
 
             layers = {}
             if result:
+                geoserver_config_ = get_geoserver_config(db_session)
+                
+                if geoserver_config["return"] == False:
+                    geoserver_config["return"] = True
+                    
+                if geoserver_config["geoserver_url"] == None:
+                    geoserver_config["geoserver_url"] = geoserver_config_[0].url
+                    
+                if geoserver_config["workspace"] == None:
+                    geoserver_config["workspace"] = geoserver_config_[0].workspace
+                    
+                if geoserver_config["service"] == None:
+                    geoserver_config["service"] = geoserver_config_[0].service
+
+                if geoserver_config["format"] == None:
+                    geoserver_config["format"] = geoserver_config_[0].format_
+
+                if geoserver_config["transparent"] == None:
+                    geoserver_config["transparent"] = geoserver_config_[0].transparent
+
                 for i in result.all():
-                    if geoserver_info["return"] == False:
-                        geoserver_info["return"] = True
-                        
-                    if geoserver_info["geoserver_url"] == None:
-                        geoserver_info["geoserver_url"] = i[0]
-                        
-                    if geoserver_info["workspace"] == None:
-                        geoserver_info["workspace"] = i[1]
-                        
-                    if geoserver_info["service"] == None:
-                        geoserver_info["service"] = i[2]
-
-                    if geoserver_info["format"] == None:
-                        geoserver_info["format"] = i[3]
-
-                    if geoserver_info["transparent"] == None:
-                        geoserver_info["transparent"] = i[4]
-
-                    layers[i[5]] = {
-                        "custom_id"              : i[5],
-                        "satellite"              : i[6],
-                        "sensor"                 : i[7],
-                        "orbit"                  : i[8],
-                        "scene"                  : i[9],
-                        "capture_date"           : i[10],
-                        "cutted_image_shape"     : i[11],
-                        "solar_elevation"        : i[12],
-                        "solar_azimuth"          : i[13],
-                        "cloud_percentage"       : i[14],
-                        "solar_irradiance"       : i[15],
-                        "k_val"                  : i[16],
-                        "b_val"                  : i[17],
-                        "satellite_altitude"     : i[18],
-                        "zenit_satellite_angle"  : i[19],
-                        "satellite_azimuth_angle": i[20],
-                        "roll_angle"             : i[21],
-                        "compressed_file_path"   : i[22],
+                    layers[i.custom_id] = {
+                        "custom_id"              : i.custom_id,
+                        "satellite"              : i.satellite,
+                        "sensor"                 : i.sensor,
+                        "orbit"                  : i.orbit,
+                        "scene"                  : i.scene,
+                        "capture_date"           : i.capture_date,
+                        "cutted_image_shape"     : i[6],
+                        "solar_elevation"        : i.solar_elevation,
+                        "solar_azimuth"          : i.solar_azimuth,
+                        "cloud_percentage"       : i.cloud_percentage,
+                        "solar_irradiance"       : i.solar_irradiance,
+                        "k_val"                  : i.k_val,
+                        "b_val"                  : i.b_val,
+                        "satellite_altitude"     : i.satellite_altitude,
+                        "zenit_satellite_angle"  : i.zenit_satellite_angle,
+                        "satellite_azimuth_angle": i.satellite_azimuth_angle,
+                        "roll_angle"             : i.roll_angle,
+                        "compressed_file_path"   : i.compressed_file_path,
                     }
 
     error_ = False
@@ -206,20 +209,20 @@ def search():
         bs_version    = 5
     )
     
-    if geoserver_info["return"] == False:
-        geoserver_info = False
-        layers         = False
-        error_         = False
+    if geoserver_config["return"] == False:
+        geoserver_config = False
+        layers           = False
+        error_           = False
 
     return render_template(
         "index.html",
-        geoserver_info = geoserver_info,
+        geoserver_config = geoserver_config,
         #layers         = result[0:int(len(result)/2)],
-        layers         = layers,
-        result         = result_render,
-        map_config     = map_config,
-        pagination     = pagination,
-        error_         = error_
+        layers           = layers,
+        result           = result_render,
+        map_config       = map_config,
+        pagination       = pagination,
+        error_           = error_
     )
     
 if __name__ == "__main__":

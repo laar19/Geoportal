@@ -354,7 +354,7 @@ if __name__ == "__main__":
         
     # Convertimos la lista de listas a dataframe
     columns = [
-        "custom_id", "satellite", "sensor", "orbit", "escene", "capture_date",
+        "custom_id", "satellite", "sensor", "orbit", "scene", "capture_date",
         "image_coordinates", "cutted_image_shape", "solar_elevation",
         "solar_azimuth", "cloud_percentage", "solar_irradiance", "k_val",
         "b_val", "satellite_altitude", "zenit_satellite_angle",
@@ -385,7 +385,7 @@ if __name__ == "__main__":
             satellite               = tmp_df["satellite"][0],
             sensor                  = tmp_df["sensor"][0],
             orbit                   = tmp_df["orbit"][0],
-            escene                  = tmp_df["escene"][0],
+            scene                   = tmp_df["scene"][0],
             capture_date            = tmp_df["capture_date"][0],
             image_coordinates       = tmp_df["image_coordinates"][0],
             cutted_image_shape      = tmp_df["cutted_image_shape"][0],

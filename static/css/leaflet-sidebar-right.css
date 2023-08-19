@@ -306,5 +306,11 @@
 }
 
 #sidebar {
+    /*
     height: 290px;
+    */
+    height: 95%;
+    /*
+    margin-left: 100px;
+    */
 }

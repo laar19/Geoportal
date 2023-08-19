@@ -5,21 +5,18 @@ from geoalchemy2 import functions
 from app.models.satellite_images_table import *
 from app.models.geoserver_table        import *
 
+def get_geoserver_config(db_session):
+    # For geoserver url
+    return db_session.query(GeoserverConfig).all()
+
 def intersect(db_session, filters):
+    # Satellite info
     db_session_query = db_session.query(
-        # For geoserver url
-        GeoserverConfig.url,
-        GeoserverConfig.workspace,
-        GeoserverConfig.service,
-        GeoserverConfig.format_,
-        GeoserverConfig.transparent,
         SatelliteImages.custom_id,
-        
-        # Satellite info
         SatelliteImages.satellite,
         SatelliteImages.sensor,
         SatelliteImages.orbit,
-        SatelliteImages.escene,
+        SatelliteImages.scene,
         SatelliteImages.capture_date,
         #functions.ST_AsText(SatelliteImages.cutted_image_shape),
         functions.ST_AsGeoJSON(SatelliteImages.cutted_image_shape),
@@ -73,7 +70,7 @@ def intersect(db_session, filters):
         
     if filters["scene"]:
         db_session_query = db_session_query.where(
-            SatelliteImages.escene==filters["scene"]
+            SatelliteImages.scene==filters["scene"]
         )
 
     if filters["start_date"] and filters["end_date"]:
@@ -82,20 +79,20 @@ def intersect(db_session, filters):
                 filters["start_date"], filters["end_date"]
             )
         )
-        
+
     if filters["roll_angle"]:
         db_session_query = db_session_query.where(
             SatelliteImages.roll_angle.between(
-                int(filters["roll_angle"])*-1, int(filters["roll_angle"])
+                float(filters["roll_angle"])*-1, float(filters["roll_angle"])
             )
         )
-
-    """
-    if filters["roll_angle"]:
+        
+    if filters["cloud_percentage"]:
         db_session_query = db_session_query.where(
-            SatelliteImages.roll_angle>=filters["roll_angle"]
+            SatelliteImages.cloud_percentage.between(
+                float(0), float(filters["cloud_percentage"])
+            )
         )
-    """
 
     #return db_session_query.all()
     return db_session_query

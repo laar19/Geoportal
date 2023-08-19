@@ -1,11 +1,11 @@
-function show_raster_info(map, geoserver_info, layers, error) {
+function show_raster_info(map, geoserver_config, layers, error) {
     var map_layers = {};
     
-    var workspace     = geoserver_info["workspace"];
-    var service       = geoserver_info["service"];
-    var geoserver_url = geoserver_info["geoserver_url"] + "/" + workspace + "/" + service;
-    var format        = geoserver_info["format"];
-    var transparent   = geoserver_info["transparent"];
+    var workspace     = geoserver_config["workspace"];
+    var service       = geoserver_config["service"];
+    var geoserver_url = geoserver_config["geoserver_url"] + "/" + workspace + "/" + service;
+    var format        = geoserver_config["format"];
+    var transparent   = geoserver_config["transparent"];
 
     //var aux = 0;
     for(let key in layers) {
@@ -42,7 +42,7 @@ function show_raster_info(map, geoserver_info, layers, error) {
         });
 
         /*
-        var url = geoserver_info["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key]["custom_id"];
+        var url = geoserver_config["geoserver_url"] + "/" + service + "/reflect?layers=" + workspace + ":" + layers[key]["custom_id"];
         $("#"+id_+"").append('<br><br><img src='+url+' width="100" height="100">');
         */
 
@@ -142,7 +142,9 @@ function show_raster_info(map, geoserver_info, layers, error) {
 
         //aux = aux + 1;
     }
+    /*
     sidebar2.open();
     $("#sidebar1").removeClass("collapsed");
     $("#information").addClass("active");
+    */
 }
