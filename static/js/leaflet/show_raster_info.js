@@ -38,7 +38,7 @@ function show_raster_info(map, geoserver_config, layers, error) {
         //$("#informacion").append('<div id='+id_+'></div>');
         $("#"+layers[key]["custom_id"]+"").click(function() {
             var layer = map_layers[this.id];
-            toggleLayer(layer, map);
+            toggleLayer(layer, map, "div_"+layers[key]["custom_id"]);
         });
 
         /*

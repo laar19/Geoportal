@@ -20,6 +20,7 @@ Distributed under the GNU Affero General Public License (AGPLv3).
 > python main.py
 
 ## Credits:
+- [Enmanuel Duque](duquenmanuel@gmail.com), [Linkedin](https://ve.linkedin.com/in/enmanuel-e-duque-c-80111939/en)
 - [Ronald Delgado](https://github.com/RDelgado1980)
 - [Jackie Ng](https://github.com/jumpinjackie),[repository](https://github.com/jumpinjackie/bootstrap-viewer-template)
 - [Tobias Bieniek](https://github.com/Turbo87), [repository](https://github.com/Turbo87/sidebar-v2) 

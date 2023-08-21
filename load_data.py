@@ -256,7 +256,7 @@ if __name__ == "__main__":
         custom_id = folder_names[i]
 
         compressed_file_path_ = compressed_file_list[i]
-        compressed_file_path = compressed_file_path_.replace(source_dir_, target_dir_)
+        compressed_file_path  = compressed_file_path_.replace(source_dir_, target_dir_)
         
         # Primero, extraemos el nombre de archivo comprimido original
         #compressed_name = lista_nombres_comprimidos[i]
@@ -406,8 +406,11 @@ if __name__ == "__main__":
             compressed_file_path    = tmp_df["compressed_file_path"][0],
             metadata_xml            = tmp_df["metadata_xml"][0],
         )
-        result = conn.execute(stmt)
-        conn.commit()
+        try:
+            result = conn.execute(stmt)
+            conn.commit()
+        except Exception as e:
+            print("\n\nOmitting error on database\n\n")
 
         # Upload to geoserver
         GEOSERVER_URL      = os.getenv("GEOSERVER_URL")
@@ -439,6 +442,9 @@ if __name__ == "__main__":
 
     file_names = os.listdir(carpeta_imagenes)
     for file_name in file_names:
-        shutil.move(os.path.join(carpeta_imagenes, file_name), target_dir)
+        try:
+            shutil.move(os.path.join(carpeta_imagenes, file_name), target_dir)
+        except Exception as e:
+            print("\n\nOmitting error on filesystem\n\n")
 
-    print("Procesamiento finalizado!")    
+    print("\n\nProcesamiento finalizado!")

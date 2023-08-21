@@ -124,10 +124,7 @@
                 <br>
                 <label for="" class="form-label">Roll Max</label>
                 <input id="roll_angle_" type="range" min="0" max="35" step="1" class="form-range">
-                <p>
-                    From <output id="roll_angle_value"></output>
-                    to <output id="roll_angle_negative_value"></output>
-                </p>
+                <p>Value: <output id="roll_angle_value"></output></p>
             <!-- /div -->
 
             <!-- div class="sidebar-pane" id="nubosidad" -->
@@ -136,68 +133,11 @@
                 <br>
                 <label for="" class="form-label">Maximum permitted</label>
                 <input id="cloud_percentage_" type="range" min="0" max="100" step="1" class="form-range">
-                <p>Value <output id="cloud_percentage_value"></output></p>
+                <p>Value: <output id="cloud_percentage_value"></output></p>
                 <!-- button type="button" class="btn btn-primary">Enviar</button -->
             </div>
             <div class="sidebar-pane" id="sensor">
-                {% if layers != False %}
-                    <div class="table-responsive">
-                        {{ pagination.info|safe }}
-                        {{ pagination.links|safe }}
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Preview</th>
-                                    <th>Satellite</th>
-                                    <th>Sensor</th>
-                                    <th>Orbit</th>
-                                    <th>Scene</th>
-                                    <th>Capture date</th>
-                                    <th>Solar Elevation</th>
-                                    <th>Solar Azimuth</th>
-                                    <th>Cloud percentage</th>
-                                    <th>Solar irradiance</th>
-                                    <th>K</th>
-                                    <th>B</th>
-                                    <th>Satellite altitude</th>
-                                    <th>Satellite zenit angle</th>
-                                    <th>Satellite azimuth angle</th>
-                                    <th>Roll angle</th>
-                                    <th>Download</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for layer in result %}
-                                    <tr>
-                                        <td>{{ loop.index + pagination.skip }}</td>
-
-                                        <td><img id={{layer.custom_id}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"] + "/reflect?layers=" + geoserver_config["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
-
-                                        <td>{{ layer.satellite }}</td>
-                                        <td>{{ layer.sensor }}</td>
-                                        <td>{{ layer.orbit }}</td>
-                                        <td>{{ layer.escene }}</td>
-                                        <td>{{ layer.capture_date }}</td>
-                                        <td>{{ layer.solar_elevation }}</td>
-                                        <td>{{ layer.solar_azimuth }}</td>
-                                        <td>{{ layer.cloud_percentage }}</td>
-                                        <td>{{ layer.solar_irradiance }}</td>
-                                        <td>{{ layer.k_val }}</td>
-                                        <td>{{ layer.b_val }}</td>
-                                        <td>{{ layer.satellite_altitude }}</td>
-                                        <td>{{ layer.zenit_satellite_angle }}</td>
-                                        <td>{{ layer.satellite_azimuth_angle }}</td>
-                                        <td>{{ layer.roll_angle }}</td>
-                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>                                        
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <br>
-                        {{ pagination.links|safe }}
-                    </div>
-                {% endif %}
+                SHOW RESULTS
             </div>
         </div>
     </div>
@@ -248,7 +188,7 @@
                             </thead>
                             <tbody>
                                 {% for layer in result %}
-                                    <tr>
+                                    <tr id={{"div_"+layer.custom_id}}>
                                         <td>{{ loop.index + pagination.skip }}</td>
 
                                         <td><img id={{layer.custom_id}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"] + "/reflect?layers=" + geoserver_config["workspace"] + ":" + layer.custom_id}} width="100" height="100"></td>
@@ -268,7 +208,7 @@
                                         <td>{{ layer.zenit_satellite_angle }}</td>
                                         <td>{{ layer.satellite_azimuth_angle }}</td>
                                         <td>{{ layer.roll_angle }}</td>
-                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>                                        
+                                        <td><a href={{layer.compressed_file_path}}>Download</a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
