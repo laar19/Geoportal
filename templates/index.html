@@ -173,15 +173,7 @@
                                     <th>Orbit</th>
                                     <th>Scene</th>
                                     <th>Capture date</th>
-                                    <th>Solar Elevation</th>
-                                    <th>Solar Azimuth</th>
                                     <th>Cloud percentage</th>
-                                    <th>Solar irradiance</th>
-                                    <th>K</th>
-                                    <th>B</th>
-                                    <th>Satellite altitude</th>
-                                    <th>Satellite zenit angle</th>
-                                    <th>Satellite azimuth angle</th>
                                     <th>Roll angle</th>
                                     <th>Download</th>
                                 </tr>
@@ -196,17 +188,9 @@
                                         <td>{{ layer.satellite }}</td>
                                         <td>{{ layer.sensor }}</td>
                                         <td>{{ layer.orbit }}</td>
-                                        <td>{{ layer.escene }}</td>
-                                        <td>{{ layer.capture_date }}</td>
-                                        <td>{{ layer.solar_elevation }}</td>
-                                        <td>{{ layer.solar_azimuth }}</td>
+                                        <td>{{ layer.scene }}</td>
+                                        <td>{{ layer.capture_date.date() }}</td>
                                         <td>{{ layer.cloud_percentage }}</td>
-                                        <td>{{ layer.solar_irradiance }}</td>
-                                        <td>{{ layer.k_val }}</td>
-                                        <td>{{ layer.b_val }}</td>
-                                        <td>{{ layer.satellite_altitude }}</td>
-                                        <td>{{ layer.zenit_satellite_angle }}</td>
-                                        <td>{{ layer.satellite_azimuth_angle }}</td>
                                         <td>{{ layer.roll_angle }}</td>
                                         <td><a href={{layer.compressed_file_path}}>Download</a></td>
                                     </tr>

@@ -20,15 +20,7 @@ def intersect(db_session, filters):
         SatelliteImages.capture_date,
         #functions.ST_AsText(SatelliteImages.cutted_image_shape),
         functions.ST_AsGeoJSON(SatelliteImages.cutted_image_shape),
-        SatelliteImages.solar_elevation,
-        SatelliteImages.solar_azimuth,
         SatelliteImages.cloud_percentage,
-        SatelliteImages.solar_irradiance,
-        SatelliteImages.k_val,
-        SatelliteImages.b_val,
-        SatelliteImages.satellite_altitude,
-        SatelliteImages.zenit_satellite_angle,
-        SatelliteImages.satellite_azimuth_angle,
         SatelliteImages.roll_angle,
         SatelliteImages.compressed_file_path
     )

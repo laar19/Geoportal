@@ -53,15 +53,7 @@ function show_raster_info(map, geoserver_config, layers, error) {
             "Orbit                  : " + layers[key]["orbit"]                   + "<br>"+
             "Scene                  : " + layers[key]["scene"]                   + "<br>"+
             "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
-            "Solar Elevation        : " + layers[key]["solar_elevation"]         + "<br>"+
-            "Solar Azimuth          : " + layers[key]["solar_azimuth"]           + "<br>"+
             "Cloud percentage       : " + layers[key]["cloud_percentage"]        + "<br>"+
-            "Solar irradiance       : " + layers[key]["solar_irradiance"]        + "<br>"+
-            "K                      : " + layers[key]["k_val"]                   + "<br>"+
-            "B                      : " + layers[key]["b_val"]                   + "<br>"+
-            "Satellite altitude     : " + layers[key]["satellite_altitude"]      + "<br>"+
-            "Satellite zenit angle  : " + layers[key]["zenit_satellite_angle"]   + "<br>"+
-            "Satellite azimuth angle: " + layers[key]["satellite_azimuth_angle"] + "<br>"+
             "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
             "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
         "</div>";
