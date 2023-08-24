@@ -47,15 +47,40 @@ function show_raster_info(map, geoserver_config, layers, error) {
         */
 
         var html_layer_info = "<div>"+
-            //"<button id=show_"+id_+">Show</button>"                              + "<br>"+
-            "Satellite              : " + layers[key]["satellite"]               + "<br>"+
-            "Sensor                 : " + layers[key]["sensor"]                  + "<br>"+
-            "Orbit                  : " + layers[key]["orbit"]                   + "<br>"+
-            "Scene                  : " + layers[key]["scene"]                   + "<br>"+
-            "Capture date           : " + layers[key]["capture_date"]            + "<br>"+
-            "Cloud percentage       : " + layers[key]["cloud_percentage"]        + "<br>"+
-            "Roll angle             : " + layers[key]["roll_angle"]              + "<br>"+
-            "<a href="+layers[key]["compressed_file_path"]+">Download</a>"+
+            "<table>"+
+                "<tr>"+
+                    "<td>Satellite</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["satellite"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Sensor</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["sensor"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Orbit</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["orbit"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Scene</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["scene"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Capture date</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["capture_date"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Cloud percentage</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["cloud_percentage"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Roll angle</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["roll_angle"] + "</td>"+
+                "</tr>"+
+                "<tr>"+
+                    "<td>Download</td>"+
+                    "<td class='popup-table-value'>" + "<a href="+layers[key]["compressed_file_path"]+">Link</a>"+ "</td>"+
+                "</tr>"+
+            "</table>"+
         "</div>";
 
         /*

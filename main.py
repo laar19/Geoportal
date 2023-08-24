@@ -178,7 +178,7 @@ def search():
                         "sensor"                 : i.sensor,
                         "orbit"                  : i.orbit,
                         "scene"                  : i.scene,
-                        "capture_date"           : i.capture_date,
+                        "capture_date"           : str(i.capture_date.date()),
                         "cutted_image_shape"     : i[6],
                         "cloud_percentage"       : i.cloud_percentage,
                         "roll_angle"             : i.roll_angle,
@@ -215,6 +215,19 @@ def search():
         map_config       = map_config,
         pagination       = pagination,
         error_           = error_
+    )
+
+# app name
+@app.errorhandler(404)
+def not_found(e):
+    return render_template(
+        "404.html",
+        geoserver_config = False,
+        layers           = False,
+        result           = False,
+        map_config       = map_config,
+        pagination       = False,
+        error_           = False
     )
     
 if __name__ == "__main__":

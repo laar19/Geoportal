@@ -1,17 +1,17 @@
+
 # Geoportal
 
 ## Catalog for satellite images
 
-## Luis Acevedo  <laar@pm.me>
+## Technical information
+- Python 3.10.x
+- Flask framework
+- Leaflet
+- Postgresql + Postgis
+- Geoserver
+- Distributed under the GNU Affero General Public License (AGPLv3)
 
-## Technical information:
-Python 3.9   
-Flask framework as backend.   
-Openlayers 6 as mapping library.   
-Postgresql + Postgis as database.   
-Distributed under the GNU Affero General Public License (AGPLv3).
-
-## Setup
+## Setup (This setup bellow is an example, not finished)
 ### Setup PostGis database first
 > add the credentials to /config/db_credentials.csv   
 ### Setup anaconda environment
@@ -19,15 +19,18 @@ Distributed under the GNU Affero General Public License (AGPLv3).
 ### Run
 > python main.py
 
-## Credits:
+## Credits
+- [Luis Acevedo](mailto:laar@pm.me), [Linkedin](https://www.linkedin.com/in/luis-acevedo-662535260/)
 - [Enmanuel Duque](mailto:duquenmanuel@gmail.com), [Linkedin](https://ve.linkedin.com/in/enmanuel-e-duque-c-80111939/en)
 - [Ronald Delgado](https://github.com/RDelgado1980)
-- [Jackie Ng](https://github.com/jumpinjackie),[repository](https://github.com/jumpinjackie/bootstrap-viewer-template)
-- [Tobias Bieniek](https://github.com/Turbo87), [repository](https://github.com/Turbo87/sidebar-v2) 
-- [Matt Walker](https://github.com/walkermatt), [repository](https://github.com/walkermatt/ol-layerswitcher) 
-- [David Shea](https://github.com/dashea), [repository](https://github.com/dashea/requests-file) 
+- [Jesús Cardiel](mailto:jesus.cardielg@gmail.com), [Linkedin](https://ve.linkedin.com/in/enmanuel-e-duque-c-80111939/en)
 
-## Reference templates:
+## Third party
+- [Jackie Ng](https://github.com/jumpinjackie),[repository](https://github.com/jumpinjackie/bootstrap-viewer-template)
+- [Tobias Bieniek](https://github.com/Turbo87), [repository](https://github.com/Turbo87/sidebar-v2)
+- [Matt Walker](https://github.com/walkermatt), [repository](https://github.com/walkermatt/ol-layerswitcher)
+- [David Shea](https://github.com/dashea), [repository](https://github.com/dashea/requests-file)
+- https://github.com/tsparticles/404-templates
 - https://github.com/jumpinjackie/bootstrap-viewer-template
 - https://jumpinjackie.github.io/bootstrap-viewer-template/3-column/index.html
 - https://github.com/Turbo87/sidebar-v2
