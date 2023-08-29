@@ -47,7 +47,7 @@ function show_raster_info(map, geoserver_config, layers, error) {
         */
 
         var html_layer_info = "<div>"+
-            "<table class='popup-table-value'>"+
+            "<table class='raster-info-table'>"+
                 "<tr>"+
                     "<td>Satellite</td>"+
                     "<td>" + layers[key]["satellite"] + "</td>"+
