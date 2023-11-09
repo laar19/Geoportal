@@ -1,4 +1,3 @@
-
 # Geoportal
 
 ## Catalog for satellite images
@@ -11,7 +10,7 @@
 - Geoserver
 - Distributed under the GNU Affero General Public License (AGPLv3)
 
-## Setup (This setup bellow is an example, not finished)
+## Setup (not finished)
 ### Setup PostGis database first
 > add the credentials to /config/db_credentials.csv   
 ### Setup anaconda environment
