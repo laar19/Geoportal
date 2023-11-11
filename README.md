@@ -11,20 +11,22 @@
 - Distributed under the GNU Affero General Public License (AGPLv3)
 
 ## Setup
-### Setup PostGis database first
-> Edit deployment/postgis/docker-compose.yml to configure user, password and ports   
-> docker compose up deployment/postgis/docker-compose.yml   
 ### Setup Geoserver
-> Copy deployment/geoserver/dot_env_example.txt to .env   
-> Edit deployment/geoserver/.env to configure user, password and ports   
-> docker compose up deployment/geoserver/docker-compose.yml   
+> Copy ***deployment/geoserver/dot_env_example.txt*** to ***.env***   
+> Edit ***deployment/geoserver/.env*** to configure **user**, **password** and **ports**   
+> In ***deployment/geoserver/*** folder ***docker compose up docker-compose.yml***   
+### Setup PostGis database
+> Edit ***deployment/postgis/docker-compose.yml*** to configure **user**, **password** and **ports**   
+> In ***deployment/postgis/*** folder ***docker compose up docker-compose.yml***   
+> *python db_setup.py*   
+> Setup **geoserver host** on **geoserver_config table**   
 ### Setup anaconda environment
-> conda env create -n geoportal -f environment.yml   
-### Add credentials
-> copy dot_env_example.txt to .env
-> Edit .env to configure user, password, host and ports   
+> *conda env create -n geoportal -f environment.yml*   
+### Setup global credentials
+> copy ***dot_env_example.txt*** to ***.env***
+> Edit ***.env*** to configure **user**, **password**, **host** and **ports**   
 ### Run
-> python main.py   
+> *python main.py*   
 
 ## Credits
 - [Luis Acevedo](mailto:laar@pm.me), [Linkedin](https://www.linkedin.com/in/luis-acevedo-662535260/)
