@@ -15,14 +15,14 @@
 > Edit deployment/postgis/docker-compose.yml to configure user, password and ports   
 > docker compose up deployment/postgis/docker-compose.yml   
 ### Setup Geoserver
-> Copy deployment/geoserver/dot_env_example.txt to .env
+> Copy deployment/geoserver/dot_env_example.txt to .env   
 > Edit deployment/geoserver/.env to configure user, password and ports   
 > docker compose up deployment/geoserver/docker-compose.yml   
 ### Setup anaconda environment
 > conda env create -n geoportal -f environment.yml   
 ### Add credentials
 > copy dot_env_example.txt to .env
-> Edit .env to configure user, password and ports   
+> Edit .env to configure user, password, host and ports   
 ### Run
 > python main.py   
 
