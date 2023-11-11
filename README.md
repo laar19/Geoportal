@@ -12,19 +12,19 @@
 
 ## Setup
 ### Setup Geoserver
-> Copy ***deployment/geoserver/dot_env_example.txt*** to ***.env***   
-> Edit ***deployment/geoserver/.env*** to configure **user**, **password** and **ports**   
-> In ***deployment/geoserver/*** folder ***docker compose up docker-compose.yml***   
+> 1. Copy ***deployment/geoserver/dot_env_example.txt*** to ***.env***   
+> 2. Edit ***deployment/geoserver/.env*** to configure **user**, **password** and **ports**   
+> 3. In ***deployment/geoserver/*** folder ***docker compose up docker-compose.yml***   
 ### Setup PostGis database
-> Edit ***deployment/postgis/docker-compose.yml*** to configure **user**, **password** and **ports**   
-> In ***deployment/postgis/*** folder ***docker compose up docker-compose.yml***   
-> *python db_setup.py*   
-> Setup **geoserver host** on **geoserver_config table**   
+> 1. Edit ***deployment/postgis/docker-compose.yml*** to configure **user**, **password** and **ports**   
+> 2. In ***deployment/postgis/*** folder ***docker compose up docker-compose.yml***   
+> 3. *python db_setup.py*   
+> 4. Setup **geoserver host** on **geoserver_config table**   
 ### Setup anaconda environment
 > *conda env create -n geoportal -f environment.yml*   
 ### Setup global credentials
-> copy ***dot_env_example.txt*** to ***.env***
-> Edit ***.env*** to configure **user**, **password**, **host** and **ports**   
+> 1. copy ***dot_env_example.txt*** to ***.env***
+> 2. Edit ***.env*** to configure **user**, **password**, **host** and **ports**   
 ### Run
 > *python main.py*   
 
