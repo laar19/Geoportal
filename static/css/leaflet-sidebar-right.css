@@ -30,10 +30,10 @@
     width: 390px; 
   } 
 }
-  
+/* ancho del sidebar    */
 @media (min-width: 1200px) {
   .sidebar {
-    width: 230px; 
+    width: 350px; 
   } 
 }
 
@@ -61,7 +61,7 @@
   top: 0;
   bottom: 0;
   height: 100%;
-  background-color: #040f1bb3; 
+  background-color: #0f3fc7a6; 
 }
   
 .sidebar-left .sidebar-tabs {
@@ -96,7 +96,7 @@
 
 .sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
   color: #fff;
-  background-color: #0074d9; 
+  background-color: #0074d96e; 
 }
 
 .sidebar-tabs > li.disabled, .sidebar-tabs > ul > li.disabled {
@@ -183,9 +183,9 @@
   height: 40px;
   padding: 0 20px;
   line-height: 40px;
-  font-size: 14.4pt;
+  font-size: 11pt;
   color: #fff;
-  background-color: #0074d9; 
+  background-color: #0074d96e; 
 }
   
 .sidebar-right .sidebar-header {
@@ -265,9 +265,10 @@
   } 
 }
 
+/* desplazamiento de los botones del menu */
 @media (min-width: 1200px) {
   .sidebar-left ~ .sidebar-map .leaflet-left {
-    left: 240px; 
+    left: 360px; 
   } 
 }
 

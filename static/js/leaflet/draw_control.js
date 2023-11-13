@@ -170,18 +170,18 @@ new L.cascadeButtons([
         }
     },
     
+    {
+        icon: 'bi-house', command: () => {
+            window.location.href = "http://192.168.88.8:8891";
+        }
+    },
+
     {icon: 'bi bi-share', items: [
         {icon: 'bi bi-twitter',   command: () =>{console.log('hola')}},
         {icon: 'bi bi-facebook',  command: () =>{console.log('hola')}},
         {icon: 'bi bi-instagram', command: () =>{console.log('hola')}},
         {icon: 'fbi bi-whatsapp', command: () =>{console.log('hola')}},
     ]},
-
-    {
-        icon: 'bi-house', command: () => {
-            window.location.href = "http://192.168.88.8:8892";
-        }
-    },
 ], {position:'topleft', direction:'vertical'}).addTo(map);
 
 //L.Control.geocoder().addTo(map);

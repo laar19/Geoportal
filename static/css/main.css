@@ -37,7 +37,7 @@ html, body, #map {
 .leaflet-control-cascadeButtons button{
     border-radius: 2px;
     border: none;
-    background-color:#040f1bb3;
+    background-color:#0f3fc7a6;
     box-shadow: 0 1px 5px rgb(0 0 0 / 65%);
     height: 36px;
     width: 36px;
@@ -49,7 +49,7 @@ html, body, #map {
 }
 
 .leaflet-control-cascadeButtons button:hover{
-    background-color:#040f1bb3; 
+    background-color:#0f3fc7a6; 
     opacity:0.8;
 }
 
@@ -91,7 +91,7 @@ html, body, #map {
 }
 
 .leaflet-draw-draw-rectangle {
-    background-color: rgb(255, 255, 255) !important;
+    background-color: #0f3fc7a6 !important;
 }
 
 /*
@@ -113,7 +113,7 @@ html, body, #map {
     /*
     line-height: 300px;
     */
-    background-color:#040f1bb3;
+    background-color:#0f3fc7a6;
     color: rgb(255, 255, 255);
 }
 
@@ -128,7 +128,7 @@ html, body, #map {
 }
 
 .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar a:hover  {
-    background-color:#040f1bb3; 
+    background-color:#0f3fc7a6; 
     opacity:0.8;
 }
 
@@ -275,6 +275,6 @@ table, th, td {
     border-collapse: collapse;
 }
 
-.raster-info-table {
+.popup-table-value {
     text-align: center;
 }

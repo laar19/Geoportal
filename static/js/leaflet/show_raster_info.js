@@ -47,38 +47,38 @@ function show_raster_info(map, geoserver_config, layers, error) {
         */
 
         var html_layer_info = "<div>"+
-            "<table class='raster-info-table'>"+
+            "<table>"+
                 "<tr>"+
                     "<td>Satellite</td>"+
-                    "<td>" + layers[key]["satellite"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["satellite"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Sensor</td>"+
-                    "<td>" + layers[key]["sensor"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["sensor"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Orbit</td>"+
-                    "<td>" + layers[key]["orbit"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["orbit"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Scene</td>"+
-                    "<td>" + layers[key]["scene"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["scene"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Capture date</td>"+
-                    "<td>" + layers[key]["capture_date"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["capture_date"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Cloud percentage</td>"+
-                    "<td>" + layers[key]["cloud_percentage"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["cloud_percentage"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Roll angle</td>"+
-                    "<td>" + layers[key]["roll_angle"] + "</td>"+
+                    "<td class='popup-table-value'>" + layers[key]["roll_angle"] + "</td>"+
                 "</tr>"+
                 "<tr>"+
                     "<td>Download</td>"+
-                    "<td>" + "<a href="+layers[key]["compressed_file_path"]+">Link</a>"+ "</td>"+
+                    "<td class='popup-table-value'>" + "<a href="+layers[key]["compressed_file_path"]+">Link</a>"+ "</td>"+
                 "</tr>"+
             "</table>"+
         "</div>";
@@ -139,20 +139,14 @@ function show_raster_info(map, geoserver_config, layers, error) {
             var popup = e.target.getPopup();
 
             $.ajax({
-                //url: "myurl",
-                //url: document.URL,
-                function(data) {
-                    popup.setContent(data);
-                    popup.update();
-                }
-            });
-            /*
+                //url: "myurl.html",
+                url: $(location).attr("host"),
+            })
             .done(function(data) {
-                //alert(data);
+                alert(data);
                 popup.setContent(data);
                 popup.update();
             })
-            */
             /*
             .fail(function(data) {
                 alert("FAIL: "+data);
