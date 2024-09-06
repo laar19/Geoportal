@@ -1,7 +1,7 @@
 import os, zipfile, re, shutil, hashlib
 
 import rasterio
-from rasterio.transform import GroundControlPoint
+from rasterio.control import GroundControlPoint
 
 import lxml.etree as ET
 
