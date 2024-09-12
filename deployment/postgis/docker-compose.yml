@@ -15,7 +15,7 @@ services:
             POSTGRES_PASSWORD: root
 
         ports:
-            - 8896:5432
+            - 8890:5432
         networks:
             - geoportal_db_network
         volumes:
@@ -29,7 +29,7 @@ services:
         depends_on:
             - geoportal_db
         ports:
-            - 8895:8080
+            - 8891:8080
         networks:
             - geoportal_db_network
 
