@@ -9,7 +9,7 @@ DB_HOST=localhost
 DB_NAME=geoportal_db
 DB_USER=root
 DB_PASSWORD=root
-DB_PORT=8890
+DB_PORT=8870
 
 # Geoserver
 GEOSERVER_URL=http://localhost:8080/geoserver

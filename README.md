@@ -17,6 +17,7 @@
 > 1. Copy ***dot_env_example.txt*** to ***.env***
 > 2. Edit ***.env*** to configure **user**, **password**, **host** and **ports**   
 ### Setup Geoserver
+> *Modify username and password*
 ### Setup PostGis database
 > 1. Edit ***deployment/postgis/docker-compose.yml*** to configure **user**, **password** and **ports**   
 > 2. In ***deployment/postgis/*** folder ***docker compose up***

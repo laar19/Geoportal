@@ -1,13 +1,12 @@
-version: '3.3'
-
 volumes:
     geoportal_db_data:
 
 services:
     # DATABASE
     geoportal_db:
-        image  : postgis/postgis
-        restart: always
+        image         : postgis/postgis
+        container_name: geoportal_db
+        restart       : always
 
         environment:
             POSTGRES_DB      : geoportal_db
@@ -15,21 +14,38 @@ services:
             POSTGRES_PASSWORD: root
 
         ports:
-            - 8890:5432
+            - 8870:5432
         networks:
             - geoportal_db_network
         volumes:
             - geoportal_db_data:/var/lib/postgresql/data
 
+    # pgadmin4
+    pgadmin:
+        image         : dpage/pgadmin4
+        container_name: pgadmin4_geoportal_db
+        
+        environment:
+            PGADMIN_DEFAULT_EMAIL   : admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+          
+        depends_on:
+            - geoportal_db
+        ports:
+            - 8871:80
+        networks:
+            - geoportal_db_network
+
     # ADMINER
     adminer_geoportal:
-        image  : adminer
-        restart: always
+        image         : adminer
+        container_name: adminer_geoportal_db
+        restart       : always
         
         depends_on:
             - geoportal_db
         ports:
-            - 8891:8080
+            - 8872:8080
         networks:
             - geoportal_db_network
 
