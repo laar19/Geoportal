@@ -1,7 +1,8 @@
 import os
 
+from pathlib import Path
+
 from dotenv import load_dotenv
-load_dotenv()
 
 from flask          import Flask, render_template, request
 from flask_wtf      import CSRFProtect
@@ -18,6 +19,15 @@ from app.config           import *
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
+
+# Load environment variables
+# Specify the path to .env file
+env_paths = [
+    Path("deployment/postgis/.env")
+]
+# Load the environment variables from the specified files
+for i in env_paths:
+    load_dotenv(dotenv_path=i)
 
 # Default map config
 MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
@@ -53,14 +63,21 @@ def search():
     offset   = (page - 1) * per_page
         
     if request.method == "GET":
-        DB          = os.getenv("DB")
-        DB_HOST     = os.getenv("DB_HOST")
-        DB_NAME     = os.getenv("DB_NAME")
-        DB_USER     = os.getenv("DB_USER")
-        DB_PASSWORD = os.getenv("DB_PASSWORD")
-        DB_PORT     = os.getenv("DB_PORT")
+        POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
+        POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
+        POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
+        POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
+        POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+        POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
         
-        DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+        DbConn = DatabaseConfig(
+            POSTGRES_DB_TYPE,
+            POSTGRES_DB_USER,
+            POSTGRES_DB_PASSWORD,
+            POSTGRES_DB_HOST,
+            POSTGRES_DB_PORT,
+            POSTGRES_DB_NAME
+        )
         conn, engine = DbConn.connection()
         Session      = sessionmaker(bind=engine)
         db_session   = Session()

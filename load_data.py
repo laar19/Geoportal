@@ -7,8 +7,9 @@ import lxml.etree as ET
 
 import pandas as pd
 
+from pathlib import Path
+
 from dotenv import load_dotenv
-load_dotenv()
 
 from osgeo import gdal, osr
 
@@ -25,6 +26,17 @@ from app.models.models import DatabaseConfig
 def create_folder(folder_name):
     if not os.path.exists(folder_name):
         os.mkdir(folder_name)
+
+# Load environment variables
+# Specify the path to .env file
+env_paths = [
+    Path(".env"), # Is the same as load_dotenv()
+    Path("deployment/geoserver/.env"),
+    Path("deployment/postgis/.env")
+]
+# Load the environment variables from the specified files
+for i in env_paths:
+    load_dotenv(dotenv_path=i)
 
 # De cada archivo, descomprime en la carpeta xml solo los xml presentes que terminan en .xml
 def unpackXML(filename, carpeta):
@@ -364,14 +376,21 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(registros, columns=columns)
 
-    DB          = os.getenv("DB")
-    DB_HOST     = os.getenv("DB_HOST")
-    DB_NAME     = os.getenv("DB_NAME")
-    DB_USER     = os.getenv("DB_USER")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-    DB_PORT     = os.getenv("DB_PORT")
+    POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
+    POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
+    POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
+    POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
+    POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+    POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
     
-    DbConn       = DatabaseConfig(DB, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+    DbConn = DatabaseConfig(
+        POSTGRES_DB_TYPE,
+        POSTGRES_DB_USER,
+        POSTGRES_DB_PASSWORD,
+        POSTGRES_DB_HOST,
+        POSTGRES_DB_PORT,
+        POSTGRES_DB_NAME
+    )
     conn, engine = DbConn.connection()
 
     for index, row in df.iterrows():
@@ -413,14 +432,17 @@ if __name__ == "__main__":
             print("\n\nOmitting error on database\n\n")
 
         # Upload to geoserver
-        GEOSERVER_URL      = os.getenv("GEOSERVER_URL")
-        GEOSERVER_USER     = os.getenv("GEOSERVER_USER")
-        GEOSERVER_PASSWORD = os.getenv("GEOSERVER_PASSWORD")
+        GEOSERVER_HOST  = os.getenv("GEOSERVER_HOST")
+        GEOSERVER_PORT  = os.getenv("GEOSERVER_PORT")
+        geoserver_url   = "{}:{}/geoserver".format(GEOSERVER_HOST, GEOSERVER_PORT)
+        
+        GEOSERVER_ADMIN_USER     = os.getenv("GEOSERVER_ADMIN_USER")
+        GEOSERVER_ADMIN_PASSWORD = os.getenv("GEOSERVER_ADMIN_PASSWORD")
         
         geo = Geoserver(
-            str(GEOSERVER_URL),
-            username = str(GEOSERVER_USER),
-            password = str(GEOSERVER_PASSWORD)
+            geoserver_url,
+            username = GEOSERVER_ADMIN_USER,
+            password = GEOSERVER_ADMIN_PASSWORD
         )
 
         try:
@@ -437,7 +459,11 @@ if __name__ == "__main__":
             path       = tmp_df["geothumb_path"][0]
             layer_name = tmp_df["custom_id"][0]
 
-            geo.create_coveragestore(layer_name=layer_name, path=path, workspace=workspace)
+            geo.create_coveragestore(
+                layer_name = layer_name,
+                path       = path,
+                workspace  = workspace
+            )
     conn.close()
 
     file_names = os.listdir(carpeta_imagenes)
