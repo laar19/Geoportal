@@ -88,3 +88,12 @@ def intersect(db_session, filters):
 
     #return db_session_query.all()
     return db_session_query
+
+def get_tables_from_db_schema(DbConn, inspect, schema_name):
+    conn, engine = DbConn.connection()
+    inspector    = inspect(engine)
+
+    # Get all tables from the schema
+    table_names = inspector.get_table_names(schema=schema_name)
+
+    return table_names

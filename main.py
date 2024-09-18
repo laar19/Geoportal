@@ -10,6 +10,7 @@ from flask_paginate import Pagination, get_page_parameter
 
 from shapely.geometry import Polygon
 
+from sqlalchemy     import inspect
 from sqlalchemy.orm import sessionmaker
 
 from app.models.models    import DatabaseConfig
@@ -23,6 +24,7 @@ csrf = CSRFProtect(app)
 # Load environment variables
 # Specify the path to .env file
 env_paths = [
+    Path(".env"), # Is the same as load_dotenv()
     Path("deployment/postgis/.env")
 ]
 # Load the environment variables from the specified files
@@ -190,17 +192,35 @@ def search():
 
                 for i in result.all():
                     layers[i.custom_id] = {
-                        "custom_id"              : i.custom_id,
-                        "satellite"              : i.satellite,
-                        "sensor"                 : i.sensor,
-                        "orbit"                  : i.orbit,
-                        "scene"                  : i.scene,
-                        "capture_date"           : str(i.capture_date.date()),
-                        "cutted_image_shape"     : i[6],
-                        "cloud_percentage"       : i.cloud_percentage,
-                        "roll_angle"             : i.roll_angle,
-                        "compressed_file_path"   : i.compressed_file_path,
+                        "layer_type"           : "raster",
+                        "custom_id"            : i.custom_id,
+                        "satellite"            : i.satellite,
+                        "sensor"               : i.sensor,
+                        "orbit"                : i.orbit,
+                        "scene"                : i.scene,
+                        "capture_date"         : str(i.capture_date.date()),
+                        "cutted_image_shape"   : i[6],
+                        "cloud_percentage"     : i.cloud_percentage,
+                        "roll_angle"           : i.roll_angle,
+                        "compressed_file_path" : i.compressed_file_path,
+                        "geoserver_workspace"  : i.geoserver_workspace,
+                        "geoserver_service"    : i.geoserver_service,
+                        "geoserver_format"     : i.geoserver_format,
+                        "geoserver_transparent": i.geoserver_transparent,
                     }
+
+    vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "test")
+
+    if len(vector_layer_names) > 0:
+        for i in vector_layer_names:
+            layers[i] = {
+                "layer_type"           : "vector",
+                "custom_id"            : i,
+                "geoserver_workspace"  : i.geoserver_workspace,
+                "geoserver_service"    : i.geoserver_service,
+                "geoserver_format"     : i.geoserver_format,
+                "geoserver_transparent": i.geoserver_transparent,
+            }
 
     error_ = False
 

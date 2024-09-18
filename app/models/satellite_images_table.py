@@ -31,6 +31,10 @@ class SatelliteImages(Base):
     geothumb_path           = Column(VARCHAR)
     compressed_file_path    = Column(VARCHAR, nullable=True)
     metadata_xml            = Column(Text)
+    geoserver_workspace     = Column(VARCHAR) # Geoserver WMS configuration
+    geoserver_service       = Column(VARCHAR) # Geoserver WMS configuration
+    geoserver_format        = Column(VARCHAR) # Geoserver WMS configuration
+    geoserver_transparent   = Column(VARCHAR) # Geoserver WMS configuration
     create_date             = Column(DateTime, default=dtime.now)
     
 db_tables[table_name] = SatelliteImages

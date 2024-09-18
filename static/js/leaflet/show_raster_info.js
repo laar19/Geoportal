@@ -109,55 +109,57 @@ function show_raster_info(map, geoserver_config, layers, error) {
         $("#"+id_+"").append('<a href='+layers[key]["compressed_file_path"]+'>Download</a>');
         */
 
-        var coords = JSON.parse(layers[key]["cutted_image_shape"])["coordinates"];
-        //var coords =  [[48,-3],[50,5],[44,11],[48,-3]] ;
-        
-        var coordinates = [[]];
-        for (var i=0; i<coords[0].length; i++) {
-            coordinates[0].push([coords[0][i][1], coords[0][i][0]]);
+        if (layers[key]["cutted_image_shape"] != "None") {
+            var coords = JSON.parse(layers[key]["cutted_image_shape"])["coordinates"];
+            //var coords =  [[48,-3],[50,5],[44,11],[48,-3]] ;
+            
+            var coordinates = [[]];
+            for (var i=0; i<coords[0].length; i++) {
+                coordinates[0].push([coords[0][i][1], coords[0][i][0]]);
+            }
+
+            var polygon_style = {
+                //"color"      : "red",
+                "weight"     : 0,
+                "fillOpacity": 0.0
+                //"opacity"    :0
+            };
+            
+            var polygon = L.polygon(coordinates, polygon_style);
+            var polyline = L.polyline(coordinates, {color: "red"});
+            polygon.addTo(map);
+            polyline.addTo(map);
+            //map.fitBounds(polygon.getBounds());
+
+            //var marker = L.marker([33.767675, -84.537291]).addTo(map);
+            //marker.bindPopup("Loading...");
+            //polygon.bindPopup("Loading...");
+            polygon.bindPopup(html_layer_info);
+
+            function show_popup(e) {
+                var popup = e.target.getPopup();
+
+                $.ajax({
+                    //url: "myurl.html",
+                    url: $(location).attr("host"),
+                })
+                .done(function(data) {
+                    alert(data);
+                    popup.setContent(data);
+                    popup.update();
+                })
+                /*
+                .fail(function(data) {
+                    alert("FAIL: "+data);
+                });
+                */
+            };
+
+            //marker.on('click', onMapClick );
+            polygon.on("click", show_popup);
+
+            //aux = aux + 1;
         }
-
-        var polygon_style = {
-            //"color"      : "red",
-            "weight"     : 0,
-            "fillOpacity": 0.0
-            //"opacity"    :0
-        };
-        
-        var polygon = L.polygon(coordinates, polygon_style);
-        var polyline = L.polyline(coordinates, {color: "red"});
-        polygon.addTo(map);
-        polyline.addTo(map);
-        //map.fitBounds(polygon.getBounds());
-
-        //var marker = L.marker([33.767675, -84.537291]).addTo(map);
-        //marker.bindPopup("Loading...");
-        //polygon.bindPopup("Loading...");
-        polygon.bindPopup(html_layer_info);
-
-        function show_popup(e) {
-            var popup = e.target.getPopup();
-
-            $.ajax({
-                //url: "myurl.html",
-                url: $(location).attr("host"),
-            })
-            .done(function(data) {
-                alert(data);
-                popup.setContent(data);
-                popup.update();
-            })
-            /*
-            .fail(function(data) {
-                alert("FAIL: "+data);
-            });
-            */
-        };
-
-        //marker.on('click', onMapClick );
-        polygon.on("click", show_popup);
-
-        //aux = aux + 1;
     }
     /*
     sidebar2.open();
@@ -165,3 +167,14 @@ function show_raster_info(map, geoserver_config, layers, error) {
     $("#information").addClass("active");
     */
 }
+
+/*
+var test = L.tileLayer.wms("http://localhost:8873/geoserver/wellPoint_workspace/wms", {
+    layers     : "wellPoint_workspace:wellPoint",
+    format     : "image/png",
+    transparent: true,
+    //version    : '1.1.0',
+    //attribution: "country layer"
+});
+test.addTo(map);
+*/

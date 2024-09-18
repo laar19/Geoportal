@@ -24,8 +24,8 @@
 > 2. In ***deployment/postgis/*** folder run ***docker compose up***   
 > 3. Run ***python setup_db.py***   
 ### Setup sample data
-> 1. Copy ***sample_data*** content to ***~/load_data***   
-> 2. Run ***python load_data.py***   
+> 1. Copy ***sample_data*** folder to ***home*** directory   
+> 2. Run thes cripts inside ***load_data*** folder   
 ### Run
 > *python main.py*   
 

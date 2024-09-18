@@ -224,14 +224,14 @@ def thumb_a_geothumb(ruta, upper_left_lon, upper_left_lat, output_name):
 # Aca comienza script
 if __name__ == "__main__":
     # Lista los archivos comprimidos de imagenes presentes en la carpeta imagenes
-    source_dir_      = "/load_data"
-    carpeta_imagenes = os.path.expanduser("~") + source_dir_
+    source_dir_   = "/sample_data"
+    data_source = os.path.expanduser("~") + source_dir_
 
     target_dir_ = "/data"
     target_dir  = os.path.expanduser("~") + target_dir_
     
     lista_de_archivos = []
-    for (dirpath, dirnames, filenames) in os.walk(carpeta_imagenes):
+    for (dirpath, dirnames, filenames) in os.walk(data_source):
         lista_de_archivos += [os.path.join(dirpath, file) for file in filenames]
         lista_de_archivos = sorted(lista_de_archivos)
 
@@ -249,15 +249,15 @@ if __name__ == "__main__":
         lista_nombres_comprimidos.append(archivo.split("\\")[0])
 
         print("Extracting .xml")
-        lista_de_xml.append(carpeta_imagenes+"/"+folder_name+"/"+unpackXML(archivo, carpeta_imagenes+"/"+folder_name))
+        lista_de_xml.append(data_source+"/"+folder_name+"/"+unpackXML(archivo, data_source+"/"+folder_name))
 
         print("Extracting .jpg")
-        lista_de_thumb.append(carpeta_imagenes+"/"+folder_name+"/"+unpackThumb(archivo, carpeta_imagenes+"/"+folder_name))
+        lista_de_thumb.append(data_source+"/"+folder_name+"/"+unpackThumb(archivo, data_source+"/"+folder_name))
 
         # Move the compressed file to the new folder
-        shutil.move(archivo, carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
+        shutil.move(archivo, data_source+"/"+folder_name+"/"+os.path.basename(archivo))
         
-        compressed_file_list.append(carpeta_imagenes+"/"+folder_name+"/"+os.path.basename(archivo))
+        compressed_file_list.append(data_source+"/"+folder_name+"/"+os.path.basename(archivo))
         print("Done\n")
         
     # Para cada xml, hay que extraer los datos de interes
@@ -424,6 +424,10 @@ if __name__ == "__main__":
             geothumb_path           = tmp_df["geothumb_path"][0],
             compressed_file_path    = tmp_df["compressed_file_path"][0],
             metadata_xml            = tmp_df["metadata_xml"][0],
+            geoserver_workspace     = "satellite_images",
+            geoserver_service       = "wms",
+            geoserver_format        = "image/png",
+            geoserver_transparent   = "true",
         )
         try:
             result = conn.execute(stmt)
@@ -466,10 +470,10 @@ if __name__ == "__main__":
             )
     conn.close()
 
-    file_names = os.listdir(carpeta_imagenes)
+    file_names = os.listdir(data_source)
     for file_name in file_names:
         try:
-            shutil.move(os.path.join(carpeta_imagenes, file_name), target_dir)
+            shutil.move(os.path.join(data_source, file_name), target_dir)
         except Exception as e:
             print("\n\nOmitting error on filesystem\n\n")
 
