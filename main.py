@@ -25,7 +25,6 @@ csrf = CSRFProtect(app)
 # Specify the path to .env file
 env_paths = [
     Path(".env"), # Is the same as load_dotenv()
-    Path("deployment/geoserver/.env"),
     Path("deployment/postgis/.env")
 ]
 # Load the environment variables from the specified files
@@ -166,19 +165,17 @@ def search():
             else:
                 filters["cloud_percentage"] = False
 
-            result        = intersect(db_session, filters)
-            result_render = result.limit(per_page).offset(offset)
+            rasters_result = intersect(db_session, filters)
+            result_render  = rasters_result.limit(per_page).offset(offset)
 
             layers = {}
-            if result:
-                GEOSERVER_HOST        = os.getenv("GEOSERVER_HOST")
-                GEOSERVER_PORT        = os.getenv("GEOSERVER_PORT")
+            if rasters_result:
                 GEOSERVER_WORKSPACE   = None
                 GEOSERVER_SERVICE     = None
                 GEOERVER_FORMAT       = None
                 GEOSERVER_TRANSPARENT = None
 
-                for i in result.all():
+                for i in rasters_result.all():
                     layers[i.custom_id] = {
                         "layer_type"           : "raster",
                         "custom_id"            : i.custom_id,
@@ -202,15 +199,13 @@ def search():
                     GEOERVER_FORMAT       = i.geoserver_format
                     GEOSERVER_TRANSPARENT = i.geoserver_transparent
 
-                GEOSERVER_URL = "{}:{}/geoserver/".format(
-                    GEOSERVER_HOST, GEOSERVER_PORT
-                )
+                geoserver_config_ = get_geoserver_config(db_session)
                 
                 if geoserver_config["return"] == False:
                     geoserver_config["return"] = True
                     
                 if geoserver_config["geoserver_url"] == None:
-                    geoserver_config["geoserver_url"] = GEOSERVER_URL
+                    geoserver_config["geoserver_url"] = geoserver_config_[0].url
                     
                 if geoserver_config["workspace"] == None:
                     geoserver_config["workspace"] = GEOSERVER_WORKSPACE
@@ -224,11 +219,19 @@ def search():
                 if geoserver_config["transparent"] == None:
                     geoserver_config["transparent"] = GEOSERVER_TRANSPARENT
 
-    """
-    vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "test")
+    vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "vectors")
 
-    if len(vector_layer_names) > 0:
-        for i in vector_layer_names:
+    vectors_result = db_session.query(
+        Vectors.name,
+        Vectors.geoserver_workspace,
+        Vectors.geoserver_service,
+        Vectors.geoserver_format,
+        Vectors.geoserver_transparent
+    )
+
+    layers2 = []
+    if len(vectors_result.all()) > 0:
+        for i in vectors_result.all():
             layers[i] = {
                 "layer_type"           : "vector",
                 "custom_id"            : i,
@@ -237,17 +240,26 @@ def search():
                 "geoserver_format"     : i.geoserver_format,
                 "geoserver_transparent": i.geoserver_transparent,
             }
-    """
+            layers2.append(layers[i])
+
+    print()
+    print("LAYERS")
+    print(layers)
+    print()
+    print()
+    print("LAYERS 2")
+    print(layers2)
+    print()
 
     error_ = False
 
     pagination = Pagination(
-        result.count(),
+        rasters_result.count()+vectors_result.count(),
         page          = page,
         per_page      = per_page,
         offset        = offset,
         #total         = len(layers),
-        total         = result.count(),
+        total         = rasters_result.count()+vectors_result.count(),
         search        = True,
         #search_msg    = "Found {} results".format(len(layers)),
         record_name   = "Rasters",
@@ -263,7 +275,7 @@ def search():
     return render_template(
         "index.html",
         geoserver_config = geoserver_config,
-        #layers         = result[0:int(len(result)/2)],
+        #layers         = rasters_result[0:int(len(rasters_result)/2)],
         layers           = layers,
         result           = result_render,
         map_config       = map_config,

@@ -26,8 +26,13 @@
 > 3. In ***deployment/postgis/*** folder run ***docker compose up***   
 > 4. Run ***python setup_db.py***   
 ### Setup sample data
-> 1. Copy ***sample_data*** folder from  to ***home*** directory   
-> 2. Run thes cripts inside ***load_data*** folder   
+#### Setup sample raster data
+> 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to ***home*** directory   
+> 2. Run ***python -m load_data.load_raster_to_db.load_raster_to_db***   
+#### Setup sample vector data
+> 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to ***home*** directory   
+> 2. Run ***python -m load_data.load_vector_to_db.1_shp_to_postgis***   
+> 3. Run ***python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver***   
 ### Run
 > *python main.py*   
 

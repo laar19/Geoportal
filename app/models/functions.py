@@ -3,7 +3,8 @@ from sqlalchemy import or_
 from geoalchemy2 import functions
 
 from app.models.satellite_images_table import *
-#from app.models.geoserver_table        import *
+from app.models.vectors_table import *
+from app.models.geoserver_table        import *
 
 def get_geoserver_config(db_session):
     # For geoserver url

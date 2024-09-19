@@ -30,8 +30,20 @@ POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
 POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
 POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
 
+"""
 engine = create_engine(
     f"{POSTGRES_DB_TYPE}://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
+)
+"""
+engine = create_engine(
+    "{}://{}:{}@{}:{}/{}".format(
+        POSTGRES_DB_TYPE,
+        POSTGRES_DB_USER,
+        POSTGRES_DB_PASSWORD,
+        POSTGRES_DB_HOST,
+        POSTGRES_DB_PORT,
+        POSTGRES_DB_NAME
+    )
 )
 
 # Get all .shp files
