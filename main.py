@@ -25,6 +25,7 @@ csrf = CSRFProtect(app)
 # Specify the path to .env file
 env_paths = [
     Path(".env"), # Is the same as load_dotenv()
+    Path("deployment/geoserver/.env"),
     Path("deployment/postgis/.env")
 ]
 # Load the environment variables from the specified files
@@ -170,25 +171,12 @@ def search():
 
             layers = {}
             if result:
-                geoserver_config_ = get_geoserver_config(db_session)
-                
-                if geoserver_config["return"] == False:
-                    geoserver_config["return"] = True
-                    
-                if geoserver_config["geoserver_url"] == None:
-                    geoserver_config["geoserver_url"] = geoserver_config_[0].url
-                    
-                if geoserver_config["workspace"] == None:
-                    geoserver_config["workspace"] = geoserver_config_[0].workspace
-                    
-                if geoserver_config["service"] == None:
-                    geoserver_config["service"] = geoserver_config_[0].service
-
-                if geoserver_config["format"] == None:
-                    geoserver_config["format"] = geoserver_config_[0].format_
-
-                if geoserver_config["transparent"] == None:
-                    geoserver_config["transparent"] = geoserver_config_[0].transparent
+                GEOSERVER_HOST        = os.getenv("GEOSERVER_HOST")
+                GEOSERVER_PORT        = os.getenv("GEOSERVER_PORT")
+                GEOSERVER_WORKSPACE   = None
+                GEOSERVER_SERVICE     = None
+                GEOERVER_FORMAT       = None
+                GEOSERVER_TRANSPARENT = None
 
                 for i in result.all():
                     layers[i.custom_id] = {
@@ -209,6 +197,34 @@ def search():
                         "geoserver_transparent": i.geoserver_transparent,
                     }
 
+                    GEOSERVER_WORKSPACE   = i.geoserver_workspace
+                    GEOSERVER_SERVICE     = i.geoserver_service
+                    GEOERVER_FORMAT       = i.geoserver_format
+                    GEOSERVER_TRANSPARENT = i.geoserver_transparent
+
+                GEOSERVER_URL = "{}:{}/geoserver/".format(
+                    GEOSERVER_HOST, GEOSERVER_PORT
+                )
+                
+                if geoserver_config["return"] == False:
+                    geoserver_config["return"] = True
+                    
+                if geoserver_config["geoserver_url"] == None:
+                    geoserver_config["geoserver_url"] = GEOSERVER_URL
+                    
+                if geoserver_config["workspace"] == None:
+                    geoserver_config["workspace"] = GEOSERVER_WORKSPACE
+                    
+                if geoserver_config["service"] == None:
+                    geoserver_config["service"] = GEOSERVER_SERVICE
+
+                if geoserver_config["format"] == None:
+                    geoserver_config["format"] = GEOERVER_FORMAT
+
+                if geoserver_config["transparent"] == None:
+                    geoserver_config["transparent"] = GEOSERVER_TRANSPARENT
+
+    """
     vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "test")
 
     if len(vector_layer_names) > 0:
@@ -221,6 +237,7 @@ def search():
                 "geoserver_format"     : i.geoserver_format,
                 "geoserver_transparent": i.geoserver_transparent,
             }
+    """
 
     error_ = False
 

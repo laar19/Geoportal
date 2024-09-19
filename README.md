@@ -14,17 +14,19 @@
 ### Setup anaconda environment
 > *conda env create -n geoportal -f environment.yml*   
 ### Setup global environment variables
-> Edit ***.env*** file in project root directory   
+> 1. Copy ***dot_env_example.txt*** to ***.env***   
+> 2. Edit ***.env*** to to setup environment variables   
 ### Setup Geoserver
 > 1. Copy ***deployment/geoserver/dot_env_example.txt*** to ***deployment/geoserver/.env***   
 > 2. Edit ***deployment/geoserver/.env*** to configure ***user, password*** and ***ports***   
 > 3. In ***deployment/geoserver/*** folder run ***docker compose up***   
 ### Setup PostGis database
-> 1. Edit ***deployment/postgis/docker-compose.yml*** to configure **user**, **password** and **port**   
-> 2. In ***deployment/postgis/*** folder run ***docker compose up***   
-> 3. Run ***python setup_db.py***   
+> 1. Copy ***deployment/postgis/dot_env_example.txt*** to ***deployment/postgis/.env***   
+> 2. Edit ***deployment/postgis/.env*** to configure ***user, password*** and ***ports***   
+> 3. In ***deployment/postgis/*** folder run ***docker compose up***   
+> 4. Run ***python setup_db.py***   
 ### Setup sample data
-> 1. Copy ***sample_data*** folder to ***home*** directory   
+> 1. Copy ***sample_data*** folder from  to ***home*** directory   
 > 2. Run thes cripts inside ***load_data*** folder   
 ### Run
 > *python main.py*   

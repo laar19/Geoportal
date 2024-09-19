@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from geoalchemy2 import functions
 
 from app.models.satellite_images_table import *
-from app.models.geoserver_table        import *
+#from app.models.geoserver_table        import *
 
 def get_geoserver_config(db_session):
     # For geoserver url
@@ -22,7 +22,11 @@ def intersect(db_session, filters):
         functions.ST_AsGeoJSON(SatelliteImages.cutted_image_shape),
         SatelliteImages.cloud_percentage,
         SatelliteImages.roll_angle,
-        SatelliteImages.compressed_file_path
+        SatelliteImages.compressed_file_path,
+        SatelliteImages.geoserver_workspace,
+        SatelliteImages.geoserver_service,
+        SatelliteImages.geoserver_format,
+        SatelliteImages.geoserver_transparent
     )
 
     if filters["coordinates"]:

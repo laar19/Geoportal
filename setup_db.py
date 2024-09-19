@@ -8,7 +8,8 @@ from sqlalchemy import insert
 
 from app.models.models                 import *
 from app.models.satellite_images_table import *
-from app.models.geoserver_table        import *
+from app.models.vectors_table          import *
+#from app.models.geoserver_table        import *
 
 # Load environment variables
 # Specify the path to .env file
@@ -58,6 +59,7 @@ GEOSERVER_HOST  = os.getenv("GEOSERVER_HOST")
 GEOSERVER_PORT  = os.getenv("GEOSERVER_PORT")
 geoserver_url   = "{}:{}/geoserver/".format(GEOSERVER_HOST, GEOSERVER_PORT)
 
+"""
 stmt = insert(GeoserverConfig).values(
     url         = geoserver_url,
     workspace   = "satellite_images",
@@ -68,3 +70,4 @@ stmt = insert(GeoserverConfig).values(
 result = conn.execute(stmt)
 conn.commit()
 conn.close()
+"""

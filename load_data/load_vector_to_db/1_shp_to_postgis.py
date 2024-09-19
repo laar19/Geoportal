@@ -6,22 +6,23 @@ from pathlib import Path
 
 from glob import glob
 
-from sqlalchemy       import create_engine, Column, MetaData, Table, text
+from sqlalchemy       import create_engine, Column, MetaData, Table, text, insert
 from sqlalchemy.types import VARCHAR
 
 from dotenv import load_dotenv
 
+from app.models.vectors_table import *
+
 # Load environment variables
 # Specify the path to .env file
 env_paths = [
-    Path(".env"), # Is the same as load_dotenv()
     Path("deployment/postgis/.env")
 ]
 # Load the environment variables from the specified files
 for i in env_paths:
     load_dotenv(dotenv_path=i)
 
-# DB connection
+# DB conn
 POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
 POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
 POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
@@ -61,9 +62,9 @@ for i in shapefiles:
 schema_name = "vectors"
 
 def create_schema(engine, schema_name):
-    with engine.connect() as connection:
+    with engine.connect() as conn:
         # Check if schema exists
-        result = connection.execute(
+        result = conn.execute(
             text(
                 "SELECT schema_name FROM information_schema.schemata WHERE schema_name = :schema_name"
             ),
@@ -73,8 +74,8 @@ def create_schema(engine, schema_name):
         
         if not exists:
             # Create schema if it does not exist
-            connection.execute(text(f"CREATE SCHEMA {schema_name}"))
-            connection.commit()
+            conn.execute(text(f"CREATE SCHEMA {schema_name}"))
+            conn.commit()
             print(f"Schema '{schema_name}' created.")
         else:
             print(f"Schema '{schema_name}' already exists.")
@@ -92,3 +93,15 @@ for i in geometry:
         index       = True,
         index_label = "Index"
     )
+
+    stmt = insert(Vectors).values(
+        name                  = i["filename"],
+        geoserver_workspace   = i["filename"],
+        geoserver_service     = "wms",
+        geoserver_format      = "image/png",
+        geoserver_transparent = "true"
+    )
+
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()

@@ -6,6 +6,7 @@ class Vectors(Base):
     
     id                      = Column(Integer, primary_key=True, autoincrement=True)
     #custom_id               = Column(VARCHAR, unique=True)
+    name                    = Column(VARCHAR)
     geoserver_workspace     = Column(VARCHAR) # Geoserver WMS configuration
     geoserver_service       = Column(VARCHAR) # Geoserver WMS configuration
     geoserver_format        = Column(VARCHAR) # Geoserver WMS configuration
