@@ -229,27 +229,16 @@ def search():
         Vectors.geoserver_transparent
     )
 
-    layers2 = []
     if len(vectors_result.all()) > 0:
         for i in vectors_result.all():
-            layers[i] = {
+            layers[i.name] = {
                 "layer_type"           : "vector",
-                "custom_id"            : i,
+                "custom_id"            : i.name,
                 "geoserver_workspace"  : i.geoserver_workspace,
                 "geoserver_service"    : i.geoserver_service,
                 "geoserver_format"     : i.geoserver_format,
                 "geoserver_transparent": i.geoserver_transparent,
             }
-            layers2.append(layers[i])
-
-    print()
-    print("LAYERS")
-    print(layers)
-    print()
-    print()
-    print("LAYERS 2")
-    print(layers2)
-    print()
 
     error_ = False
 

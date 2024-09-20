@@ -14,20 +14,6 @@ from sqlalchemy.orm import sessionmaker
 from app.models.models    import DatabaseConfig
 from app.models.functions import *
 
-"""
-# DB connection
-db_type  = "postgresql"
-host     = "localhost"
-port     = "8870"
-db_name  = "geoportal_db"
-user     = "root"
-password = "root"
-
-engine = create_engine(f"{db_type}://{user}:{password}@{host}:{port}/{db_name}")
-engine = create_engine(
-    f"{POSTGRES_DB_TYPE}://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
-)
-"""
 # Load environment variables
 # Specify the path to .env file
 env_paths = [
@@ -107,7 +93,7 @@ for i in filenames:
             store_name  = i,
             workspace   = i,
             db          = POSTGRES_DB_NAME,
-            host        = "172.22.0.1", # docker gateway
+            host        = "172.19.0.1", # docker gateway
             port        = POSTGRES_DB_PORT,
             schema      = schema_name,
             pg_user     = POSTGRES_DB_USER,
