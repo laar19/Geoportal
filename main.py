@@ -52,12 +52,6 @@ def index_leaflet():
 
 @app.route("/search", methods=["GET"])
 def search():
-    """
-    search = False
-    q      = request.args.get("q")
-    if q:
-        search = True
-    """
     search   = True
     #page     = request.args.get("page", type=int, default=1)
     page     = request.args.get(get_page_parameter(), type=int, default=1)

@@ -28,8 +28,15 @@ class DatabaseConfig:
         self.db_name     = db_name
         
     def get_credentials(self):
-        target_db_uri = f"{self.db}://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
-        #main_db_uri   = f"{c['database']}://{c['user']}:{c['password']}@{c['host']}"
+        #target_db_uri = f"{self.db}://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+        target_db_uri = "{}://{}:{}@{}:{}/{}".format(
+            self.db,
+            self.db_user,
+            self.db_password,
+            self.db_host,
+            self.db_port,
+            self.db_name
+        )
 
         #return main_db_uri, target_db_uri
         return target_db_uri

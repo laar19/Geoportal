@@ -17,6 +17,7 @@ from app.models.functions import *
 # Load environment variables
 # Specify the path to .env file
 env_paths = [
+    Path(".env"), # Is the same as load_dotenv()
     Path("deployment/geoserver/.env"),
     Path("deployment/postgis/.env")
 ]
@@ -25,12 +26,13 @@ for i in env_paths:
     load_dotenv(dotenv_path=i)
 
 # DB conn
-POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
-POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
-POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
-POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
-POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
-POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
+POSTGRES_DB_TYPE       = os.getenv("POSTGRES_DB_TYPE")
+POSTGRES_DB_HOST       = os.getenv("POSTGRES_DB_HOST")
+POSTGIS_DOCKER_GATEWAY = os.getenv("POSTGIS_DOCKER_GATEWAY")
+POSTGRES_DB_NAME       = os.getenv("POSTGRES_DB_NAME")
+POSTGRES_DB_USER       = os.getenv("POSTGRES_DB_USER")
+POSTGRES_DB_PASSWORD   = os.getenv("POSTGRES_DB_PASSWORD")
+POSTGRES_DB_PORT       = os.getenv("POSTGRES_DB_PORT")
 
 engine = create_engine(
     "{}://{}:{}@{}:{}/{}".format(
@@ -93,7 +95,8 @@ for i in filenames:
             store_name  = i,
             workspace   = i,
             db          = POSTGRES_DB_NAME,
-            host        = "172.19.0.1", # docker gateway
+            #host        = POSTGIS_DOCKER_GATEWAY,
+            host        = "172.19.0.1",
             port        = POSTGRES_DB_PORT,
             schema      = schema_name,
             pg_user     = POSTGRES_DB_USER,

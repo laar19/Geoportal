@@ -6,6 +6,9 @@ FLASK_DEBUG=true
 # Geoserver
 GEOSERVER_HOST=http://localhost
 
+# PostGIS
+POSTGIS_DOCKER_GATEWAY=http://172.19.0.1
+
 # Map config
 MAP_ZOOM_LEVEL=6
 MAP_LAT=6.717710140513336
