@@ -14,10 +14,11 @@ function show_raster_info(map, geoserver_config, layers, error) {
         test.addTo(map);
         */
 
-        var geoserver_url = geoserver_config["geoserver_url"] + layers[key]["geoserver_workspace"]  + "/" + layers[key]["geoserver_service"] ;
+        var geoserver_url = geoserver_config["geoserver_url"] + layers[key]["geoserver_workspace"]  + "/" + layers[key]["geoserver_service"];
         
         var wmsLayer = L.tileLayer.wms(geoserver_url, {
-            layers     : layers[key]["geoserver_workspace"] + ":" + layers[key]["custom_id"],
+            //layers     : layers[key]["geoserver_workspace"] + ":" + layers[key]["custom_id"],
+            layers     : layers[key]["custom_id"],
             format     : layers[key]["geoserver_format"],
             transparent: layers[key]["geoserver_transparent"],
             //name       : _id
@@ -28,14 +29,137 @@ function show_raster_info(map, geoserver_config, layers, error) {
         map_layers[layers[key]["custom_id"]] = wmsLayer;
 
         if (layers[key]["layer_type"] == "vector") {
-            wmsLayer.addTo(map);
+            wmsLayer.addTo(map).bindPopup("My popup content", {
+                trigger: 'hover',
+                maxWidth: 200,
+                className: 'custom-popup'
+            });
 
             /*
-            // Get the bounds of the WMS layer
-            wmsLayer.on('load', function() {
-                var bounds = wmsLayer.getBounds();
-                console.log('Layer Bounds:', bounds);
+            // Function to retrieve polygon data from WFS
+            function getPolygonData(wmsUrl, layerName) {
+                var wfsUrl = wmsUrl + '?service=WFS&version=1.1.0&request=GetFeature&typeName=' + layerName + '&outputFormat=application/json';
+
+                axios.get(wfsUrl)
+                    .then(function (response) {
+                        var features = response.data.features;
+                        for (var i = 0; i < features.length; i++) {
+                            var feature = features[i];
+                            var coordinates = feature.geometry.coordinates;
+                            var polygon = L.polygon(coordinates).addTo(map).bindPopup("hi jeje");
+                            console.log(coordinates);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching polygon data:', error);
+                    });
+            }
+
+            // Call the function to retrieve polygon data
+            getPolygonData(geoserver_config["geoserver_url"]+"wms", layers[key]["custom_id"]);
+            */
+
+            /*
+            // Add click event listener
+            map.on('click', function(e) {
+                var url = wmsLayer.getFeatureInfoUrl(
+                    e.latlng,
+                    map.getZoom(),
+                    map.getSize(),
+                    {
+                        'info_format': 'application/json'
+                    }
+                );
+
+                // Fetch the feature info
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the feature info data
+                        console.log(data);
+                        L.popup()
+                            .setLatLng(e.latlng)
+                            .setContent('Feature Info: ' + JSON.stringify(data))
+                            .openOn(map);
+                    })
+                    .catch(error => console.error('Error fetching feature info:', error));
             });
+            */
+
+            /*
+            map.on('click', function (e) {
+                const url = geoserver_config["geoserver_url"]+"wms?service=WMS&version=1.1.1&request=GetFeatureInfo&layers="+layers[key]["geoserver_workspace"]+":"+layers[key]["custom_id"]+"&bbox=${map.getBounds().toBBoxString()}&width=${map.getSize().x}&height=${map.getSize().y}&srs=EPSG:4326&format=image/png&query_layers="+layers[key]["geoserver_workspace"]+":"+layers[key]["custom_id"]+"&info_format=application/json&x=${Math.floor(e.containerPoint.x)}&y=${Math.floor(e.containerPoint.y)}";
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Feature Info:', data);
+                        // Display the feature info as needed
+                        alert(JSON.stringify(data));
+                    })
+                    .catch(error => console.error('Error fetching feature info:', error));
+            });
+            */
+
+            /*
+            // Get the bounds of the geoserver WMS layer to draw
+            const wmsUrl    = geoserver_config["geoserver_url"] + "wms?service=WMS&version=1.1.1&request=GetCapabilities";
+            const workspace = layers[key]["geoserver_workspace"];
+            const layerName = layers[key]["custom_id"];
+
+            var coordinates_vector;
+
+            axios.get(wmsUrl).then((response) => {
+                const parser = new WMSCapabilities();
+                const json   = parser.parse(response.data);
+                const layers = json.Capability.Layer.Layer;
+                const layer  = layers.find(l => l.Name === `${workspace}:${layerName}`);
+                const bbox   = layer.BoundingBox[0].extent;
+
+                var coordinates = [[]];
+                for (var i=0; i<bbox.length; i++) {
+                    coordinates[0].push([bbox[i][1], bbox[i][0]]);
+                }
+                coordinates_vector = coordinates;
+
+                console.log("Bounding Box:", bbox);
+                // Use the bounding box as needed, e.g., to fit the map view
+                // map.fitBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]]);
+            }).catch((error) => {
+                console.error("Error fetching WMS capabilities:", error);
+            });
+
+            console.log(coordinates_vector);
+
+            var polygon  = L.polygon(coordinates_vector, polygon_style);
+            var polyline = L.polyline(coordinates_vector, {color: "red"});
+            polygon.addTo(map);
+            polyline.addTo(map);
+
+            var html_layer_info = "<div>"+
+                "<table>"+
+                    "<tr>"+
+                        "<td>Hello</td>"
+                "</table>"+
+            "</div>";
+
+            wmsLayer.bindPopup(html_layer_info);
+
+            function show_popup(e) {
+                var popup = e.target.getPopup();
+
+                $.ajax({
+                    //url: "myurl.html",
+                    url: $(location).attr("host"),
+                })
+                .done(function(data) {
+                    alert(data);
+                    popup.setContent(data);
+                    popup.update();
+                })
+            };
+
+            wmsLayer.on("click", show_popup);
             */
         }
 
@@ -107,6 +231,7 @@ function show_raster_info(map, geoserver_config, layers, error) {
 
                 polygon.bindPopup(html_layer_info);
 
+                /*
                 function show_popup(e) {
                     var popup = e.target.getPopup();
 
@@ -122,7 +247,59 @@ function show_raster_info(map, geoserver_config, layers, error) {
                 };
 
                 polygon.on("click", show_popup);
+                */
             }
         }
     }
+
+    /*
+    const polygon2 = L.polygon([
+        [472545.74484795, 4823134.54431552],
+        [472543.90161885, 4823132.13071817],
+        [472523.76152767, 4823124.8830602]
+    ]).addTo(map).bindPopup('I am a polygon.');
+    */
+
+    /*
+    // Define the source projection using its Proj4 definition string
+    proj4.defs("EPSG:32611", "+proj=utm +zone=11 +datum=WGS84 +units=m +no_defs");
+
+    // Define the source and destination projections
+    var sourceProjection = 'EPSG:32611'; // UTM Zone 33N
+    var destProjection = 'EPSG:4326'; // WGS84
+
+    // Example projected coordinates (easting, northing)
+    var projectedCoordinates = [
+        [472545.74484795, 4823134.54431552],
+        [472543.90161885, 4823132.13071817],
+        [472523.76152767, 4823124.8830602]
+    ];
+    //var projectedCoordinates = [472545.74484795, 4823134.54431552];
+
+    // Perform the conversion
+    var geographicCoordinates = proj4(sourceProjection, destProjection, projectedCoordinates);
+
+    console.log('Latitude:', geographicCoordinates[1]);
+    console.log('Longitude:', geographicCoordinates[0]);
+    */
+
+    /*
+    //var proj4 = require('proj4');
+
+    // Define the source and target projections
+    var fromProj = 'EPSG:3857'; // Example: Web Mercator
+    var toProj = 'EPSG:4326'; // Example: WGS84 (geographic)
+
+    // Projected coordinates
+    var projectedCoordinates = [
+        [472545.74484795, 4823134.54431552],
+        [472543.90161885, 4823132.13071817],
+        [472523.76152767, 4823124.8830602]
+    ];
+
+    // Convert to geographic coordinates
+    var geographicCoords = proj4(fromProj, toProj, projectedCoordinates);
+
+    console.log(geographicCoords); // Output: [longitude, latitude]
+    */
 }
