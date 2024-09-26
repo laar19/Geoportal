@@ -15,11 +15,9 @@ function show_raster_info(map, geoserver_config, layers, error) {
         */
 
         var geoserver_url = geoserver_config["geoserver_url"] + "/" +
-            //map_layers[key].layer_data["geoserver_workspace"]  + "/" +
             layers[key]["geoserver_service"];
         
         var wmsLayer = L.tileLayer.wms(geoserver_url, {
-            //layers     : map_layers[key].layer_data["geoserver_workspace"] + ":" + map_layers[key].layer_data["custom_id"],
             layers     : layers[key]["custom_id"],
             format     : layers[key]["geoserver_format"],
             transparent: layers[key]["geoserver_transparent"],
