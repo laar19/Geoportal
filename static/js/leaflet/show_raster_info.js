@@ -33,7 +33,6 @@ function show_raster_info(map, geoserver_config, layers, error) {
         };
         map_layers.push(tmp);
         map_layers_[layers[key]["custom_id"]] = wmsLayer;
-        
     }
 
     for(let key in map_layers) {
