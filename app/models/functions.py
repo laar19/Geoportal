@@ -3,13 +3,31 @@ from sqlalchemy import or_
 from geoalchemy2 import functions
 
 from app.models.satellite_images_table import *
-from app.models.vectors_table import *
+from app.models.vectors_table          import *
 from app.models.geoserver_table        import *
+
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.orm import sessionmaker
+from shapely.geometry import Polygon
+from geoalchemy2 import Geometry, WKTElement
+from sqlalchemy import create_engine, MetaData, Table, select
+from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, MetaData, Table
+
+def get_tables_from_db_schema(DbConn, inspect, schema_name):
+    conn, engine = DbConn.connection()
+    inspector    = inspect(engine)
+
+    # Get all tables from the schema
+    table_names = inspector.get_table_names(schema=schema_name)
+
+    return table_names
 
 def get_geoserver_config(db_session):
     # For geoserver url
     return db_session.query(GeoserverConfig).all()
 
+"""
 def intersect(db_session, filters):
     # Satellite info
     db_session_query = db_session.query(
@@ -91,14 +109,63 @@ def intersect(db_session, filters):
             )
         )
 
-    #return db_session_query.all()
     return db_session_query
+"""
+    
+def intersect(db_session, filters, engine):
+    # Create an inspector object
+    inspector = inspect(engine)
 
-def get_tables_from_db_schema(DbConn, inspect, schema_name):
-    conn, engine = DbConn.connection()
-    inspector    = inspect(engine)
+    # Specify the schema name
+    schema_name = "vectors"
 
-    # Get all tables from the schema
+    # Get all table names in the specified schema
     table_names = inspector.get_table_names(schema=schema_name)
 
-    return table_names
+    for i in table_names:
+        # Reflect the existing table
+        metadata = MetaData()
+
+        table = Table(i, metadata, schema="vectors", autoload_with=engine)
+
+        # Query the table
+        db_session_query = session.query(
+            table.custom_id,
+            table.name,
+            table.geoserver_workspace,
+            table.geoserver_service,
+            table.geoserver_format,
+            table.geoserver_transparent
+        )#.filter(example_table.c.value > 1).all()
+
+    """
+    if filters["coordinates"]:
+        db_session_query = db_session_query.filter(
+            func.ST_Intersects(
+                Vectors.cutted_image_shape,
+                from_shape(filters["coordinates"])
+            )
+        )
+    """
+
+    """
+    # Reflect the custom schema table
+    metadata = MetaData(schema='vectors')
+    your_table = Table('kesPolygon', metadata, autoload_with=engine)
+
+    polygon = Polygon(polygon_coords_4326)
+
+    polygon_wkt = WKTElement(polygon.wkt, srid=4326)
+
+    # Perform the intersection query
+    intersect_query = session.query(your_table).filter(
+        your_table.c.geometry.ST_Intersects(polygon_wkt)
+    )
+
+    # Fetch and print the results
+    results = intersect_query.all()
+    for result in results:
+        print(result)
+    """
+
+    return db_session_query

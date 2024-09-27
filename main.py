@@ -113,7 +113,8 @@ def search():
             filters = {}
 
             filters["coordinates"] = formatted_coord_from_user3
-                
+
+            """
             if request.args.get("satellite") != "ALL":
                 filters["satellite"] = request.args.get("satellite")
             else:
@@ -158,6 +159,7 @@ def search():
                 filters["cloud_percentage"] = request.args.get("cloud_percentage")
             else:
                 filters["cloud_percentage"] = False
+            """
 
             """
             rasters_result = intersect(db_session, filters)
@@ -217,6 +219,11 @@ def search():
 
             #vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "vectors")
 
+            vectors_result = intersect(db_session)
+            print()
+            print(vectors_result)
+            print()
+            """
             vectors_result = db_session.query(
                 Vectors.name,
                 Vectors.geoserver_workspace,
@@ -224,6 +231,7 @@ def search():
                 Vectors.geoserver_format,
                 Vectors.geoserver_transparent
             )
+            """
             result_render  = vectors_result.limit(per_page).offset(offset)
 
             layers = {}
@@ -237,6 +245,7 @@ def search():
                     layers[i.name] = {
                         "layer_type"           : "vector",
                         "custom_id"            : i.name,
+                        "name"                 : i.name,
                         "geoserver_workspace"  : i.geoserver_workspace,
                         "geoserver_service"    : i.geoserver_service,
                         "geoserver_format"     : i.geoserver_format,
@@ -267,10 +276,6 @@ def search():
 
                 if geoserver_config["transparent"] == None:
                     geoserver_config["transparent"] = GEOSERVER_TRANSPARENT
-
-    print()
-    print(result_render)
-    print()
 
     """
     if len(vectors_result.all()) > 0:
