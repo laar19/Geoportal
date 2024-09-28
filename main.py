@@ -219,7 +219,7 @@ def search():
 
             #vector_layer_names = get_tables_from_db_schema(DbConn, inspect, "vectors")
 
-            vectors_result = intersect(db_session)
+            vectors_result = intersect(db_session, filters, engine)
             print()
             print(vectors_result)
             print()

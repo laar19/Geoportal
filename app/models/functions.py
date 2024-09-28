@@ -129,7 +129,7 @@ def intersect(db_session, filters, engine):
         table = Table(i, metadata, schema="vectors", autoload_with=engine)
 
         # Query the table
-        db_session_query = session.query(
+        db_session_query = db_session.query(
             table.custom_id,
             table.name,
             table.geoserver_workspace,
