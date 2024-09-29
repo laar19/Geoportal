@@ -37,4 +37,4 @@ class SatelliteImages(Base):
     geoserver_transparent   = Column(VARCHAR) # Geoserver WMS configuration
     create_date             = Column(DateTime, default=dtime.now)
     
-db_tables[table_name] = SatelliteImages
+#db_tables[table_name] = SatelliteImages

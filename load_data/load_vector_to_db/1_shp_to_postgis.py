@@ -51,8 +51,25 @@ for i in shapefiles:
     # Get filename without extension
     aux      = i.strip(data_source)
     filename = aux.strip(".shp")
+    filename = filename.lower()
 
-    geometry.append({"filename": filename, "geom": gpd.read_file(i)})
+    gdf = gpd.read_file(i)      # Read the shapefile
+    gdf = gdf.to_crs(epsg=4326) # Transform CRS
+
+    # Add colums
+    gdf["custom_id"]             = filename
+    gdf["name"]                  = filename
+    gdf["geoserver_workspace"]   = filename
+    gdf["geoserver_service"]     = "wms"
+    gdf["geoserver_format"]      = "image/png"
+    gdf["geoserver_transparent"] = "true"
+    gdf["test_json_field"]       = {"test": True}
+
+    # Rename the column
+    #gdf = gdf.rename(columns={"geom": "geometry"})
+
+    #geometry.append({"filename": filename, "geom": gpd.read_file(i)})
+    geometry.append({"filename": filename, "geom": gdf})
 
 # Upload shapefiles to DB
 
@@ -101,7 +118,9 @@ for i in geometry:
         index_label = "Index"
     )
 
+    """
     stmt = insert(Vectors).values(
+        custom_id             = i["filename"],
         name                  = i["filename"],
         geoserver_workspace   = i["filename"],
         geoserver_service     = "wms",
@@ -112,3 +131,4 @@ for i in geometry:
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
+    """

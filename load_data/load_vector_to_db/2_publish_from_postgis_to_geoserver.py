@@ -77,6 +77,7 @@ for i in shapefiles:
     # Get filename without extension
     aux      = i.strip(data_source)
     filename = aux.strip(".shp")
+    filename = filename.lower()
 
     filenames.append(filename)
 
