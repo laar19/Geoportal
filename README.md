@@ -12,7 +12,9 @@
 
 ## Setup
 ### Setup anaconda environment
-> *conda env create -n geoportal -f environment.yml*   
+> ```sh
+> conda env create -n geoportal -f environment.yml
+> ```
 ### Setup global environment variables
 > 1. Copy ***dot_env_example.txt*** to ***.env***   
 > 2. Edit ***.env*** to to setup environment variables   
@@ -26,32 +28,35 @@
 ### Setup PostGis database
 > 1. Copy ***deployment/postgis/dot_env_example.txt*** to ***deployment/postgis/.env***   
 > 2. Edit ***deployment/postgis/.env*** to configure ***user, password*** and ***ports***   
-> 3. In ***deployment/postgis/*** folder run:
+> 3. In ***deployment/postgis/*** folder run:   
 > ```sh
 > docker compose up
 > ```    
-> 4. Run ***python setup_db.py***   
+> 4. Check and setup database and tables:   
+> ```sh
+> python setup_db.py
+> ```
 ### Setup sample data
 #### Setup sample raster data
 > 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to ***home*** directory   
-> 2. Load rasters to database:
+> 2. Load rasters to database:   
 > ```sh
 > python -m load_data.load_raster_to_db.load_raster_to_db
 > ```    
 #### Setup sample vector data
 > 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to ***home*** directory   
-> 2. Load vectors to database:
+> 2. Load vectors to database:   
 > ```sh
 > python -m load_data.load_vector_to_db.1_shp_to_postgis
 > ```   
-> 3. Load vectors from database to geoserver:
+> 3. Load vectors from database to geoserver:   
 > ```sh
 > python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver
 > ```
 ### Run app
 > ```sh
 > python main.py
-> ``
+> ```
 
 ## Credits
 - [Luis Acevedo](mailto:laar@pm.me), [Linkedin](https://www.linkedin.com/in/luis-acevedo-662535260/)
