@@ -21,23 +21,37 @@
 > 2. Edit ***deployment/geoserver/.env*** to configure ***user, password*** and ***ports***   
 > 3. In ***deployment/geoserver/*** folder run:   
 > ```sh
-> ***docker compose up***
+> docker compose up
 > ```    
 ### Setup PostGis database
 > 1. Copy ***deployment/postgis/dot_env_example.txt*** to ***deployment/postgis/.env***   
 > 2. Edit ***deployment/postgis/.env*** to configure ***user, password*** and ***ports***   
-> 3. In ***deployment/postgis/*** folder run ***docker compose up***   
+> 3. In ***deployment/postgis/*** folder run:
+> ```sh
+> docker compose up
+> ```    
 > 4. Run ***python setup_db.py***   
 ### Setup sample data
 #### Setup sample raster data
 > 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to ***home*** directory   
-> 2. Run ***python -m load_data.load_raster_to_db.load_raster_to_db***   
+> 2. Load rasters to database:
+> ```sh
+> python -m load_data.load_raster_to_db.load_raster_to_db
+> ```    
 #### Setup sample vector data
 > 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to ***home*** directory   
-> 2. Run ***python -m load_data.load_vector_to_db.1_shp_to_postgis***   
-> 3. Run ***python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver***   
-### Run
-> *python main.py*   
+> 2. Load vectors to database:
+> ```sh
+> python -m load_data.load_vector_to_db.1_shp_to_postgis
+> ```   
+> 3. Load vectors from database to geoserver:
+> ```sh
+> python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver
+> ```
+### Run app
+> ```sh
+> python main.py
+> ``
 
 ## Credits
 - [Luis Acevedo](mailto:laar@pm.me), [Linkedin](https://www.linkedin.com/in/luis-acevedo-662535260/)
