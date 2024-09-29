@@ -51,6 +51,7 @@ for i in shapefiles:
     # Get filename without extension
     aux      = i.strip(data_source)
     filename = aux.strip(".shp")
+    filename = filename.lower()
 
     gdf = gpd.read_file(i)      # Read the shapefile
     gdf = gdf.to_crs(epsg=4326) # Transform CRS
@@ -63,6 +64,9 @@ for i in shapefiles:
     gdf["geoserver_format"]      = "image/png"
     gdf["geoserver_transparent"] = "true"
     gdf["test_json_field"]       = {"test": True}
+
+    # Rename the column
+    #gdf = gdf.rename(columns={"geom": "geometry"})
 
     #geometry.append({"filename": filename, "geom": gpd.read_file(i)})
     geometry.append({"filename": filename, "geom": gdf})
