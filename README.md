@@ -19,7 +19,10 @@
 ### Setup Geoserver
 > 1. Copy ***deployment/geoserver/dot_env_example.txt*** to ***deployment/geoserver/.env***   
 > 2. Edit ***deployment/geoserver/.env*** to configure ***user, password*** and ***ports***   
-> 3. In ***deployment/geoserver/*** folder run ***docker compose up***   
+> 3. In ***deployment/geoserver/*** folder run:   
+> ```sh
+> ***docker compose up***
+> ```    
 ### Setup PostGis database
 > 1. Copy ***deployment/postgis/dot_env_example.txt*** to ***deployment/postgis/.env***   
 > 2. Edit ***deployment/postgis/.env*** to configure ***user, password*** and ***ports***   
