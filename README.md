@@ -38,13 +38,13 @@
 > ```
 ### Setup sample data
 #### Setup sample raster data
-> 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to ***home*** directory   
+> 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to user ***home*** directory   
 > 2. Load rasters to database:   
 > ```sh
 > python -m load_data.load_raster_to_db.load_raster_to_db
 > ```    
 #### Setup sample vector data
-> 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to ***home*** directory   
+> 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to user ***home*** directory   
 > 2. Load vectors to database:   
 > ```sh
 > python -m load_data.load_vector_to_db.1_shp_to_postgis
