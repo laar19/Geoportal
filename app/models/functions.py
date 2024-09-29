@@ -1,98 +1,8 @@
-from sqlalchemy import or_
+from sqlalchemy import MetaData, Table, inspect, func
 
-from geoalchemy2 import functions
-
-from app.models.satellite_images_table import *
-from app.models.vectors_table import *
+#from app.models.satellite_images_table import *
+#from app.models.vectors_table          import *
 from app.models.geoserver_table        import *
-
-def get_geoserver_config(db_session):
-    # For geoserver url
-    return db_session.query(GeoserverConfig).all()
-
-def intersect(db_session, filters):
-    # Satellite info
-    db_session_query = db_session.query(
-        SatelliteImages.custom_id,
-        SatelliteImages.satellite,
-        SatelliteImages.sensor,
-        SatelliteImages.orbit,
-        SatelliteImages.scene,
-        SatelliteImages.capture_date,
-        #functions.ST_AsText(SatelliteImages.cutted_image_shape),
-        functions.ST_AsGeoJSON(SatelliteImages.cutted_image_shape),
-        SatelliteImages.cloud_percentage,
-        SatelliteImages.roll_angle,
-        SatelliteImages.compressed_file_path,
-        SatelliteImages.geoserver_workspace,
-        SatelliteImages.geoserver_service,
-        SatelliteImages.geoserver_format,
-        SatelliteImages.geoserver_transparent
-    )
-
-    if filters["coordinates"]:
-        db_session_query = db_session_query.filter(
-            func.ST_Intersects(
-                SatelliteImages.cutted_image_shape,
-                from_shape(filters["coordinates"])
-            )
-        )
-
-    if filters["satellite"]:
-        db_session_query = db_session_query.where(
-            SatelliteImages.satellite==filters["satellite"]
-        )
-        
-    if filters["sensor_pan"] and filters["sensor_mss"]:
-        db_session_query = db_session_query.filter(
-            or_(
-                SatelliteImages.sensor == filters["sensor_pan"],
-                SatelliteImages.sensor == filters["sensor_mss"]
-            )
-        )
-    else:
-        if filters["sensor_pan"]:
-            db_session_query = db_session_query.where(
-                SatelliteImages.sensor==filters["sensor_pan"]
-            )
-        if filters["sensor_mss"]:
-            db_session_query = db_session_query.where(
-                SatelliteImages.sensor==filters["sensor_mss"]
-            )
-
-    if filters["orbit"]:
-        db_session_query = db_session_query.where(
-            SatelliteImages.orbit==filters["orbit"]
-        )
-        
-    if filters["scene"]:
-        db_session_query = db_session_query.where(
-            SatelliteImages.scene==filters["scene"]
-        )
-
-    if filters["start_date"] and filters["end_date"]:
-        db_session_query = db_session_query.filter(
-            SatelliteImages.capture_date.between(
-                filters["start_date"], filters["end_date"]
-            )
-        )
-
-    if filters["roll_angle"]:
-        db_session_query = db_session_query.where(
-            SatelliteImages.roll_angle.between(
-                float(filters["roll_angle"])*-1, float(filters["roll_angle"])
-            )
-        )
-        
-    if filters["cloud_percentage"]:
-        db_session_query = db_session_query.where(
-            SatelliteImages.cloud_percentage.between(
-                float(0), float(filters["cloud_percentage"])
-            )
-        )
-
-    #return db_session_query.all()
-    return db_session_query
 
 def get_tables_from_db_schema(DbConn, inspect, schema_name):
     conn, engine = DbConn.connection()
@@ -102,3 +12,57 @@ def get_tables_from_db_schema(DbConn, inspect, schema_name):
     table_names = inspector.get_table_names(schema=schema_name)
 
     return table_names
+
+def get_geoserver_config(db_session):
+    # For geoserver url
+    return db_session.query(GeoserverConfig).all()
+
+def intersect(db_session, filters, engine):
+    # Reflect the existing table
+    metadata = MetaData()
+    
+    # Create an inspector object
+    inspector = inspect(engine)
+
+    # Specify the schema name
+    schema_name = "vectors"
+
+    # Get all table names in the specified schema
+    table_names = inspector.get_table_names(schema=schema_name)
+
+    db_session_query = []
+    for i in table_names:
+        # Map the table
+        table = Table(i, metadata, schema="vectors", autoload_with=engine)
+
+        # Query the table
+        result = db_session.query(
+            table.c.custom_id,
+            table.c.name,
+            table.c.geoserver_workspace,
+            table.c.geoserver_service,
+            table.c.geoserver_format,
+            table.c.geoserver_transparent
+        )
+
+        # Filter by coordinates
+        if filters["coordinates"]:
+            polygon_wkt = filters["coordinates"].wkt
+            
+            # Create a polygon from the WKT
+            polygon_geom = func.ST_GeomFromText(polygon_wkt, 4326)
+
+            # Query the table to find intersecting geometries
+            result = result.filter(
+                table.c.geometry.ST_Intersects(polygon_geom)
+            )#.all()
+
+        db_session_query.append(result)
+
+    # Combine the queries of all tables of the schema and automatically
+    # remove duplicates
+    combined_query = db_session_query[0]
+    for i in db_session_query[1:]:
+        combined_query = combined_query.union(i)
+
+    return combined_query
