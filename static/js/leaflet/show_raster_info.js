@@ -59,37 +59,37 @@ function show_raster_info(map, geoserver_config, layers, error) {
                             var popupContent  = "<div>" +
                                     "<table>" +
                                         "<tr>" +
-                                            "<td>Satellite</td>" +
+                                            "<td>Custom ID</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["custom_id"] +
                                             "</td>" +
                                         "</tr>" +
                                         "<tr>" +
-                                            "<td>Sensor</td>" +
+                                            "<td>Name</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["name"] +
                                             "</td>" +
                                         "</tr>" +
                                         "<tr>" +
-                                            "<td>Orbit</td>" +
+                                            "<td>Geoserver workspace</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["geoserver_workspace"] +
                                             "</td>" +
                                         "</tr>" +
                                         "<tr>" +
-                                            "<td>Scene</td>" +
+                                            "<td>Geoserver service</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["geoserver_service"] +
                                             "</td>" +
                                         "</tr>" +
                                         "<tr>" +
-                                            "<td>Capture date</td>" +
+                                            "<td>Geoserver format</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["geoserver_format"] +
                                             "</td>" +
                                         "</tr>" +
                                         "<tr>" +
-                                            "<td>Cloud percentage</td>" +
+                                            "<td>Geoserver transparent</td>" +
                                             "<td class='popup-table-value'>" +
                                                 map_layers_list[key].layer_data["geoserver_transparent"] +
                                             "</td>" +
