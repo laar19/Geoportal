@@ -1,3 +1,63 @@
+.sidebar-header{
+    font-size:15pt;
+    background-color: #535973;
+}
+.sidebar-tabs{
+    background-color:#535973;
+}
+.sidebar.collapsed{
+    width: 44px;
+}
+.sidebar-tabs > li, .sidebar-tabs > ul > li{
+    font-size: 16pt;
+    width: auto;
+    height: auto;
+    padding: 24px 0px;
+}
+
+.sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
+    color: #fff;
+    background-color: #656b86c9;
+}
+
+.sidebar-left .sidebar-content {
+    left: 42px;
+}
+@media (min-width: 768px) {
+    .sidebar-left {
+        left: 10px;
+    }
+    .sidebar-left.collapsed ~ .sidebar-map .leaflet-left 
+    {
+        left: 50px
+    }
+}
+@media (max-width: 768px) {
+    .sidebar-left.collapsed ~ .sidebar-map .leaflet-left 
+    {
+        left: 35px
+    }
+}
+.leaflet-touch .leaflet-bar a{
+    background-color:#535973;
+    line-height: 35px;
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.leaflet-control-cascadeButtons button{
+    background-color:#535973;
+    line-height: 35px;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 16pt;
+}
+
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-rectangle{
+    background-position: -55px 5px!important;
+    background-color:#535973!important;
+    color: white;
+}
 .content-layers-info {
     width: 100%;
     margin: 20px 0;
@@ -17,11 +77,20 @@
 }
 
 .header-layer {
-    background: #f4f4f4;
-    padding: 10px;
+    background: #8188a6;
+    padding: 15px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0 20px;
+    color: #fff;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+.header-layer:hover{
+    background: #535973;
 }
 
 .header-layer .toggle-ly {
@@ -50,6 +119,7 @@
     opacity: 0;
 }
 
+
 .overlay-to-layer {
     position: absolute;
     top: 50%;
@@ -58,7 +128,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: black;
+    color: #d5f1ff!important;
     font-size: 24px;
     pointer-events: none;
 }
@@ -66,4 +136,23 @@
 .contenido {
     display: none;
     padding: 10px;
+    background: #e5e8f7;
+}
+.info-descr{
+    white-space: normal;
+    word-break: break-word;
+}
+
+.pagination-page-info b {
+    background: #afbeff;
+}
+.page-item.active .page-link {
+    background-color: #afbeff;
+    border-color: #afbeff;
+}
+.page-link {
+    color: #535973
+}
+.page-link:hover {
+    color: #535973
 }

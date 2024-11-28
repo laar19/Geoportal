@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
             event.stopPropagation(); // Evita que el clic afecte otros elementos
             var content = this.closest(".info-layer").querySelector(".contenido");
             if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
+                content.style.display = "flex";
             } else {
                 content.style.display = "none";
             }
