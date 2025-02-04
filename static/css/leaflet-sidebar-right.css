@@ -268,7 +268,7 @@
 /* desplazamiento de los botones del menu */
 @media (min-width: 1200px) {
   .sidebar-left ~ .sidebar-map .leaflet-left {
-    left: 360px; 
+    left: 415px; 
   } 
 }
 
