@@ -1,0 +1,73 @@
+.modals {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modals-content {
+    background-color: #535973;
+    margin: 7% auto;
+    padding: 20px;
+    border: 3px solid #ffffff1c;
+    width: 75%;
+    color: white;
+    transition: 0.3s;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    border-radius: 5px;
+}
+
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+  }
+  
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+.closes {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.closes:hover,
+.closes:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modals-header {
+    padding: 2px 16px;
+}
+
+.modals-header b{
+    font-size: 25px;
+}
+  
+.modals-body {
+    margin-top: 20px;
+    padding: 2px 16px;
+    text-align: justify;
+}
+
+.sidebar .abajo{
+    position: relative;
+    margin-bottom:;
+}
+

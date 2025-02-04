@@ -267,7 +267,7 @@
 
 @media (min-width: 1200px) {
   .sidebar-left ~ .sidebar-map .leaflet-left {
-    left: 470px; 
+    left: 570px; 
   } 
 }
 
