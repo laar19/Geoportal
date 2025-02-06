@@ -4,7 +4,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from flask          import Flask, render_template, request
+from flask          import Flask, render_template, jsonify, request, render_template_string
 from flask_wtf      import CSRFProtect
 from flask_paginate import Pagination, get_page_parameter
 
@@ -181,6 +181,15 @@ def search():
         layers           = False
         error_           = False
 
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        pagination_html = render_template_string("{{ pagination.links|safe }}", pagination=pagination)
+        results_html = render_template("results.html", result=result_render, geoserver_config=geoserver_config)
+        
+        return jsonify({
+            "pagination": pagination_html,
+            "results": results_html
+        })
+    
     return render_template(
         "index.html",
         geoserver_config = geoserver_config,
