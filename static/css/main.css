@@ -25,6 +25,7 @@ html, body, #map {
 /* CSS DE LOS ICONOS DEL MENU */
 .hidden {
     visibility: hidden !important;
+    display: none;
 }
 
 .leaflet-control-cascadeButtons{

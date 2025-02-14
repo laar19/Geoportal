@@ -12,18 +12,22 @@
 }
 
 .modals-content {
-    background-color: #535973;
+    background-color: white;
     margin: 7% auto;
     padding: 20px;
     border: 3px solid #ffffff1c;
     width: 75%;
-    color: white;
+    color: #0c275a;
     transition: 0.3s;
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
     animation-duration: 0.4s;
     border-radius: 5px;
+}
+
+.texto {
+    text-align: justify;
 }
 
 @-webkit-keyframes animatetop {
@@ -68,6 +72,5 @@
 
 .sidebar .abajo{
     position: relative;
-    margin-bottom:;
 }
 

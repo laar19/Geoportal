@@ -65,11 +65,11 @@
 }
   
 .sidebar-left .sidebar-tabs {
-  left: 0; 
+  left: -1; 
 }
 
 .sidebar-right .sidebar-tabs {
-  right: 0; 
+  right: -1; 
 }
 
 .sidebar-tabs, .sidebar-tabs > ul {
@@ -307,11 +307,5 @@
 }
 
 #sidebar {
-    /*
-    height: 290px;
-    */
-    height: 95%;
-    /*
-    margin-left: 100px;
-    */
+    height: 101%;
 }

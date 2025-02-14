@@ -61,26 +61,6 @@ L.Control.cascadeButtons = L.Control.extend({
     },
 
     buildDirection: function(direction){
-
-        if(direction === "vertical"){
-            if((this.options.position).includes('left')){
-                if(this.options.position.includes('bottom')) direction = direction + ' col-reverse'
-            }
-            if((this.options.position).includes('right')){
-                if(this.options.position.includes('bottom')) direction = direction + ' col-reverse'
-                direction = direction + ' right';
-            }
-        }
-        else if(direction === "horizontal"){
-            if((this.options.position).includes('top')){
-                if(this.options.position.includes('right')) direction = direction + ' row-reverse';
-            }
-            if((this.options.position).includes('bottom')){
-                if(this.options.position.includes('right')) direction = direction + ' row-reverse';
-                direction = direction + ' bottom'
-            }
-        }
-
         return direction
     },
 

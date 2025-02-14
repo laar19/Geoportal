@@ -54,6 +54,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet-sidebar-right.css') }}">
     <!-- CUSTOM SIDEBAR-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
     <!-- SIDEBAR LEFT -->
@@ -63,7 +64,7 @@
             <ul role="tablist">
                 <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
                 <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
-                <li id="information"><a href="#informacion" role="tab"><i class="bi bi-info-circle"></i></a></li>
+                <li id="information"><a href="#informacion" role="tab"><i class="fa-solid fa-circle-info" style="color: #ffffff;"></i></a></li>
                 <!--
                 <li><a href="#orbita" role="tab"><i class="fa-solid fa-solar-panel"></i></a></li>
                 <li><a href="#escena" role="tab"><i class="fa-solid fa-fingerprint"></i></a></li>
@@ -71,7 +72,8 @@
                 <li><a href="#roll" role="tab"><i class="fa-solid fa-compass-drafting"></i></a></li>
                 <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
                 -->
-                <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i class="bi bi-question-circle"></i></a></li>
+                <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
+                <li class="logins"><a class="boton-modal" id="open-modal-btn"><i class="fa-solid fa-user" style="color: #ffffff;"></i></a></li>
             </ul>
         </div>
 
@@ -84,21 +86,68 @@
                 </div>
                 <hr>
                 <div class="modals-body">  
-                    <p><b>What is Lorem Ipsum?</b></p>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                    <p><b>Where does it come from?</b></p>
-                    <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
-                    <p>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
+                    <p class="texto"><b>What is Lorem Ipsum?</b></p>
+                    <p class="texto">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    <p class="texto"><b>Where does it come from?</b></p>
+                    <p class="texto">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
+                    <p class="texto">The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
                 </div>
             </div>
         </div>
 
+        <!-- ======================= Formulario de ingreso ================== -->
+        <div class="container-modal" id="myModal">
+            <div class="content-modal">
+                <div class="main">
+                    <div class="btn-cerrar" id="close-modal-btn">  
+                        <label title="Cerrar" class="cerrar">X</label>
+                        </div>
+                        <div class="signup" id="form-login">
+                            <form method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/>  
+                                <label class="title" for="chk" aria-hidden="true">Inicio de Sesión</label>
+                                <h2 class="use" >Usuario:</h2>
+                                <input type="number" name="name" placeholder="Ingrese su cédula" required="">
+                                <br>
+                                <h3 class="pass" >Contraseña:</h3>
+                                <input type="password" name="pswd" placeholder="Ingrese su contraseña" required="">
+                                <button>Ingresar</button>
+                                <br>
+                                <div class="registre">
+                                    <p>¿No tienes cuenta?
+                                        <a href="#" id="views-register">Registrese aquí</a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="sesion" id="form-register" style="display: none;">
+                            <form method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value = "{{ csrf_token() }}"/>  
+                                <label class="reg" for="chk" aria-hidden="true">Registro</label>
+                                <input type="text" name="name" placeholder="Nombre" required="">           
+                                <input type="text" name="lastname" placeholder="Apellido" required="">
+                                <input type="email" name="username" placeholder="Correo eléctronico"  required="">
+                                <input type="password" name="pswd" placeholder="Contraseña" required="">
+                                <input type="password" name="pswd" placeholder="Confirmar contraseña" required="">
+                                <button>Registrarse</button>
+                                <div class="registre">
+                                    <p class="regis">Inicio de Sesión
+                                        <a href="#" id="views-login">Aquí</a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
         <!-- Tab panes -->
         <div class="sidebar-content">
             <div class="sidebar-pane" id="satelite">
-                <h1 class="sidebar-header">Advanced<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <h1 class="sidebar-header">Avanzado<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
-                <h1 class="sidebar-header">Satellite<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <h1 class="sidebar-header">Satélite<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <select id="select_satellite" name="select_satellite" class="form-select form-select-sm" aria-label=".form-select-sm example">
                     <option value="ALL">ALL</option>
@@ -126,7 +175,7 @@
             <!-- div class="sidebar-pane" id="orbita" -->
                 <br>
                 <br>
-                <h1 class="sidebar-header">Orbita<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <h1 class="sidebar-header">Órbita<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
                 <br>
                 <input id="orbit_" class="form-control form-control-sm" type="text" placeholder="Ingrese Orbita">
             <!-- /div -->
@@ -170,7 +219,7 @@
                 <!-- button type="button" class="btn btn-primary">Enviar</button -->
             </div>
             <div class="sidebar-pane" id="sensor">
-                SHOW RESULTS
+                MOSTRAR RESULTADOS
             </div>
             <div class="sidebar-pane" id="informacion">
                 <h1 class="sidebar-header">
@@ -230,6 +279,7 @@
     <script src="{{ url_for('static', filename='js/leaflet/leaflet-sidebar.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/leaflet/L.cascadeButtons.js') }}"></script>
+    
     <script src="{{ url_for('static', filename='js/leaflet/draw_control.js') }}"></script>
     
     <script src="{{ url_for('static', filename='js/leaflet/functions.js') }}"></script>
@@ -246,6 +296,9 @@
 
     <!-- MODAL -->
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    
+    <!-- LOGIN -->
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
     
     <!-- ACTIVAR INF AL BUSCAR -->
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
