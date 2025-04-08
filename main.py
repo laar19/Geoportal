@@ -7,18 +7,91 @@ from dotenv import load_dotenv
 from flask          import Flask, render_template, jsonify, request, render_template_string
 from flask_wtf      import CSRFProtect
 from flask_paginate import Pagination, get_page_parameter
+from flask_login    import LoginManager
+from flask_login import login_required
+
+
 
 from shapely.geometry import Polygon
 
-from sqlalchemy.orm import sessionmaker
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm   import sessionmaker
+
+#from flask_sessionstore import Session 
+#from flask_session_captcha import FlaskSessionCaptcha 
 
 from app.models.models    import DatabaseConfig
 from app.models.functions import *
 from app.config           import *
 
+import pdb
+
+################################## Initialization ##################################
+from app.db import db
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
+
+# Enables server session 
+#Session(app) 
+# Initialize FlaskSessionCaptcha 
+#captcha = FlaskSessionCaptcha(app)
+
+################## Register ################
+app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db_user.sqlite'
+
+
+db.init_app(app)  # Now initialize with the app
+
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message = "Please log in before proceeding"
+login_manager.login_message_category = "warning"
+login_manager.init_app(app)
+
+test_config = None
+
+if test_config is None:
+    # load the instance config, if it exists, when not testing
+    app.config.from_pyfile("config.py", silent=True)
+else:
+    # load the test config if passed in
+    app.config.update(test_config)
+
+# Others
+import os
+# ensure the instance folder exists
+try:
+    os.makedirs(app.instance_path)
+except OSError:
+    pass
+
+# register the database commands
+#with app.app_context():
+#    my_db.init_app(app)
+
+from app.models.User import User
+
+# Added to init database
+with app.app_context():
+    db.create_all()
+
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    return User.query.get(int(user_id))
+
+# blueprint for auth routes in our app
+from app.auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
+# blueprint for non-auth parts of app
+#from app.main import main as main_blueprint
+#app.register_blueprint(main_blueprint)
+################## /Register ################
+
+
 
 # Load environment variables
 # Specify the path to .env file
@@ -35,6 +108,7 @@ MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
 MAP_LAT        = os.getenv("MAP_LAT")
 MAP_LONG       = os.getenv("MAP_LONG")
 map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
+DATA_GOOGLE_SITEKEY = os.getenv("DATA_GOOGLE_SITEKEY")
 
 @app.route("/")
 @app.route("/index")
@@ -46,10 +120,12 @@ def index_leaflet():
         result           = False,
         map_config       = map_config,
         pagination       = False,
-        error_           = False
+        error_           = False,
+        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY
     )
 
 @app.route("/search", methods=["GET"])
+@login_required
 def search():
     search   = True
     page     = request.args.get(get_page_parameter(), type=int, default=1)
