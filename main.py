@@ -1,16 +1,14 @@
-import os
+import os, shutil, pdb
 
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-from flask          import Flask, render_template, jsonify, request, render_template_string
+from flask          import Flask, render_template, jsonify, request
+from flask          import flash, redirect, url_for, render_template_string
 from flask_wtf      import CSRFProtect
 from flask_paginate import Pagination, get_page_parameter
-from flask_login    import LoginManager
-from flask_login import login_required
-
-
+from flask_login    import LoginManager, login_required, current_user
 
 from shapely.geometry import Polygon
 
@@ -18,13 +16,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm   import sessionmaker
 
 #from flask_sessionstore import Session 
-#from flask_session_captcha import FlaskSessionCaptcha 
+#from flask_session_captcha import FlaskSessionCaptcha
 
+from app.auth             import auth as auth_blueprint
+from app.models.User      import User
 from app.models.models    import DatabaseConfig
 from app.models.functions import *
+from app.functions        import *
 from app.config           import *
-
-import pdb
 
 ################################## Initialization ##################################
 from app.db import db
@@ -40,7 +39,6 @@ csrf = CSRFProtect(app)
 ################## Register ################
 app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db_user.sqlite'
-
 
 db.init_app(app)  # Now initialize with the app
 
@@ -59,8 +57,6 @@ else:
     # load the test config if passed in
     app.config.update(test_config)
 
-# Others
-import os
 # ensure the instance folder exists
 try:
     os.makedirs(app.instance_path)
@@ -70,8 +66,6 @@ except OSError:
 # register the database commands
 #with app.app_context():
 #    my_db.init_app(app)
-
-from app.models.User import User
 
 # Added to init database
 with app.app_context():
@@ -83,15 +77,12 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # blueprint for auth routes in our app
-from app.auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 
 # blueprint for non-auth parts of app
 #from app.main import main as main_blueprint
 #app.register_blueprint(main_blueprint)
 ################## /Register ################
-
-
 
 # Load environment variables
 # Specify the path to .env file
@@ -289,7 +280,71 @@ def not_found(e):
         pagination       = False,
         error_           = False
     )
+
+@app.route('/upload', methods=['POST'])
+def upload_files():
+    # Configuration
+    UPLOAD_FOLDER = 'uploads'
+    GEOJSON_FOLDER = 'geojson_outputs'
+    ALLOWED_EXTENSIONS = {'shp', 'dbf', 'shx', 'prj'}  # Shapefile components
+
+    # Create necessary directories
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(GEOJSON_FOLDER, exist_ok=True)
+
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['GEOJSON_FOLDER'] = GEOJSON_FOLDER
+
+    # Increase maximum content length to 500MB (adjust based on your needs)
+    app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
+
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+    # Check if the post request has files
+    if 'files[]' not in request.files:
+        flash('No files selected')
+        return redirect(url_for("index_leaflet"))
     
+    files = request.files.getlist('files[]')
+    
+    # If user submits without selecting files
+    if not files or files[0].filename == '':
+        flash('No files selected')
+        return redirect(url_for("index_leaflet"))
+    
+    # Clear upload folder for fresh start
+    shutil.rmtree(app.config['UPLOAD_FOLDER'])
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # Process uploaded files, preserving directory structure
+    for file in files:
+        if file and allowed_file(file.filename):
+            file_path = file.filename.replace('\\', '/')  # Normalize path separators
+            dir_path = os.path.dirname(file_path)
+            
+            # Create directory structure in upload folder
+            if dir_path:
+                upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], dir_path)
+                os.makedirs(upload_dir, exist_ok=True)
+            else:
+                upload_dir = app.config['UPLOAD_FOLDER']
+            
+            # Save file preserving path
+            filename = os.path.basename(file_path)
+            filepath = os.path.join(upload_dir, filename)
+            file.save(filepath)
+    
+    # Process each shapefile in the uploaded directory structure
+    converted_count = process_uploaded_shapefiles(app, current_user.id) # current_user.email
+    
+    if converted_count > 0:
+        flash(f'Successfully converted {converted_count} shapefile(s) to GeoJSON')
+    else:
+        flash('No valid shapefiles were found in the upload')
+    
+    return redirect(url_for("index_leaflet"))
+
 if __name__ == "__main__":
     csrf.init_app(app)
 
