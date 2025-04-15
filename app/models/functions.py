@@ -61,8 +61,11 @@ def intersect(db_session, filters, engine):
 
     # Combine the queries of all tables of the schema and automatically
     # remove duplicates
-    combined_query = db_session_query[0]
-    for i in db_session_query[1:]:
-        combined_query = combined_query.union(i)
-
-    return combined_query
+    try:
+        combined_query = db_session_query[0]
+        for i in db_session_query[1:]:
+            combined_query = combined_query.union(i)
+        return combined_query
+    except Exception as e:
+        print("Error:", str(e))
+        return False

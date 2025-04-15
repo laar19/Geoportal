@@ -180,10 +180,12 @@ def search():
             filters["coordinates"] = formatted_coord_from_user3
 
             vectors_result = intersect(db_session, filters, engine)
-            result_render  = vectors_result.limit(per_page).offset(offset)
 
-            layers = {}
             if vectors_result:
+                result_render  = vectors_result.limit(per_page).offset(offset)
+
+                layers = {}
+                
                 GEOSERVER_WORKSPACE   = None
                 GEOSERVER_SERVICE     = None
                 GEOERVER_FORMAT       = None
@@ -224,24 +226,24 @@ def search():
 
                 if geoserver_config["transparent"] == None:
                     geoserver_config["transparent"] = GEOSERVER_TRANSPARENT
+                
+                pagination = Pagination(
+                    vectors_result.count(),
+                    page          = page,
+                    per_page      = per_page,
+                    offset        = offset,
+                    total         = vectors_result.count(),
+                    search        = True,
+                    record_name   = "Rasters",
+                    css_framework = "bootstrap",
+                    bs_version    = 5
+                )
+            else:
+                # Added flash message for when no vectors are found
+                flash("No results found for your search criteria.", "warning")
+                return redirect(url_for("index_leaflet"))
 
     error_ = False
-
-    pagination = Pagination(
-        #rasters_result.count()+vectors_result.count(),
-        vectors_result.count(),
-        page          = page,
-        per_page      = per_page,
-        offset        = offset,
-        #total         = len(layers),
-        #total         = rasters_result.count()+vectors_result.count(),
-        total         = vectors_result.count(),
-        search        = True,
-        #search_msg    = "Found {} results".format(len(layers)),
-        record_name   = "Rasters",
-        css_framework = "bootstrap",
-        bs_version    = 5
-    )
     
     if geoserver_config["return"] == False:
         geoserver_config = False
@@ -254,13 +256,12 @@ def search():
         
         return jsonify({
             "pagination": pagination_html,
-            "results": results_html
+            "results"   : results_html
         })
     
     return render_template(
         "index.html",
         geoserver_config = geoserver_config,
-        #layers         = rasters_result[0:int(len(rasters_result)/2)],
         layers           = layers,
         result           = result_render,
         map_config       = map_config,
