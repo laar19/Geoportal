@@ -411,22 +411,6 @@
         $("#search_status").val(map_config["search_status"])
     </script>
     
-    <script>
-        $.ajaxSetup({
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-    
-        $(document).on("click", ".pagination a", function(e) {
-            e.preventDefault();
-            var url = $(this).attr("href");
-    
-            $.get(url, function(data) {
-                $("#pagination-container").html(data.pagination);
-                $("#results-container").html(data.results);
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/pagination-fix.js') }}"></script>
 </body>
 </html>
