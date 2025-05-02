@@ -24,10 +24,6 @@ load_dotenv()
 # Default map config
 RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 
-@auth.route('/login')
-def login():
-    return render_template('login.html')
-
 @auth.route('/login', methods=['POST'])
 def login_post():
     email = request.form.get('email')
