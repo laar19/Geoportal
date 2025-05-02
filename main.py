@@ -95,11 +95,15 @@ for i in env_paths:
     load_dotenv(dotenv_path=i)
 
 # Default map config
-MAP_ZOOM_LEVEL = os.getenv("MAP_ZOOM_LEVEL")
-MAP_LAT        = os.getenv("MAP_LAT")
-MAP_LONG       = os.getenv("MAP_LONG")
-map_config     = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
-DATA_GOOGLE_SITEKEY = os.getenv("DATA_GOOGLE_SITEKEY")
+MAP_ZOOM_LEVEL        = os.getenv("MAP_ZOOM_LEVEL")
+MAP_LAT               = os.getenv("MAP_LAT")
+MAP_LONG              = os.getenv("MAP_LONG")
+TILELAYER_URL         = os.getenv("TILELAYER_URL")
+TILELAYER_ATTRIBUTION = os.getenv("TILELAYER_ATTRIBUTION")
+map_config            = get_map_config(
+    MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG, TILELAYER_URL, TILELAYER_ATTRIBUTION
+)
+DATA_GOOGLE_SITEKEY   = os.getenv("DATA_GOOGLE_SITEKEY")
 
 @app.route("/")
 @app.route("/index")
@@ -144,9 +148,12 @@ def search():
         db_session   = Session()
 
         previous_map_config = {
-            "zoom_level"   : request.args.get("zoom_level"),
-            "center"       : request.args.get("center"),
-            "search_status": bool(request.args.get("search_status"))
+            "coordinates"          : request.args.get("coordinates"),
+            "zoom_level"           : request.args.get("zoom_level"),
+            "center"               : request.args.get("center"),
+            "search_status"        : bool(request.args.get("search_status")),
+            "tilelayer_url"        : request.args.get("tilelayer_url"),
+            "tilelayer_attribution": request.args.get("tilelayer_attribution")
         }
 
         # If there is an image search

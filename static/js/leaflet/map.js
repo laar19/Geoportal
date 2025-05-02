@@ -1,7 +1,7 @@
 var map = L.map('map');
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer(map_config["tilelayer_url"], {
     //maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    attribution: map_config["tilelayer_attribution"]
 }).addTo(map);
 
 // If there was an image search, set the las user view at the moment

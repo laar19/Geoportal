@@ -321,6 +321,8 @@
             <input type="hidden" id="zoom_level"    name="zoom_level"    value="">
             <input type="hidden" id="center"        name="center"        value="">
             <input type="hidden" id="search_status" name="search_status" value="False">
+            <input type="hidden" id="tilelayer_url"        name="tilelayer_url"        value="">
+            <input type="hidden" id="tilelayer_attribution" name="tilelayer_attribution" value="">
         </form>
     </div>
 
@@ -390,7 +392,6 @@
             .catch(error => { /* Handle error */ });
         });
     
-        // ... your existing JavaScript to toggle the modals ...
     </script>
 
     
@@ -403,12 +404,17 @@
         var layers           = {{ layers|tojson }};
         var error_           = {{ error_|tojson }};
 
+        console.log("map_config: ", map_config);
+
         show_raster_info(map, geoserver_config, layers, error_);
 
         $("#coordinates").val(map_config["coordinates"])
         $("#zoom_level").val(map_config["zoom_level"])
         $("#center").val(map_config["center"])
         $("#search_status").val(map_config["search_status"])
+        $("#tilelayer_url").val(map_config["tilelayer_url"])
+        $("#tilelayer_attribution").val(map_config["tilelayer_attribution"])
+
     </script>
     
     <script src="{{ url_for('static', filename='js/pagination-fix.js') }}"></script>
