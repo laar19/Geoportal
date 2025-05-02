@@ -75,9 +75,17 @@ function show_raster_info(map, geoserver_config, layers, error) {
     });
 
     for(let key in map_layers_list) {
+        // Add click handler to the image
         $("#"+map_layers_list[key].layer_data["custom_id"]).click(function() {
             var layer = map_layers_dict[this.id];
-            toggleLayer(layer, map, "div_"+map_layers_list[key].layer_data["custom_id"]);
+            toggleLayer(this.id+"-eye", layer, map, "div_"+map_layers_list[key].layer_data["custom_id"]);
+        });
+        
+        // Add another handler specifically for the eye icon clicks
+        $(".image-to-layer").find("img#" + map_layers_list[key].layer_data["custom_id"]).siblings(".overlay-to-layer").click(function() {
+            var customId = $(this).siblings("img").attr("id");
+            var layer = map_layers_dict[customId];
+            toggleLayer(this.id+"-eye", layer, map, "div_"+customId);
         });
     }
 }

@@ -404,8 +404,6 @@
         var layers           = {{ layers|tojson }};
         var error_           = {{ error_|tojson }};
 
-        console.log("map_config: ", map_config);
-
         show_raster_info(map, geoserver_config, layers, error_);
 
         $("#coordinates").val(map_config["coordinates"])
