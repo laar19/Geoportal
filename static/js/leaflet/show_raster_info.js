@@ -1,6 +1,8 @@
 function show_raster_info(map, geoserver_config, layers, error) {
     var map_layers_list  = [];
     var map_layers_dict  = {};
+    // Add a layer visibility tracker
+    var layerVisibility = {};
 
     for(let key in layers) {
         var geoserver_url = geoserver_config["geoserver_url"] + "/" +
@@ -18,6 +20,9 @@ function show_raster_info(map, geoserver_config, layers, error) {
         };
         map_layers_list.push(tmp);
         map_layers_dict[layers[key]["custom_id"]] = wmsLayer;
+
+        // Initialize all layers as visible
+        layerVisibility[layers[key]["custom_id"]] = true;
     }
 
     var info_adicional = {
@@ -74,18 +79,77 @@ function show_raster_info(map, geoserver_config, layers, error) {
         });
     });
 
-    for(let key in map_layers_list) {
-        // Add click handler to the image
-        $("#"+map_layers_list[key].layer_data["custom_id"]).click(function() {
-            var layer = map_layers_dict[this.id];
-            toggleLayer(this.id+"-eye", layer, map, "div_"+map_layers_list[key].layer_data["custom_id"]);
-        });
-        
-        // Add another handler specifically for the eye icon clicks
-        $(".image-to-layer").find("img#" + map_layers_list[key].layer_data["custom_id"]).siblings(".overlay-to-layer").click(function() {
-            var customId = $(this).siblings("img").attr("id");
-            var layer = map_layers_dict[customId];
-            toggleLayer(this.id+"-eye", layer, map, "div_"+customId);
-        });
+    // Event delegation for the image clicks
+    $(document).on("click", ".image-to-layer img", function() {
+        var customId = $(this).attr("id");
+        var layer = map_layers_dict[customId];
+        toggleLayerAndTrackState(customId+"-layer-eye", layer, map, "div_"+customId, layerVisibility);
+    });
+    
+    // Event delegation for the eye icon clicks
+    $(document).on("click", ".overlay-to-layer", function() {
+        var customId = $(this).siblings("img").attr("id");
+        var layer = map_layers_dict[customId];
+        toggleLayerAndTrackState(customId+"-layereye", layer, map, "div_"+customId, layerVisibility);
+    });
+    
+    // Add a function to update UI based on layer visibility state
+    function updateLayerUI() {
+        for(let layerId in layerVisibility) {
+            const isVisible = layerVisibility[layerId];
+            const eyeIcon = document.getElementById(layerId + "-layer-eye");
+            const divElement = document.getElementById("div_" + layerId);
+            
+            if(eyeIcon) {
+                if(isVisible) {
+                    eyeIcon.classList.remove("fa-eye-slash");
+                    eyeIcon.classList.add("fa-eye");
+                    if(divElement) $(divElement).css("background-color", "antiquewhite");
+                } else {
+                    eyeIcon.classList.remove("fa-eye");
+                    eyeIcon.classList.add("fa-eye-slash");
+                    if(divElement) $(divElement).css("background-color", "white");
+                }
+            }
+        }
+    }
+
+    // Add this after defining updateLayerUI
+    const observer = new MutationObserver(function(mutations) {
+        updateLayerUI();
+    });
+
+    // Start observing the container where your paginated content appears
+    observer.observe(document.querySelector("#pagination-container"), {
+        childList: true,
+        subtree: true
+    });
+    
+    // Call this after pagination or whenever the DOM is updated
+    // You'll need to add this call to your pagination logic
+    $(document).on("paginationComplete", function() {
+        updateLayerUI();
+    });
+    
+    // Initial UI update
+    updateLayerUI();
+}
+
+// Modified toggle function to track state
+function toggleLayerAndTrackState(nameLayer, layerName, map, tr_id, layerVisibility) {
+    var customId = nameLayer.replace("-layer-eye", "").replace("-layereye", "");
+    
+    if (map.hasLayer(layerName)) {
+        map.removeLayer(layerName);
+        $("#"+tr_id).css("background-color", "white");
+        document.getElementById(nameLayer).classList.remove("fa-eye");
+        document.getElementById(nameLayer).classList.add("fa-eye-slash");
+        layerVisibility[customId] = false;
+    } else {
+        map.addLayer(layerName);
+        $("#"+tr_id).css("background-color", "antiquewhite");
+        document.getElementById(nameLayer).classList.remove("fa-eye-slash");
+        document.getElementById(nameLayer).classList.add("fa-eye");
+        layerVisibility[customId] = true;
     }
 }
