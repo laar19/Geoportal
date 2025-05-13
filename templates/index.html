@@ -268,16 +268,17 @@
                 <!-- button type="button" class="btn btn-primary">Enviar</button -->
             </div>
             <div class="sidebar-pane" id="sensor">
+                SUBIR ARCHIVOS
+
                 <div class="upload-container">
-                    <h2>&nbsp;&nbsp;Subir Shapefiles</h2>
-                    <br>
-                    <p>Seleccionar todos los componentes del Shapefile<strong>(.shp, .dbf, .shx, .prj files)</strong></p>
+                    <h2>Upload Shapefiles</h2>
+                    <p>Select all shapefile components (.shp, .dbf, .shx, .prj files)</p>
                     
                     <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input class="file" type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory directory>
+                        <input type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory directory>
                         <br>
-                        <button class="submit" type="submit">Subir y convertir a GeoJSON</button>
+                        <button type="submit">Upload and Convert to GeoJSON</button>
                     </form>
                 </div>
             </div>
