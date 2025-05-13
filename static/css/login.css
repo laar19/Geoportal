@@ -103,13 +103,6 @@ p{
     padding: 15px;
     text-decoration: none;
 }
-#views-login{
-    text-decoration: none;
-}
-#views-register {
-    text-decoration: none;
-    margin-top: 10px;
-}
 /*Formulario de registro*/
 .sesion{    
     width: 380px;
