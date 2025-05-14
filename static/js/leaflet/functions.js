@@ -1,11 +1,15 @@
-function toggleLayer(layerName, map, tr_id) {
+function toggleLayer(nameLayer, layerName, map, tr_id) {
     if (map.hasLayer(layerName)) {
         map.removeLayer(layerName);
         $("#"+tr_id).css("background-color", "white");
+        document.getElementById(nameLayer).classList.remove("fa-eye");
+        document.getElementById(nameLayer).classList.add("fa-eye-slash");
     }
     else {
         map.addLayer(layerName);
         $("#"+tr_id).css("background-color", "antiquewhite");
+        document.getElementById(nameLayer).classList.remove("fa-eye-slash");
+        document.getElementById(nameLayer).classList.add("fa-eye");
     }
 }
 
