@@ -38,7 +38,7 @@
      <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <!-- BUSCADOR LEAFLET -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> -->
@@ -268,17 +268,17 @@
                 <!-- button type="button" class="btn btn-primary">Enviar</button -->
             </div>
             <div class="sidebar-pane" id="sensor">
-                SUBIR ARCHIVOS
-
                 <div class="upload-container">
-                    <h2>Upload Shapefiles</h2>
-                    <p>Select all shapefile components (.shp, .dbf, .shx, .prj files)</p>
+                    <h2>&nbsp;&nbsp;Subir Shapefiles</h2>
+                    <br>
+                    <p>Seleccionar todos los componentes del Shapefile<strong>(.shp, .dbf, .shx, .prj files)</strong></p>
+
                     
                     <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory directory>
+                        <input class="file" type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory directory>
                         <br>
-                        <button type="submit">Upload and Convert to GeoJSON</button>
+                        <button class="submit" type="submit">Subir y convertir a GeoJSON</button>
                     </form>
                 </div>
             </div>
@@ -321,8 +321,6 @@
             <input type="hidden" id="zoom_level"    name="zoom_level"    value="">
             <input type="hidden" id="center"        name="center"        value="">
             <input type="hidden" id="search_status" name="search_status" value="False">
-            <input type="hidden" id="tilelayer_url"        name="tilelayer_url"        value="">
-            <input type="hidden" id="tilelayer_attribution" name="tilelayer_attribution" value="">
         </form>
     </div>
 
@@ -335,7 +333,15 @@
     <!-- BOOTSTRAP -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-    <script> var map_config = {{ map_config|tojson }}; </script>
+    <script>
+        var map_config = {{ map_config|tojson }};
+
+        $("#coordinates").val(map_config["coordinates"])
+        $("#zoom_level").val(map_config["zoom_level"])
+        $("#center").val(map_config["center"])
+        $("#search_status").val(map_config["search_status"])
+
+    </script>
     <script src="{{ url_for('static', filename='js/leaflet/map.js') }}"></script>
 
     <!-- SIDEBAR V2-MASTER -->
@@ -364,34 +370,35 @@
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>
     
     <script>
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-    
-        loginForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-    
-            // AJAX request for login
-            fetch('/login', {  // Update with your login route
-                method: 'POST',
-                body: new FormData(loginForm)
-            })
-            .then(response => { /* Handle response (e.g., redirect) */ })
-            .catch(error => { /* Handle error */ });
+        // Corrected login script
+        document.addEventListener('DOMContentLoaded', function() {
+            // Using the correct form elements from your HTML
+            const loginForm = document.querySelector('.signup form'); // This targets the login form in your HTML
+            const registerForm = document.querySelector('.sesion form'); // This targets the register form in your HTML
+            
+            // Only add event listeners if the forms exist
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(event) {
+                    // The form will handle submission naturally - no need to prevent default
+                    // Your form already has action="{{ url_for('auth.login_post') }}" which will handle the submission
+                    console.log("Login form submitted");
+                    // We don't need to do anything here as the form will submit naturally to the backend
+                });
+            } else {
+                console.log("Login form not found");
+            }
+            
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(event) {
+                    // The form will handle submission naturally - no need to prevent default
+                    // Your form already has action="{{ url_for('auth.signup_post') }}" which will handle the submission
+                    console.log("Register form submitted");
+                    // We don't need to do anything here as the form will submit naturally to the backend
+                });
+            } else {
+                console.log("Register form not found");
+            }
         });
-    
-    
-        registerForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-    
-            // AJAX request for registration
-            fetch('/signup', { // Update with your signup route
-                method: 'POST',
-                body: new FormData(registerForm)
-            })
-            .then(response => { /* Handle response (e.g., redirect) */ })
-            .catch(error => { /* Handle error */ });
-        });
-    
     </script>
 
     
@@ -400,19 +407,11 @@
 
     <script>
         var geoserver_config = {{ geoserver_config|tojson }};
-        var map_config       = {{ map_config|tojson }};
+        //var map_config       = {{ map_config|tojson }};
         var layers           = {{ layers|tojson }};
         var error_           = {{ error_|tojson }};
 
         show_raster_info(map, geoserver_config, layers, error_);
-
-        $("#coordinates").val(map_config["coordinates"])
-        $("#zoom_level").val(map_config["zoom_level"])
-        $("#center").val(map_config["center"])
-        $("#search_status").val(map_config["search_status"])
-        $("#tilelayer_url").val(map_config["tilelayer_url"])
-        $("#tilelayer_attribution").val(map_config["tilelayer_attribution"])
-
     </script>
     
     <script src="{{ url_for('static', filename='js/pagination-fix.js') }}"></script>

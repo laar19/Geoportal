@@ -103,6 +103,13 @@ p{
     padding: 15px;
     text-decoration: none;
 }
+#views-login{
+    text-decoration: none;
+}
+#views-register {
+    text-decoration: none;
+    margin-top: 10px;
+}
 /*Formulario de registro*/
 .sesion{    
     width: 380px;
@@ -224,4 +231,7 @@ p{
     display: flex;
     justify-content: center; /* Horizontally center */
     margin-bottom: 10px; /* Add some spacing below */
+}
+.swal2-front {
+    z-index: 1050 !important; /* Asegúrate de que sea mayor al del modal */
 }
