@@ -172,7 +172,7 @@ new L.cascadeButtons([
     
     {
         icon: 'bi-house', command: () => {
-            window.location.href = "http://192.168.88.8:8891";
+            window.location.href = "http://172.17.15.27:8874";
         }
     },
 
@@ -188,5 +188,5 @@ new L.cascadeButtons([
 
 var sidebar1 = L.control.sidebar('sidebar').addTo(map);
 
-var sidebar2 = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);
+//var sidebar2 = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);
 //var sidebar2 = L.control.sidebar('sidebar1').addTo(map);

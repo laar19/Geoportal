@@ -261,12 +261,13 @@ def search():
     
     return render_template(
         "index.html",
-        geoserver_config = geoserver_config,
-        layers           = layers,
-        result           = result_render,
-        map_config       = map_config,
-        pagination       = pagination,
-        error_           = error_
+        geoserver_config    = geoserver_config,
+        layers              = layers,
+        result              = result_render,
+        map_config          = map_config,
+        pagination          = pagination,
+        error_              = error_,
+        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY
     )
 
 # app name
@@ -345,6 +346,15 @@ def upload_files():
         flash('No valid shapefiles were found in the upload')
     
     return redirect(url_for("index_leaflet"))
+
+@app.after_request
+def add_security_headers(response):
+    # Remove any existing CSP headers
+    for header in ['Content-Security-Policy', 'Content-Security-Policy-Report-Only']:
+        if header in response.headers:
+            del response.headers[header]
+    
+    return response
 
 if __name__ == "__main__":
     csrf.init_app(app)

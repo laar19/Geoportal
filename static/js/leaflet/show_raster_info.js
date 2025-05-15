@@ -1,8 +1,15 @@
+// Modified show_raster_info.js (fixes MutationObserver error)
 function show_raster_info(map, geoserver_config, layers, error) {
     var map_layers_list  = [];
     var map_layers_dict  = {};
     // Add a layer visibility tracker
     var layerVisibility = {};
+
+    // Check if layers exist and is not null/undefined
+    if (!layers || Object.keys(layers).length === 0) {
+        console.log("No layers provided or layers object is empty");
+        return;
+    }
 
     for(let key in layers) {
         var geoserver_url = geoserver_config["geoserver_url"] + "/" +
@@ -114,16 +121,19 @@ function show_raster_info(map, geoserver_config, layers, error) {
         }
     }
 
-    // Add this after defining updateLayerUI
-    const observer = new MutationObserver(function(mutations) {
-        updateLayerUI();
-    });
+    // Fix for MutationObserver error - Only observe if element exists
+    const paginationContainer = document.querySelector("#pagination-container");
+    if (paginationContainer) {
+        const observer = new MutationObserver(function(mutations) {
+            updateLayerUI();
+        });
 
-    // Start observing the container where your paginated content appears
-    observer.observe(document.querySelector("#pagination-container"), {
-        childList: true,
-        subtree: true
-    });
+        // Start observing the container where your paginated content appears
+        observer.observe(paginationContainer, {
+            childList: true,
+            subtree: true
+        });
+    }
     
     // Call this after pagination or whenever the DOM is updated
     // You'll need to add this call to your pagination logic
@@ -142,14 +152,20 @@ function toggleLayerAndTrackState(nameLayer, layerName, map, tr_id, layerVisibil
     if (map.hasLayer(layerName)) {
         map.removeLayer(layerName);
         $("#"+tr_id).css("background-color", "white");
-        document.getElementById(nameLayer).classList.remove("fa-eye");
-        document.getElementById(nameLayer).classList.add("fa-eye-slash");
+        const eyeIcon = document.getElementById(nameLayer);
+        if (eyeIcon) {
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        }
         layerVisibility[customId] = false;
     } else {
         map.addLayer(layerName);
         $("#"+tr_id).css("background-color", "antiquewhite");
-        document.getElementById(nameLayer).classList.remove("fa-eye-slash");
-        document.getElementById(nameLayer).classList.add("fa-eye");
+        const eyeIcon = document.getElementById(nameLayer);
+        if (eyeIcon) {
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
         layerVisibility[customId] = true;
     }
 }

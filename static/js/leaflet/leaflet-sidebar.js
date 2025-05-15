@@ -10,7 +10,7 @@
  * @see L.control.sidebar
  */
 L.Control.Sidebar = L.Control.extend(/** @lends L.Control.Sidebar.prototype */ {
-    includes: (L.Evented.prototype || L.Mixin.Events),
+    includes: (L.Evented.prototype || L.Events),
 
     options: {
         position: 'left'

@@ -38,7 +38,7 @@
      <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <!-- BUSCADOR LEAFLET -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> -->
@@ -370,35 +370,35 @@
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>
     
     <script>
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-    
-        loginForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-    
-            // AJAX request for login
-            fetch('/login', {  // Update with your login route
-                method: 'POST',
-                body: new FormData(loginForm)
-            })
-            .then(response => { /* Handle response (e.g., redirect) */ })
-            .catch(error => { /* Handle error */ });
+        // Corrected login script
+        document.addEventListener('DOMContentLoaded', function() {
+            // Using the correct form elements from your HTML
+            const loginForm = document.querySelector('.signup form'); // This targets the login form in your HTML
+            const registerForm = document.querySelector('.sesion form'); // This targets the register form in your HTML
+            
+            // Only add event listeners if the forms exist
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(event) {
+                    // The form will handle submission naturally - no need to prevent default
+                    // Your form already has action="{{ url_for('auth.login_post') }}" which will handle the submission
+                    console.log("Login form submitted");
+                    // We don't need to do anything here as the form will submit naturally to the backend
+                });
+            } else {
+                console.log("Login form not found");
+            }
+            
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(event) {
+                    // The form will handle submission naturally - no need to prevent default
+                    // Your form already has action="{{ url_for('auth.signup_post') }}" which will handle the submission
+                    console.log("Register form submitted");
+                    // We don't need to do anything here as the form will submit naturally to the backend
+                });
+            } else {
+                console.log("Register form not found");
+            }
         });
-    
-    
-        registerForm.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-    
-            // AJAX request for registration
-            fetch('/signup', { // Update with your signup route
-                method: 'POST',
-                body: new FormData(registerForm)
-            })
-            .then(response => { /* Handle response (e.g., redirect) */ })
-            .catch(error => { /* Handle error */ });
-        });
-    
-        // ... your existing JavaScript to toggle the modals ...
     </script>
 
     
