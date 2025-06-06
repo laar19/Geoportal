@@ -152,8 +152,8 @@ def search():
             "zoom_level"           : request.args.get("zoom_level"),
             "center"               : request.args.get("center"),
             "search_status"        : bool(request.args.get("search_status")),
-            "tilelayer_url"        : request.args.get("tilelayer_url"),
-            "tilelayer_attribution": request.args.get("tilelayer_attribution")
+            "tilelayer_url"        : TILELAYER_URL,
+            "tilelayer_attribution": TILELAYER_ATTRIBUTION
         }
 
         # If there is an image search
