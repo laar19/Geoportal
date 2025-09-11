@@ -1,7 +1,7 @@
 // Event delegation approach for layer toggle functionality
 // This works with both initial and dynamically loaded content
 $(document).ready(function() {
-    console.log("Pagination fix script loaded");
+    //console.log("Pagination fix script loaded");
     
     // Setup AJAX headers
     $.ajaxSetup({
@@ -15,7 +15,7 @@ $(document).ready(function() {
     
     // Use event delegation for layer toggling - works for all content
     $(document).on("click", ".toggle-ly", function(event) {
-        console.log("Layer toggle clicked");
+        //console.log("Layer toggle clicked");
         event.stopPropagation(); // Prevent click from affecting other elements
         var content = $(this).closest(".info-layer").find(".contenido");
         
@@ -30,12 +30,12 @@ $(document).ready(function() {
     // Handle pagination links
     $(document).off("click", ".pagination a");
     $(document).on("click", ".pagination a", function(e) {
-        console.log("Pagination link clicked");
+        //console.log("Pagination link clicked");
         e.preventDefault();
         var url = $(this).attr("href");
         
         $.get(url, function(data) {
-            console.log("Pagination data received");
+            //console.log("Pagination data received");
             $("#pagination-container").html(data.pagination);
             $("#results-container").html(data.results);
         });
@@ -43,7 +43,7 @@ $(document).ready(function() {
 
     // Auto-expand the layers list if we're on a search page
     if (window.location.href.includes("&search_status=")) {
-        console.log("Search page detected");
+        //console.log("Search page detected");
         // Make sure the sidebar is open
         var sidebar = $("#sidebar");
         if (sidebar.hasClass("collapsed")) {

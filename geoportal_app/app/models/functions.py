@@ -56,6 +56,11 @@ def intersect(db_session, filters, engine):
             result = result.filter(
                 table.c.geometry.ST_Intersects(polygon_geom)
             )#.all()
+        
+        # Ensure we only get one row per layer (table), not one per feature
+        # Since all selected columns are identical for every feature in a table,
+        # DISTINCT collapses duplicates within the same table.
+        result = result.distinct().order_by(table.c.name)
 
         db_session_query.append(result)
 

@@ -134,6 +134,34 @@ html, body, #map {
     opacity:0.8;
 }
 
+/* New: mouse position control */
+.leaflet-control-mouseposition {
+  background: rgba(15,63,199,0.65);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 2px;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 65%);
+  font-size: 12px;
+  margin: 0 0 4px 4px;
+}
+
+/* New: opacity slider control */
+.opacity-control {
+  background: rgba(15,63,199,0.65);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 2px;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 65%);
+}
+.opacity-control .opacity-label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+.opacity-control input[type="range"] {
+  width: 120px;
+}
+
 
 /* CSS DEL BUSCADOR */
 .leaflet-control-geocoder {

@@ -1,5 +1,13 @@
 // Modified show_raster_info.js (fixes MutationObserver error)
 function show_raster_info(map, geoserver_config, layers, error) {
+    // If GeoServer is reported down, show a non-blocking alert and exit early
+    try {
+        if (typeof window !== 'undefined' && window.GEOSERVER_OK === false) {
+            const msg = 'GeoServer is unavailable. Layers could not be loaded.';
+            showNonBlockingAlert(msg, 'warning');
+            return; // skip adding WMS layers
+        }
+    } catch (e) { /* no-op */ }
     var map_layers_list  = [];
     var map_layers_dict  = {};
     // Add a layer visibility tracker
@@ -11,6 +19,43 @@ function show_raster_info(map, geoserver_config, layers, error) {
         return;
     }
 
+// Utility: show a Bootstrap-style non-blocking alert that auto-dismisses
+function showNonBlockingAlert(message, level) {
+    try {
+        const container = document.getElementById('alert-container') || document.body;
+        const cls = level === 'warning' ? 'alert-warning' : (level === 'danger' ? 'alert-danger' : 'alert-info');
+        const wrapper = document.createElement('div');
+        wrapper.className = `alert ${cls} alert-dismissible fade show`;
+        wrapper.setAttribute('role', 'alert');
+        wrapper.style.position = container === document.body ? 'fixed' : '';
+        if (container === document.body) {
+            wrapper.style.top = '12px';
+            wrapper.style.right = '12px';
+            wrapper.style.zIndex = 2000;
+            wrapper.style.maxWidth = '420px';
+        }
+        wrapper.innerHTML = `
+            <div>${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        container.appendChild(wrapper);
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            try {
+                if (window.bootstrap && window.bootstrap.Alert) {
+                    const alert = new window.bootstrap.Alert(wrapper);
+                    alert.close();
+                } else if (wrapper && wrapper.parentNode) {
+                    wrapper.parentNode.removeChild(wrapper);
+                }
+            } catch(_) {}
+        }, 5000);
+    } catch(e) {
+        // Fallback simple alert
+        console.warn('Non-blocking alert:', message);
+    }
+}
+
     for(let key in layers) {
         var geoserver_url = geoserver_config["geoserver_url"] + "/" +
             layers[key]["geoserver_service"];
@@ -20,6 +65,17 @@ function show_raster_info(map, geoserver_config, layers, error) {
             format     : layers[key]["geoserver_format"],
             transparent: layers[key]["geoserver_transparent"]
         }).addTo(map);
+
+        // Handle tile load errors gracefully and inform the user once
+        (function(){
+            let alerted = false;
+            wmsLayer.on('tileerror', function(){
+                if (!alerted) {
+                    alerted = true;
+                    showNonBlockingAlert('Some map layers could not be fetched from GeoServer.', 'warning');
+                }
+            });
+        })();
 
         var tmp = {
             layer_object: wmsLayer,

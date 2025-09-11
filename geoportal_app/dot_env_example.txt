@@ -1,0 +1,66 @@
+# Flask
+FLASK_HOST=0.0.0.0
+WEB_HOST_PORT=8874
+WEB_CONTAINER_PORT=8874
+FLASK_DEBUG=true
+
+# PostGIS
+POSTGIS_DOCKER_GATEWAY=172.19.0.1
+
+# Database connection used by the web app
+# If you're running the PostGIS stack from postgis/docker-compose.yml with
+# ports: ${POSTGRES_DB_PORT}:5432 and the example env there, these defaults match it.
+POSTGRES_DB_TYPE=postgresql
+POSTGRES_DB_HOST=172.19.0.1
+POSTGRES_DB_NAME=geoportal_db
+POSTGRES_DB_USER=root
+POSTGRES_DB_PASSWORD=root
+POSTGRES_DB_PORT=8871
+
+# Map config
+MAP_ZOOM_LEVEL=6
+MAP_LAT=6.717710140513336
+MAP_LONG=-64.07226562500001
+LEAFLET_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+#TILELAYER_ATTRIBUTION=&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+LEAFLET_ATTRIBUTION=<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+## Minimum zoom allowed (limits maximum zoom-out). Optional; e.g., 3
+LEAFLET_MIN_ZOOM=3
+
+# Optional secondary basemaps
+# Esri World Imagery
+LEAFLET_ESRI_URL=https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}
+LEAFLET_ESRI_ATTRIBUTION=Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community
+
+# Stamen Terrain
+LEAFLET_TERRAIN_URL=https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg
+LEAFLET_TERRAIN_ATTRIBUTION=Map tiles by Stamen Design, under CC BY 3.0 — Data © OpenStreetMap contributors
+
+# CARTO Dark Matter
+LEAFLET_DARK_URL=https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png
+LEAFLET_DARK_ATTRIBUTION=© OpenStreetMap contributors © CARTO
+LEAFLET_DARK_SUBDOMAINS=abcd
+
+# Geoserver
+GEOSERVER_HOST=http://localhost
+GEOSERVER_PORT=8870
+HTTP_PORT=8893
+GEOSERVER_ADMIN_USER=root
+GEOSERVER_ADMIN_PASSWORD=root
+
+# Clave de sitio web
+DATA_GOOGLE_SITEKEY=xyz
+
+KEYCLOAK_REALM=my-app
+KEYCLOAK_CLIENT_ID=my-web-app
+KEYCLOAK_CLIENT_SECRET=a-super-secret-value
+KEYCLOAK_SERVER_URL=https://172.17.15.27:8443
+KEYCLOAK_REDIRECT_URI=https://172.17.15.27:5045/callback
+KEYCLOAK_ISSUER_URL=https://172.17.15.27:8443/realms/my-app
+KEYCLOAK_METADATA_URL=https://172.17.15.27:8443/realms/my-app/.well-known/openid-configuration
+KEYCLOAK_TOKEN_URL=https://172.17.15.27:8443/realms/my-app/protocol/openid-connect/token
+KEYCLOAK_AUTH_URL=https://172.17.15.27:8443/realms/my-app/protocol/openid-connect/auth
+KEYCLOAK_JWKS_URI=https://172.17.15.27:8443/realms/my-app/protocol/openid-connect/certs
+
+DISABLE_SSL_VERIFY=True
+ENABLE_KEYCLOAK_AUTH=True  # True: enforce login; False: bypass login_required

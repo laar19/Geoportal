@@ -143,9 +143,13 @@ def process_uploaded_shapefiles(app, user_id):
     # Publish to GeoServer if any tables were processed
     if processed_tables:
         try:
-            # Get GeoServer configuration
-            geoserver_config_        = get_geoserver_config(db_session)
-            geoserver_url            = geoserver_config_[0].url[:-1]  # Remove trailing slash
+            # Get GeoServer configuration, allow env override for containerized deployments
+            geoserver_config_ = get_geoserver_config(db_session)
+            # Prefer GEOSERVER_PUBLIC_URL env var if provided; otherwise fall back to DB value
+            geoserver_url = os.getenv("GEOSERVER_PUBLIC_URL") or geoserver_config_[0].url
+            # Normalize: remove trailing slash
+            if geoserver_url.endswith('/'):
+                geoserver_url = geoserver_url[:-1]
             GEOSERVER_ADMIN_USER     = os.getenv("GEOSERVER_ADMIN_USER")
             GEOSERVER_ADMIN_PASSWORD = os.getenv("GEOSERVER_ADMIN_PASSWORD")
             

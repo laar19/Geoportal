@@ -10,53 +10,109 @@
 - Geoserver
 - Distributed under the GNU Affero General Public License (AGPLv3)
 
-## Setup
-### Setup anaconda environment
-> ```sh
-> conda env create -n geoportal -f environment.yml
-> ```
-### Setup global environment variables
-> 1. Copy ***dot_env_example.txt*** to ***.env***   
-> 2. Edit ***.env*** to to setup environment variables   
-### Setup Geoserver
-> 1. Copy ***deployment/geoserver/dot_env_example.txt*** to ***deployment/geoserver/.env***   
-> 2. Edit ***deployment/geoserver/.env*** to configure ***user, password*** and ***ports***   
-> 3. In ***deployment/geoserver/*** folder run:   
-> ```sh
-> docker compose up
-> ```    
-### Setup PostGis database
-> 1. Copy ***deployment/postgis/dot_env_example.txt*** to ***deployment/postgis/.env***   
-> 2. Edit ***deployment/postgis/.env*** to configure ***user, password*** and ***ports***   
-> 3. In ***deployment/postgis/*** folder run:   
-> ```sh
-> docker compose up
-> ```    
-> 4. Check and setup database and tables:   
-> ```sh
-> python setup_db.py
-> ```
-### Setup sample data
-#### Setup sample raster data
-> 1. Copy ***load_data/load_raster_to_db/sample_data*** folder  to user ***home*** directory   
-> 2. Load rasters to database:   
-> ```sh
-> python -m load_data.load_raster_to_db.load_raster_to_db
-> ```    
-#### Setup sample vector data
-> 1. Copy ***load_data/load_vector_to_db/sample_data*** folder  to user ***home*** directory   
-> 2. Load vectors to database:   
-> ```sh
-> python -m load_data.load_vector_to_db.1_shp_to_postgis
-> ```   
-> 3. Load vectors from database to geoserver:   
-> ```sh
-> python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver
-> ```
-### Run app
-> ```sh
-> python main.py
-> ```
+## Deployment with Docker (recommended)
+
+Follow these three steps to run the full stack: GeoServer, PostGIS, and the Geoportal web app.
+
+### 1) Configure GeoServer env variables and run the containers
+
+- Path: `geoserver/`
+- Copy example env and edit it as needed (admin credentials and ports):
+
+```sh
+cp geoserver/dot_env_example.txt geoserver/.env
+# edit geoserver/.env if you need to change ports or credentials
+```
+
+- Start the stack (PostGIS for GeoServer, GeoServer, and Nginx proxy):
+
+```sh
+docker compose -f geoserver/docker-compose-dev.yml --env-file geoserver/.env up -d
+```
+
+- Default URLs:
+  - GeoServer: http://localhost:8870/geoserver
+  - Nginx (forwarding to GeoServer): http://localhost:8893/geoserver
+
+### 2) Configure PostGIS env variables and run the containers
+
+- Path: `postgis/`
+- Copy example env and edit it as needed (db name, user, password, and ports):
+
+```sh
+cp postgis/dot_env_example.txt postgis/.env
+# edit postgis/.env to adjust POSTGRES_DB_NAME, POSTGRES_DB_USER, POSTGRES_DB_PASSWORD, and ports
+```
+
+- Start the stack (PostGIS + optional pgAdmin + Adminer):
+
+```sh
+docker compose -f postgis/docker-compose-dev.yml --env-file postgis/.env up -d
+```
+
+- Default URLs/ports:
+  - PostGIS: localhost:8871
+  - pgAdmin: http://localhost:8872
+  - Adminer: http://localhost:8873
+
+- Optionally initialize database objects for the app:
+
+```sh
+python geoportal_app/setup_db.py
+```
+
+### 3) Configure Geoportal env variables, build the image, and run the container
+
+- Path: `geoportal_app/`
+- Copy example env and edit it to point to your running services:
+
+```sh
+cp geoportal_app/dot_env_example.txt geoportal_app/.env
+# edit geoportal_app/.env if your ports/hosts differ
+# Key vars (defaults):
+#   POSTGRES_DB_HOST=172.19.0.1
+#   POSTGRES_DB_PORT=8871
+#   GEOSERVER_HOST=http://localhost
+#   GEOSERVER_PORT=8870
+#   HTTP_PORT=8893
+#   WEB_HOST_PORT=8874
+#   WEB_CONTAINER_PORT=8874
+```
+
+- Build and start the web app:
+
+```sh
+docker compose -f geoportal_app/docker-compose-dev.yml --env-file geoportal_app/.env up -d --build
+```
+
+- Health check (container): http://localhost:8874/health
+- App URL: http://localhost:8874
+
+> Note: If you changed any ports in the `.env` files, make sure they are consistent across `geoserver/`, `postgis/`, and `geoportal_app/`.
+
+## Sample data (optional)
+
+### Sample raster data
+1. Copy `load_data/load_raster_to_db/sample_data/` to your user home directory
+2. Load rasters to the database:
+
+```sh
+python -m load_data.load_raster_to_db.load_raster_to_db
+```
+
+### Sample vector data
+1. Copy `load_data/load_vector_to_db/sample_data/` to your user home directory
+2. Load vectors to database:
+
+```sh
+python -m load_data.load_vector_to_db.1_shp_to_postgis
+```
+
+3. Publish vectors from PostGIS to GeoServer:
+
+```sh
+python -m load_data.load_vector_to_db.2_publish_from_postgis_to_geoserver
+```
 
 ## Credits
 - [Luis Acevedo](mailto:laar@pm.me), [Linkedin](https://www.linkedin.com/in/luis-acevedo-662535260/)
@@ -85,3 +141,4 @@
 - https://gist.github.com/marcopompili/f5e071ce646c5cf3d600828ace734ce7
 - https://openlayers.org/en/latest/examples/image-vector-layer.html
 - https://azouaoui-med.github.io/ostora-ol-reqjs/#
+

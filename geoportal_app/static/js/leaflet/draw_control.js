@@ -29,6 +29,7 @@ var options = {
         },
         */
         circle: false, // Turns off this drawing tool
+        circlemarker: false,
         //rectangle: false,
         rectangle: {
             shapeOptions: {

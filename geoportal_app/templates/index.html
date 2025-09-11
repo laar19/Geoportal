@@ -54,9 +54,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/leaflet-sidebar-right.css') }}">
     <!-- CUSTOM SIDEBAR-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/message_flashing.css') }}">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     
@@ -79,35 +77,6 @@
         {% endwith %}
     </div>
     
-    <!-- 
-    <section class="hero is-primary is-fullheight">
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                                Logout
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <div class="hero-body">
-            <div class="container has-text-centered">
-               {% block content %}
-               {% endblock %}
-            </div>
-        </div>
-    </section>
-
-    -->
-    
     <!-- SIDEBAR LEFT -->
     <div id="sidebar" class="sidebar collapsed">
         <!-- Nav tabs -->
@@ -124,9 +93,13 @@
                 <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
                 -->
                 <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
-                <li class="logins"><a class="boton-modal" id="open-modal-btn"><i class="fa-solid fa-user" style="color: #ffffff;"></i></a></li>
                  
             </ul>
+            <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
+            <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
+                <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
+                <span id="gs-dot" class="dot {{ 'ok' if GEOSERVER_OK else 'fail' }}"></span>
+            </div>
         </div>
 
         <!-- About Us Modal -->
@@ -146,50 +119,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- ======================= Formulario de ingreso ================== -->
-        <div class="container-modal" id="myModal">
-            <div class="content-modal">
-                <div class="main">
-                    <div class="btn-cerrar" id="close-modal-btn">
-                        <label title="Cerrar" class="cerrar">X</label>
-                    </div>
-                    <div class="signup" id="form-login">
-                        <form method="POST" action="{{ url_for('auth.login_post') }}" enctype="multipart/form-data">  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <label class="title" for="chk" aria-hidden="true">Inicio de Sesión</label>
-                            <h2 class="use">Usuario:</h2>
-                            <input type="text" name="email" placeholder="Ingrese su correo electrónico" required=""> <br>
-                            <h3 class="pass">Contraseña:</h3>
-                            <input type="password" name="password" placeholder="Ingrese su contraseña" required=""> <br>
-                            <div class="recaptcha-wrapper">  <div class="g-recaptcha" data-sitekey={{DATA_GOOGLE_SITEKEY}}></div>
-                            </div>
-                            <button>Ingresar</button>
-                            <div class="registre">
-                                <p>¿No tienes cuenta?
-                                    <a href="#" id="views-register">Registrese aquí</a>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="sesion" id="form-register" style="display: none;">
-                        <form method="POST" action="{{ url_for('auth.signup_post') }}" enctype="multipart/form-data"> <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <label class="reg" for="chk" aria-hidden="true">Registro</label>
-                            <input type="text" name="name" placeholder="Nombre" required="">
-                            <input type="text" name="last_name" placeholder="Apellido" required=""> <input type="email" name="email" placeholder="Correo electrónico" required=""> <input type="password" name="password" placeholder="Contraseña" required=""> <input type="password" name="password_to_confirm" placeholder="Confirmar contraseña" required=""> 
-                            <div class="recaptcha-wrapper">  <div class="g-recaptcha" data-sitekey={{DATA_GOOGLE_SITEKEY}}></div>
-                            </div> 
-                            <button>Registrarse</button>
-                            <div class="registre">
-                                <p class="regis">Inicio de Sesión
-                                    <a href="#" id="views-login">Aquí</a>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
 
         <!-- Tab panes -->
         <div class="sidebar-content">
@@ -305,6 +234,23 @@
 
     <div id="map" class="sidebar-map"></div>
 
+    <!-- Inject Leaflet config from backend -->
+    <script>
+        window.LEAFLET_TILE_URL = {{ LEAFLET_TILE_URL|tojson }};
+        window.LEAFLET_ATTRIBUTION = {{ LEAFLET_ATTRIBUTION|tojson }};
+        window.LEAFLET_MIN_ZOOM = {{ LEAFLET_MIN_ZOOM|tojson }};
+        // Health flags
+        window.DB_OK = {{ DB_OK|tojson }};
+        window.GEOSERVER_OK = {{ GEOSERVER_OK|tojson }};
+        // Additional base layers
+        window.LEAFLET_ESRI_URL = {{ LEAFLET_ESRI_URL|tojson }};
+        window.LEAFLET_ESRI_ATTRIBUTION = {{ LEAFLET_ESRI_ATTRIBUTION|tojson }};
+        window.LEAFLET_TERRAIN_URL = {{ LEAFLET_TERRAIN_URL|tojson }};
+        window.LEAFLET_TERRAIN_ATTRIBUTION = {{ LEAFLET_TERRAIN_ATTRIBUTION|tojson }};
+        window.LEAFLET_DARK_URL = {{ LEAFLET_DARK_URL|tojson }};
+        window.LEAFLET_DARK_ATTRIBUTION = {{ LEAFLET_DARK_ATTRIBUTION|tojson }};
+        window.LEAFLET_DARK_SUBDOMAINS = {{ LEAFLET_DARK_SUBDOMAINS|tojson }};
+    </script>
     <div>
         <form id="search" method="GET" action="/search">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -358,7 +304,7 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <!-- CUSTOM SIDEBAR -->
-    <!-- script src="{{ url_for('static', filename='js/leaflet/custom-sidebar.js') }}"></script -->
+    <script src="{{ url_for('static', filename='js/leaflet/custom-sidebar.js') }}"></script>
     
     <!-- BUSCADOR LEAFLET -->
     <!-- script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script -->
@@ -366,52 +312,93 @@
     <!-- MODAL -->
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     
-    <!-- LOGIN -->
-    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
-    
-    <script>
-        // Corrected login script
-        document.addEventListener('DOMContentLoaded', function() {
-            // Using the correct form elements from your HTML
-            const loginForm = document.querySelector('.signup form'); // This targets the login form in your HTML
-            const registerForm = document.querySelector('.sesion form'); // This targets the register form in your HTML
-            
-            // Only add event listeners if the forms exist
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(event) {
-                    // The form will handle submission naturally - no need to prevent default
-                    // Your form already has action="{{ url_for('auth.login_post') }}" which will handle the submission
-                    console.log("Login form submitted");
-                    // We don't need to do anything here as the form will submit naturally to the backend
-                });
-            } else {
-                console.log("Login form not found");
-            }
-            
-            if (registerForm) {
-                registerForm.addEventListener('submit', function(event) {
-                    // The form will handle submission naturally - no need to prevent default
-                    // Your form already has action="{{ url_for('auth.signup_post') }}" which will handle the submission
-                    console.log("Register form submitted");
-                    // We don't need to do anything here as the form will submit naturally to the backend
-                });
-            } else {
-                console.log("Register form not found");
-            }
-        });
-    </script>
-
-    
     <!-- ACTIVAR INF AL BUSCAR -->
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 
     <script>
         var geoserver_config = {{ geoserver_config|tojson }};
-        //var map_config       = {{ map_config|tojson }};
         var layers           = {{ layers|tojson }};
         var error_           = {{ error_|tojson }};
 
-        show_raster_info(map, geoserver_config, layers, error_);
+        // Helper to toggle the GS indicator dot
+        function setGsDot(ok) {
+            try {
+                var dot = document.getElementById('gs-dot');
+                if (!dot) return;
+                dot.classList.remove('ok', 'fail');
+                dot.classList.add(ok ? 'ok' : 'fail');
+            } catch(_) {}
+        }
+
+        // After initial render, ping backend health and decide what to do
+        (function(){
+            // If backend already told us it's down explicitly, skip ping
+            if (typeof window.GEOSERVER_OK !== 'undefined' && window.GEOSERVER_OK === false) {
+                setGsDot(false);
+                if (typeof showNonBlockingAlert === 'function') {
+                    showNonBlockingAlert('GeoServer is unavailable. Layers could not be loaded.', 'warning');
+                }
+                return;
+            }
+            // Otherwise, check health in the background
+            try {
+                fetch('{{ url_for("health_geoserver", _external=True) }}', { credentials: 'same-origin' })
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        var ok = !!(data && data.ok);
+                        if (ok) {
+                            setGsDot(true);
+                            try { show_raster_info(map, geoserver_config, layers, error_); } catch(e) { console.warn('show_raster_info failed:', e); }
+                            return;
+                        }
+
+                        // Backend cannot reach GeoServer; try a browser-side fallback using public URL
+                        try {
+                            var PUB = {{ GEOSERVER_PUBLIC_URL|tojson }};
+                            if (PUB && typeof PUB === 'string') {
+                                var base = PUB.replace(/\/$/, '');
+                                // Try both variants depending on whether PUB already contains /geoserver
+                                var candidates = [
+                                    base + '/wms?service=WMS&request=GetCapabilities',
+                                    base + '/geoserver/wms?service=WMS&request=GetCapabilities'
+                                ];
+                                var tried = 0, success = false;
+                                candidates.forEach(function(url){
+                                    fetch(url, { mode: 'no-cors' })
+                                        .then(function(){
+                                            if (!success) {
+                                                success = true;
+                                                setGsDot(true);
+                                                try { show_raster_info(map, geoserver_config, layers, error_); } catch(e) { console.warn('show_raster_info failed:', e); }
+                                            }
+                                        })
+                                        .catch(function(){
+                                            tried += 1;
+                                            if (tried >= candidates.length && !success) {
+                                                setGsDot(false);
+                                                if (typeof showNonBlockingAlert === 'function') {
+                                                    showNonBlockingAlert('GeoServer is unavailable from the server. If you can reach it in your browser, data requests may still fail until server connectivity is fixed.', 'warning');
+                                                }
+                                            }
+                                        });
+                                });
+                                return;
+                            }
+                        } catch(_) {}
+
+                        // Final fallback: mark as down
+                        setGsDot(false);
+                        if (typeof showNonBlockingAlert === 'function') {
+                            showNonBlockingAlert('GeoServer is unavailable. Layers could not be loaded.', 'warning');
+                        }
+                    })
+                    .catch(function(){
+                        setGsDot(false);
+                    });
+            } catch(e) {
+                setGsDot(false);
+            }
+        })();
     </script>
     
     <script src="{{ url_for('static', filename='js/pagination-fix.js') }}"></script>

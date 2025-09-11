@@ -5,6 +5,7 @@
 .sidebar-tabs{
     background-color: #0c275a;
 }
+.sidebar .sidebar-tabs { position: relative; }
 .sidebar.collapsed{
     width: 44px;
 }
@@ -190,4 +191,35 @@
     background-color: #fff;
     border: 2px solid #0c275a;
     color: #0c275a;
+}
+
+/* Connection indicator dots */
+.connection-indicators {
+    position: fixed;
+    left: 10px; /* near left sidebar */
+    bottom: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 1000; /* above map/controls */
+}
+.connection-indicators.in-sidebar {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    z-index: 2000;
+}
+.connection-indicators .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,0,0,0.2);
+    background: #999;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.6);
+}
+.connection-indicators .dot.ok {
+    background: #20c997; /* green */
+}
+.connection-indicators .dot.fail {
+    background: #dc3545; /* red */
 }

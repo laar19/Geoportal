@@ -1,0 +1,19 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile_dev
+    container_name: geoportal_app
+    env_file:
+      - .env
+    ports:
+     - "${WEB_CONTAINER_PORT}:${WEB_HOST_PORT}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEB_CONTAINER_PORT}/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s

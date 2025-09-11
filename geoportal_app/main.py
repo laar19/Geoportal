@@ -1,4 +1,8 @@
 import os, shutil, pdb
+import requests
+from sqlalchemy import text
+import psycopg2
+from psycopg2 import OperationalError
 
 from pathlib import Path
 
@@ -8,25 +12,21 @@ from flask          import Flask, render_template, jsonify, request
 from flask          import flash, redirect, url_for, render_template_string
 from flask_wtf      import CSRFProtect
 from flask_paginate import Pagination, get_page_parameter
-from flask_login    import LoginManager, login_required, current_user
 
 from shapely.geometry import Polygon
 
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm   import sessionmaker
 
 #from flask_sessionstore import Session 
 #from flask_session_captcha import FlaskSessionCaptcha
 
-from app.auth             import auth as auth_blueprint
-from app.models.User      import User
 from app.models.models    import DatabaseConfig
 from app.models.functions import *
 from app.functions        import *
 from app.config           import *
+from login_keycloak       import *
 
 ################################## Initialization ##################################
-from app.db import db
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 csrf = CSRFProtect(app)
@@ -37,16 +37,9 @@ csrf = CSRFProtect(app)
 #captcha = FlaskSessionCaptcha(app)
 
 ################## Register ################
-app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db_user.sqlite'
-
-db.init_app(app)  # Now initialize with the app
-
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
-login_manager.login_message = "Please log in before proceeding"
-login_manager.login_message_category = "warning"
-login_manager.init_app(app)
+# Register Keycloak auth blueprint so routes like 'auth.login' are available
+app.register_blueprint(auth_bp)
+# Authentication removed; no user DB or login manager initialization
 
 test_config = None
 
@@ -63,27 +56,6 @@ try:
 except OSError:
     pass
 
-# register the database commands
-#with app.app_context():
-#    my_db.init_app(app)
-
-# Added to init database
-with app.app_context():
-    db.create_all()
-
-@login_manager.user_loader
-def load_user(user_id):
-    # since the user_id is just the primary key of our user table, use it in the query for the user
-    return User.query.get(int(user_id))
-
-# blueprint for auth routes in our app
-app.register_blueprint(auth_blueprint)
-
-# blueprint for non-auth parts of app
-#from app.main import main as main_blueprint
-#app.register_blueprint(main_blueprint)
-################## /Register ################
-
 # Load environment variables
 # Specify the path to .env file
 env_paths = [
@@ -95,28 +67,149 @@ for i in env_paths:
     load_dotenv(dotenv_path=i)
 
 # Default map config
-MAP_ZOOM_LEVEL        = os.getenv("MAP_ZOOM_LEVEL")
-MAP_LAT               = os.getenv("MAP_LAT")
-MAP_LONG              = os.getenv("MAP_LONG")
-TILELAYER_URL         = os.getenv("TILELAYER_URL")
-TILELAYER_ATTRIBUTION = os.getenv("TILELAYER_ATTRIBUTION")
-map_config            = get_map_config(
-    MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG, TILELAYER_URL, TILELAYER_ATTRIBUTION
+MAP_ZOOM_LEVEL      = os.getenv("MAP_ZOOM_LEVEL")
+MAP_LAT             = os.getenv("MAP_LAT")
+MAP_LONG            = os.getenv("MAP_LONG")
+map_config          = get_map_config(MAP_ZOOM_LEVEL, MAP_LAT, MAP_LONG)
+DATA_GOOGLE_SITEKEY = os.getenv("DATA_GOOGLE_SITEKEY")
+
+LEAFLET_TILE_URL    = os.getenv("LEAFLET_TILE_URL", "https://tile.openstreetmap.org/{z}/{x}/{y}.png")
+LEAFLET_ATTRIBUTION = os.getenv("LEAFLET_ATTRIBUTION", '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>')
+LEAFLET_MIN_ZOOM    = os.getenv("LEAFLET_MIN_ZOOM")
+LEAFLET_ESRI_URL         = os.getenv("LEAFLET_ESRI_URL", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}")
+LEAFLET_ESRI_ATTRIBUTION = os.getenv(
+    "LEAFLET_ESRI_ATTRIBUTION",
+    "Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
 )
-DATA_GOOGLE_SITEKEY   = os.getenv("DATA_GOOGLE_SITEKEY")
+LEAFLET_TERRAIN_URL         = os.getenv("LEAFLET_TERRAIN_URL", "https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg")
+LEAFLET_TERRAIN_ATTRIBUTION = os.getenv(
+    "LEAFLET_TERRAIN_ATTRIBUTION",
+    "Map tiles by Stamen Design, under CC BY 3.0 — Data © OpenStreetMap contributors"
+)
+LEAFLET_DARK_URL           = os.getenv("LEAFLET_DARK_URL", "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png")
+LEAFLET_DARK_ATTRIBUTION   = os.getenv("LEAFLET_DARK_ATTRIBUTION", "© OpenStreetMap contributors © CARTO")
+LEAFLET_DARK_SUBDOMAINS    = os.getenv("LEAFLET_DARK_SUBDOMAINS", "abcd")
+
+# --- Connectivity checks ---
+def check_db_connection() -> bool:
+    """Check DB using the same SQLAlchemy path the app uses elsewhere."""
+    try:
+        POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
+        POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
+        POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
+        POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
+        POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+        POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
+
+        # First try via SQLAlchemy (same as the rest of the app)
+        try:
+            DbConn = DatabaseConfig(
+                POSTGRES_DB_TYPE,
+                POSTGRES_DB_USER,
+                POSTGRES_DB_PASSWORD,
+                POSTGRES_DB_HOST,
+                POSTGRES_DB_PORT,
+                POSTGRES_DB_NAME
+            )
+            conn, engine = DbConn.connection()
+            conn.execute(text("SELECT 1"))
+            conn.close()
+            return True
+        except Exception:
+            # Fallback: try direct psycopg2 with a short timeout
+            try:
+                port = int(POSTGRES_DB_PORT or 5432)
+                conn = psycopg2.connect(host=POSTGRES_DB_HOST, dbname=POSTGRES_DB_NAME, user=POSTGRES_DB_USER, password=POSTGRES_DB_PASSWORD, port=port, connect_timeout=2)
+                cur = conn.cursor()
+                cur.execute("SELECT 1")
+                cur.close()
+                conn.close()
+                return True
+            except Exception:
+                return False
+    except Exception:
+        return False
+
+def strtobool_env(val: str) -> bool:
+    if val is None:
+        return False
+    return str(val).lower() in ("1", "true", "yes", "y", "t")
+
+def check_geoserver_connection() -> bool:
+    try:
+        host = os.getenv("GEOSERVER_HOST", "http://localhost")
+        port = os.getenv("GEOSERVER_PORT", "8080")
+        public_url = os.getenv("GEOSERVER_PUBLIC_URL")
+        timeout = (0.5, float(os.getenv("HTTP_TIMEOUT", "1.5")))
+        verify = not strtobool_env(os.getenv("DISABLE_SSL_VERIFY"))
+
+        candidates = []
+        if public_url:
+            pu = public_url[:-1] if public_url.endswith('/') else public_url
+            candidates.append(pu)
+        # fallback to host:port and host-only
+        base_host_port = f"{host}:{port}" if ":" not in host.split('//')[-1] else host
+        candidates.append(base_host_port)
+        candidates.append(host)
+
+        # For each base, try common WMS/OWS paths and the web UI
+        test_paths = [
+            "/wms?service=WMS&request=GetCapabilities",
+            "/ows?service=WMS&request=GetCapabilities",
+            "/geoserver/wms?service=WMS&request=GetCapabilities",
+            "/geoserver/ows?service=WMS&request=GetCapabilities",
+            "/geoserver/web/",
+        ]
+        for base in candidates:
+            for path in test_paths:
+                url = f"{base}{path}"
+                try:
+                    r = requests.get(url, timeout=timeout, verify=verify)
+                    if r.status_code < 500:
+                        return True
+                except Exception:
+                    continue
+        return False
+    except Exception:
+        return False
+
+@app.route("/health/geoserver")
+def health_geoserver():
+    try:
+        ok = check_geoserver_connection()
+        return jsonify({"ok": bool(ok)}), 200
+    except Exception:
+        return jsonify({"ok": False}), 200
 
 @app.route("/")
 @app.route("/index")
+@login_required
 def index_leaflet():
+    # Render immediately; do not block on GeoServer health
+    DB_OK = check_db_connection()
+    GEOSERVER_OK = None  # unknown at render time; will be checked client-side
     return render_template(
         "index.html",
-        geoserver_config = False,
-        layers           = False,
-        result           = False,
-        map_config       = map_config,
-        pagination       = False,
-        error_           = False,
-        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY
+        geoserver_config    = False,
+        layers              = False,
+        result              = False,
+        map_config          = map_config,
+        pagination          = False,
+        error_              = False,
+        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY,
+        LEAFLET_TILE_URL    = LEAFLET_TILE_URL,
+        LEAFLET_ATTRIBUTION = LEAFLET_ATTRIBUTION,
+        LEAFLET_MIN_ZOOM    = LEAFLET_MIN_ZOOM,
+        LEAFLET_ESRI_URL         = LEAFLET_ESRI_URL,
+        LEAFLET_ESRI_ATTRIBUTION = LEAFLET_ESRI_ATTRIBUTION,
+        LEAFLET_TERRAIN_URL         = LEAFLET_TERRAIN_URL,
+        LEAFLET_TERRAIN_ATTRIBUTION = LEAFLET_TERRAIN_ATTRIBUTION,
+        LEAFLET_DARK_URL           = LEAFLET_DARK_URL,
+        LEAFLET_DARK_ATTRIBUTION   = LEAFLET_DARK_ATTRIBUTION,
+        LEAFLET_DARK_SUBDOMAINS    = LEAFLET_DARK_SUBDOMAINS,
+        DB_OK = DB_OK,
+        GEOSERVER_OK = GEOSERVER_OK,
+        GEOSERVER_PUBLIC_URL = os.getenv("GEOSERVER_PUBLIC_URL")
     )
 
 @app.route("/search", methods=["GET"])
@@ -148,12 +241,9 @@ def search():
         db_session   = Session()
 
         previous_map_config = {
-            "coordinates"          : request.args.get("coordinates"),
-            "zoom_level"           : request.args.get("zoom_level"),
-            "center"               : request.args.get("center"),
-            "search_status"        : bool(request.args.get("search_status")),
-            "tilelayer_url"        : TILELAYER_URL,
-            "tilelayer_attribution": TILELAYER_ATTRIBUTION
+            "zoom_level"   : request.args.get("zoom_level"),
+            "center"       : request.args.get("center"),
+            "search_status": bool(request.args.get("search_status"))
         }
 
         # If there is an image search
@@ -259,13 +349,21 @@ def search():
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         pagination_html = render_template_string("{{ pagination.links|safe }}", pagination=pagination)
-        results_html = render_template("results.html", result=result_render, geoserver_config=geoserver_config)
+        # If GeoServer is down, avoid rendering thumbnails that hit GeoServer
+        ajax_gs_ok = check_geoserver_connection()
+        if not ajax_gs_ok:
+            results_html = '<div class="alert alert-warning" role="alert">GeoServer is unavailable. Layer previews are disabled.</div>'
+        else:
+            results_html = render_template("results.html", result=result_render, geoserver_config=geoserver_config)
         
         return jsonify({
             "pagination": pagination_html,
             "results"   : results_html
         })
     
+    # Render search page immediately as well; do not block on GeoServer health
+    DB_OK = check_db_connection()
+    GEOSERVER_OK = None
     return render_template(
         "index.html",
         geoserver_config    = geoserver_config,
@@ -274,7 +372,20 @@ def search():
         map_config          = map_config,
         pagination          = pagination,
         error_              = error_,
-        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY
+        DATA_GOOGLE_SITEKEY = DATA_GOOGLE_SITEKEY,
+        LEAFLET_TILE_URL    = LEAFLET_TILE_URL,
+        LEAFLET_ATTRIBUTION = LEAFLET_ATTRIBUTION,
+        LEAFLET_MIN_ZOOM    = LEAFLET_MIN_ZOOM,
+        LEAFLET_ESRI_URL         = LEAFLET_ESRI_URL,
+        LEAFLET_ESRI_ATTRIBUTION = LEAFLET_ESRI_ATTRIBUTION,
+        LEAFLET_TERRAIN_URL         = LEAFLET_TERRAIN_URL,
+        LEAFLET_TERRAIN_ATTRIBUTION = LEAFLET_TERRAIN_ATTRIBUTION,
+        LEAFLET_DARK_URL           = LEAFLET_DARK_URL,
+        LEAFLET_DARK_ATTRIBUTION   = LEAFLET_DARK_ATTRIBUTION,
+        LEAFLET_DARK_SUBDOMAINS    = LEAFLET_DARK_SUBDOMAINS,
+        DB_OK = DB_OK,
+        GEOSERVER_OK = GEOSERVER_OK,
+        GEOSERVER_PUBLIC_URL = os.getenv("GEOSERVER_PUBLIC_URL")
     )
 
 # app name
@@ -345,7 +456,7 @@ def upload_files():
             file.save(filepath)
     
     # Process each shapefile in the uploaded directory structure
-    converted_count = process_uploaded_shapefiles(app, current_user.id) # current_user.email
+    converted_count = process_uploaded_shapefiles(app, None)
     
     if converted_count > 0:
         flash(f'Successfully converted {converted_count} shapefile(s) to GeoJSON')
@@ -367,6 +478,6 @@ if __name__ == "__main__":
     csrf.init_app(app)
 
     FLASK_HOST  = os.getenv("FLASK_HOST")
-    FLASK_PORT  = os.getenv("FLASK_PORT")
+    WEB_HOST_PORT  = os.getenv("WEB_HOST_PORT")
     FLASK_DEBUG = os.getenv("FLASK_DEBUG")
-    app.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)
+    app.run(host=FLASK_HOST, port=WEB_HOST_PORT, debug=FLASK_DEBUG)
