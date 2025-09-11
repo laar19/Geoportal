@@ -28,7 +28,6 @@ for i in env_paths:
 # DB conn
 POSTGRES_DB_TYPE       = os.getenv("POSTGRES_DB_TYPE")
 POSTGRES_DB_HOST       = os.getenv("POSTGRES_DB_HOST")
-POSTGIS_DOCKER_GATEWAY = os.getenv("POSTGIS_DOCKER_GATEWAY")
 POSTGRES_DB_NAME       = os.getenv("POSTGRES_DB_NAME")
 POSTGRES_DB_USER       = os.getenv("POSTGRES_DB_USER")
 POSTGRES_DB_PASSWORD   = os.getenv("POSTGRES_DB_PASSWORD")
@@ -96,7 +95,7 @@ for i in filenames:
             store_name  = i,
             workspace   = i,
             db          = POSTGRES_DB_NAME,
-            host        = POSTGIS_DOCKER_GATEWAY,
+            host        = POSTGRES_DB_HOST,
             port        = POSTGRES_DB_PORT,
             schema      = schema_name,
             pg_user     = POSTGRES_DB_USER,

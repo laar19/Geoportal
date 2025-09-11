@@ -34,7 +34,6 @@ def process_uploaded_shapefiles(app, user_id):
     # DB connection setup
     POSTGRES_DB_TYPE       = os.getenv("POSTGRES_DB_TYPE")
     POSTGRES_DB_HOST       = os.getenv("POSTGRES_DB_HOST")
-    POSTGIS_DOCKER_GATEWAY = os.getenv("POSTGIS_DOCKER_GATEWAY")
     POSTGRES_DB_NAME       = os.getenv("POSTGRES_DB_NAME")
     POSTGRES_DB_USER       = os.getenv("POSTGRES_DB_USER")
     POSTGRES_DB_PASSWORD   = os.getenv("POSTGRES_DB_PASSWORD")
@@ -175,7 +174,7 @@ def process_uploaded_shapefiles(app, user_id):
                         store_name  = table_name,
                         workspace   = table_name,
                         db          = POSTGRES_DB_NAME,
-                        host        = POSTGIS_DOCKER_GATEWAY,  # Using Docker gateway for internal communication
+                        host        = POSTGRES_DB_HOST,
                         port        = POSTGRES_DB_PORT,
                         schema      = schema_name,
                         pg_user     = POSTGRES_DB_USER,
