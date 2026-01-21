@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile_dev
+      dockerfile: Dockerfile
     container_name: geoportal_app
     env_file:
       - .env

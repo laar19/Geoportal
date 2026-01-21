@@ -310,7 +310,7 @@ def search():
                     geoserver_config["return"] = True
                     
                 if geoserver_config["geoserver_url"] == None:
-                    geoserver_config["geoserver_url"] = geoserver_config_[0].url
+                    geoserver_config["geoserver_url"] = os.getenv("GEOSERVER_PUBLIC_URL") or geoserver_config_[0].url
                     
                 if geoserver_config["workspace"] == None:
                     geoserver_config["workspace"] = GEOSERVER_WORKSPACE

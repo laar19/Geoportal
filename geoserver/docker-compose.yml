@@ -5,7 +5,7 @@ volumes:
 services:
     db:
         image         : kartoza/postgis:${POSTGIS_VERSION_TAG}
-        container_name: geoportal_geoserver_db
+        container_name: geoportal-geoserver-db
         
         volumes:
             - geo-db-data:/var/lib/postgresql/data
@@ -25,7 +25,7 @@ services:
 
     geoserver:
         image         : kartoza/geoserver:${GS_VERSION}
-        container_name: geoportal_geoserver
+        container_name: geoportal-geoserver
         
         volumes:
             - geoserver-data:/opt/geoserver

@@ -1,0 +1,84 @@
+# ===========================================
+# Geoportal Unified Environment Configuration
+# ===========================================
+# Copy this file to .env and update the values
+
+# ----- Flask Web App -----
+FLASK_HOST=0.0.0.0
+WEB_HOST_PORT=8874
+WEB_CONTAINER_PORT=8874
+FLASK_DEBUG=true
+
+# ----- PostGIS Database (Geoportal) -----
+POSTGRES_DB_TYPE=postgresql
+POSTGRES_DB_HOST=geoportal_db
+POSTGRES_DB_NAME=geoportal_db
+POSTGRES_DB_USER=your_db_user
+POSTGRES_DB_PASSWORD=your_db_password
+POSTGRES_DB_PORT=5432
+# External port for host access (browser/tools): 8871
+
+# ----- pgAdmin -----
+PGADMIN_EMAIL=admin@admin.com
+PGADMIN_PASSWORD=your_pgadmin_password
+PGADMIN_PORT=8872
+
+# ----- Adminer -----
+ADMINER_PORT=8873
+
+# ----- Map Configuration -----
+MAP_ZOOM_LEVEL=6
+MAP_LAT=6.717710140513336
+MAP_LONG=-64.07226562500001
+LEAFLET_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+LEAFLET_ATTRIBUTION=<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+LEAFLET_MIN_ZOOM=3
+
+# Optional secondary basemaps
+LEAFLET_ESRI_URL=https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}
+LEAFLET_ESRI_ATTRIBUTION=Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community
+LEAFLET_TERRAIN_URL=https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg
+LEAFLET_TERRAIN_ATTRIBUTION=Map tiles by Stamen Design, under CC BY 3.0 — Data © OpenStreetMap contributors
+LEAFLET_DARK_URL=https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png
+LEAFLET_DARK_ATTRIBUTION=© OpenStreetMap contributors © CARTO
+LEAFLET_DARK_SUBDOMAINS=abcd
+
+# ----- Geoserver -----
+GS_VERSION=latest
+GEOSERVER_HOST=http://geoportal-geoserver
+GEOSERVER_PORT=8080
+GEOSERVER_HOST_PORT=8870
+# Public URL for browser access (set to your external IP or domain)
+GEOSERVER_PUBLIC_URL=http://YOUR_SERVER_IP:8870/geoserver
+GEOSERVER_ADMIN_USER=admin
+GEOSERVER_ADMIN_PASSWORD=your_geoserver_password
+GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
+GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
+INITIAL_MEMORY=2G
+MAXIMUM_MEMORY=4G
+
+# ----- Geoserver PostgreSQL -----
+POSTGIS_VERSION_TAG=latest
+GEOSERVER_POSTGRES_DB=gis
+GEOSERVER_POSTGRES_USER=admin
+GEOSERVER_POSTGRES_PASS=your_geoserver_db_password
+GEOSERVER_POSTGRES_PORT=32767
+ALLOW_IP_RANGE=0.0.0.0/0
+
+# ----- Google reCAPTCHA -----
+DATA_GOOGLE_SITEKEY=your_recaptcha_site_key
+
+# ----- Keycloak Authentication -----
+KEYCLOAK_REALM=my-app
+KEYCLOAK_CLIENT_ID=my-web-app
+KEYCLOAK_CLIENT_SECRET=your_keycloak_client_secret
+KEYCLOAK_SERVER_URL=https://your-keycloak-server:8443
+KEYCLOAK_REDIRECT_URI=https://your-server:5045/callback
+KEYCLOAK_ISSUER_URL=https://your-keycloak-server:8443/realms/my-app
+KEYCLOAK_METADATA_URL=https://your-keycloak-server:8443/realms/my-app/.well-known/openid-configuration
+KEYCLOAK_TOKEN_URL=https://your-keycloak-server:8443/realms/my-app/protocol/openid-connect/token
+KEYCLOAK_AUTH_URL=https://your-keycloak-server:8443/realms/my-app/protocol/openid-connect/auth
+KEYCLOAK_JWKS_URI=https://your-keycloak-server:8443/realms/my-app/protocol/openid-connect/certs
+
+DISABLE_SSL_VERIFY=True
+ENABLE_KEYCLOAK_AUTH=False
