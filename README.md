@@ -27,7 +27,7 @@ cp geoserver/dot_env_example.txt geoserver/.env
 - Start the stack (PostGIS for GeoServer, GeoServer, and Nginx proxy):
 
 ```sh
-docker compose -f geoserver/docker-compose-dev.yml --env-file geoserver/.env up -d
+docker compose -f geoserver/docker-compose.yml --env-file geoserver/.env up -d
 ```
 
 - Default URLs:
@@ -47,7 +47,7 @@ cp postgis/dot_env_example.txt postgis/.env
 - Start the stack (PostGIS + optional pgAdmin + Adminer):
 
 ```sh
-docker compose -f postgis/docker-compose-dev.yml --env-file postgis/.env up -d
+docker compose -f postgis/docker-compose.yml --env-file postgis/.env up -d
 ```
 
 - Default URLs/ports:
@@ -82,7 +82,7 @@ cp geoportal_app/dot_env_example.txt geoportal_app/.env
 - Build and start the web app:
 
 ```sh
-docker compose -f geoportal_app/docker-compose-dev.yml --env-file geoportal_app/.env up -d --build
+docker compose -f geoportal_app/docker-compose.yml --env-file geoportal_app/.env up -d --build
 ```
 
 - Health check (container): http://localhost:8874/health

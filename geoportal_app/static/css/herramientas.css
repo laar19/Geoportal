@@ -1,0 +1,420 @@
+/* herramientas.css - Combined styles for geoportal tools */
+
+/* ===== TOOL BUTTONS IN SIDEBAR ===== */
+.herramientas-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.btn-herramienta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-herramienta:hover {
+  background: #0056b3;
+  transform: translateX(3px);
+}
+
+.btn-herramienta:active {
+  background: #004085;
+}
+
+.btn-herramienta i {
+  width: 20px;
+  text-align: center;
+}
+
+.btn-herramienta.active {
+  background: #28a745;
+}
+
+.btn-herramienta.btn-primary {
+  background: #007bff;
+}
+
+.btn-herramienta.btn-secondary {
+  background: #6c757d;
+}
+
+.btn-herramienta.btn-danger {
+  background: #dc3545;
+}
+
+.btn-herramienta.btn-danger:hover {
+  background: #c82333;
+}
+
+.btn-herramienta.btn-erase {
+  background: #fd7e14;
+}
+
+.btn-herramienta.btn-erase:hover {
+  background: #e65c00;
+}
+
+.btn-herramienta.btn-erase.active {
+  background: #dc3545;
+}
+
+.btn-herramienta.btn-close-tool {
+  background: #6c757d;
+  margin-top: 15px;
+}
+
+.btn-herramienta.btn-close-tool:hover {
+  background: #545b62;
+}
+
+/* ===== TOOL PANELS ===== */
+.herramientas-panel {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.herramientas-panel h5 {
+  margin: 0 0 15px 0;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.herramientas-panel .control-group {
+  margin-bottom: 12px;
+}
+
+.herramientas-panel label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 13px;
+  color: #555;
+}
+
+.herramientas-panel input[type="color"] {
+  width: 100%;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.herramientas-panel input[type="range"] {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.herramientas-panel .buttons-row {
+  display: flex;
+  gap: 8px;
+}
+
+.herramientas-panel .buttons-row .btn-herramienta {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ===== LEAFLET MEASURE STYLES ===== */
+.leaflet-control-measure {
+  background: white;
+  padding: 0;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+
+.leaflet-measure-expanded {
+  padding: 6px 10px;
+  min-width: 150px;
+}
+
+.leaflet-measure-toggle {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M21.71 3.29a1 1 0 0 0-1.42 0l-18 18a1 1 0 0 0 1.42 1.42l18-18a1 1 0 0 0 0-1.42zM3 13.5V11l2 2v.5H3Z"/></svg>') no-repeat center;
+  background-size: 20px;
+  text-indent: -9999px;
+}
+
+.leaflet-measure-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.leaflet-measure-action {
+  margin: 4px 0;
+}
+
+.leaflet-measure-action a {
+  display: block;
+  padding: 6px 10px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.leaflet-measure-action a:hover {
+  background: #f0f0f0;
+}
+
+.leaflet-measure-lable {
+  position: absolute;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid #FF0080;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.leaflet-measure-lable .close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.leaflet-measure-lable .close svg.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.leaflet-measure-map {
+  cursor: crosshair !important;
+}
+
+/* ===== COORDINATES CONTROL ===== */
+.leaflet-control-coordinates {
+  background: rgba(255,255,255,0.95);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.leaflet-control-coordinates:hover {
+  background: #fff;
+}
+
+.leaflet-control-coordinates.hidden {
+  display: none !important;
+}
+
+.leaflet-control-coordinates-lat,
+.leaflet-control-coordinates-lng {
+  display: block;
+  margin: 2px 0;
+}
+
+/* ===== VECTOR CREATOR STYLES ===== */
+.vector-creator-panel {
+  padding: 10px 0;
+}
+
+.vector-creator-panel h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.vector-creator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.vector-creator-actions .btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px 10px;
+  font-size: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vector-creator-actions .btn:hover {
+  background: #0056b3;
+}
+
+#vector-creator-status-sidebar {
+  font-size: 12px;
+  color: #666;
+  margin: 10px 0;
+  padding: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+}
+
+#vector-creator-style-panel-sidebar {
+  display: none;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+#vector-creator-style-panel-sidebar .style-group {
+  margin-bottom: 10px;
+}
+
+#vector-creator-style-panel-sidebar label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+#vector-creator-style-panel-sidebar input[type="color"],
+#vector-creator-style-panel-sidebar input[type="range"] {
+  width: 100%;
+}
+
+#vector-creator-drawn-layers-container-sidebar {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+#vector-creator-drawn-layers-container-sidebar h5 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+}
+
+#vector-creator-drawn-list-sidebar {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#vector-creator-drawn-list-sidebar li {
+  padding: 6px 8px;
+  font-size: 12px;
+  background: white;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#vector-creator-drawn-list-sidebar li:hover {
+  background: #e9ecef;
+}
+
+/* Modal for metadata */
+#vector-creator-metadata-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.vector-creator-modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.vector-creator-modal-content h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+.vector-creator-modal-content label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.vector-creator-modal-content input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.vector-creator-modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.vector-creator-modal-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+#vector-creator-cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+#vector-creator-cancel-btn:hover {
+  background: #545b62;
+}
+
+#vector-creator-confirm-btn {
+  background: #28a745;
+  color: white;
+}
+
+#vector-creator-confirm-btn:hover {
+  background: #218838;
+}
+
+/* ===== DRAWING CONTROL EXTRA STYLES ===== */
+.leaflet-div-icon.leaflet-editing-icon {
+  background: transparent;
+  border: none;
+}
