@@ -19,7 +19,7 @@ let weightValue = 3;
 
 // Variables para la herramienta de vectorización
 let vectorCreatorInstance = null;
-let vectorToolActive = false;
+window.vectorToolActive = false;
 
 // Configure L.Measure locale for Spanish
 function configureMeasureLocale() {
@@ -446,33 +446,56 @@ function disableDrawingTools() {
 
 window.disableDrawingTools = disableDrawingTools;
 
-// Vectorization Tool
+
 window.initVectorTool = function () {
-    if (typeof L === 'undefined') {
-        console.error('❌ initVectorTool: Leaflet no está definido.');
-        return;
-    }
-    if (typeof window.map === 'undefined') {
-        console.error('❌ initVectorTool: El objeto "map" no está definido en el alcance global.');
+    if (typeof L === 'undefined' || typeof window.map === 'undefined') {
+        console.error('❌ initVectorTool: Leaflet o map no definidos.');
         return;
     }
 
-    if (vectorToolActive) {
+    // A. Lógica de Toggle: Si ya está activa, la desactivamos.
+    if (window.vectorToolActive) {
         disableVectorTool();
         return;
     }
 
-    disableAllTools();
+    // B. Desactivar OTRAS herramientas manualmente para limpiar el mapa
+    disableMeasureTool();
+    disableCoordinates();
+    disableDrawingTools();
 
-    vectorCreatorInstance = L.vectorCreator(window.map, {
-        title: 'Vectorización'
-    });
+    // Limpiar panel de controles (UI)
+    const controlsPanel = document.getElementById('herramientas-controls');
+    if (controlsPanel) {
+        controlsPanel.innerHTML = '';
+    }
 
+    // C. PATRÓN SINGLETON (La clave para que NO desaparezcan los vectores)
+    // Si la instancia NO existe, la creamos. Si YA existe, la reutilizamos.
+    if (!vectorCreatorInstance) {
+        console.log("🛠️ Creando NUEVA instancia de VectorCreator (Primer uso)");
+        vectorCreatorInstance = L.vectorCreator(window.map, {
+            title: 'Vectorización'
+        });
+
+        // Aseguramos que el grupo de capas esté añadido al mapa
+        if (vectorCreatorInstance._drawnItems) {
+            window.map.addLayer(vectorCreatorInstance._drawnItems);
+        }
+    } else {
+        console.log("♻️ Reutilizando instancia existente (Recuperando vectores previos)");
+        // Si por alguna razón el grupo se quitó del mapa, lo volvemos a poner
+        if (vectorCreatorInstance._drawnItems && !window.map.hasLayer(vectorCreatorInstance._drawnItems)) {
+            window.map.addLayer(vectorCreatorInstance._drawnItems);
+        }
+    }
+
+    // D. Recrear o recuperar la UI
+    // Nota: Aunque la instancia lógica existe, el HTML del panel se limpió en el paso B,
+    // así que pedimos a la instancia que nos devuelva su interfaz.
     const uiElement = vectorCreatorInstance.createUI();
 
-    const toolsPanel = document.getElementById('herramientas-controls');
-    if (toolsPanel) {
-        // Add close button wrapper
+    if (controlsPanel) {
         const wrapper = document.createElement('div');
         wrapper.id = 'vector-tool-wrapper';
         wrapper.className = 'herramientas-panel';
@@ -486,31 +509,29 @@ window.initVectorTool = function () {
 
         wrapper.appendChild(uiElement);
         wrapper.appendChild(closeBtn);
-        toolsPanel.innerHTML = '';
-        toolsPanel.appendChild(wrapper);
-    } else {
-        console.error("❌ No se encontró el contenedor #herramientas-controls.");
+        controlsPanel.appendChild(wrapper);
     }
 
+    // E. Activar dibujo en el mapa
     vectorCreatorInstance.enableDrawing();
-    vectorToolActive = true;
+    window.vectorToolActive = true;
 };
+
 
 window.disableVectorTool = function () {
     if (vectorCreatorInstance) {
+        // Solo pausamos el dibujo.
+        // ¡IMPORTANTE! NO hacemos vectorCreatorInstance = null
+        // Al mantener la variable viva, los polígonos (this._drawnItems) no se pierden.
         vectorCreatorInstance.disableDrawing();
-
-        if (vectorCreatorInstance._uiContainer && vectorCreatorInstance._uiContainer.parentNode) {
-            vectorCreatorInstance._uiContainer.parentNode.removeChild(vectorCreatorInstance._uiContainer);
-            vectorCreatorInstance._uiContainer = null;
-        }
-
-        vectorCreatorInstance = null;
-        vectorToolActive = false;
     }
 
+    // Quitamos la UI del sidebar
     const wrapper = document.getElementById('vector-tool-wrapper');
     if (wrapper) wrapper.remove();
+
+    // Marcamos como inactiva para el sistema de toggle
+    window.vectorToolActive = false;
 };
 
 window.disableMeasureTool = function () {

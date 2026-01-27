@@ -50,10 +50,12 @@ map.addControl(drawControl);
 
 // Get coordinates, view and zoom
 map.on(L.Draw.Event.CREATED, function (e) {
-    var type  = e.layerType,
+    if (window.vectorToolActive) return;
+
+    var type = e.layerType,
         layer = e.layer;
-        
-    if(editableLayers && editableLayers.getLayers().length!==0) {
+
+    if (editableLayers && editableLayers.getLayers().length !== 0) {
         editableLayers.clearLayers();
     }
     editableLayers.addLayer(layer);
@@ -153,37 +155,39 @@ new L.cascadeButtons([
             $("#start_date").val($("#start_date_").val());
             $("#end_date").val($("#end_date_").val());
 
-            if($("#roll_angle_value").val() == "") {
+            if ($("#roll_angle_value").val() == "") {
                 $("#roll_angle").val(false);
             }
             else {
                 $("#roll_angle").val($("#roll_angle_value").val());
             }
 
-            if($("#cloud_percentage_value").val() == "") {
+            if ($("#cloud_percentage_value").val() == "") {
                 $("#cloud_percentage").val(false);
             }
             else {
                 $("#cloud_percentage").val($("#cloud_percentage_value").val());
             }
-            
+
             document.getElementById("search").submit();
         }
     },
-    
+
     {
         icon: 'bi-house', command: () => {
             window.location.href = "http://172.17.15.27:8874";
         }
     },
 
-    {icon: 'bi bi-share', items: [
-        {icon: 'bi bi-twitter',   command: () =>{console.log('hola')}},
-        {icon: 'bi bi-facebook',  command: () =>{console.log('hola')}},
-        {icon: 'bi bi-instagram', command: () =>{console.log('hola')}},
-        {icon: 'fbi bi-whatsapp', command: () =>{console.log('hola')}},
-    ]},
-], {position:'topleft', direction:'vertical'}).addTo(map);
+    {
+        icon: 'bi bi-share', items: [
+            { icon: 'bi bi-twitter', command: () => { console.log('hola') } },
+            { icon: 'bi bi-facebook', command: () => { console.log('hola') } },
+            { icon: 'bi bi-instagram', command: () => { console.log('hola') } },
+            { icon: 'fbi bi-whatsapp', command: () => { console.log('hola') } },
+        ]
+    },
+], { position: 'topleft', direction: 'vertical' }).addTo(map);
 
 //L.Control.geocoder().addTo(map);
 
