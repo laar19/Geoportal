@@ -1,4 +1,5 @@
 // Modified show_raster_info.js (fixes MutationObserver error)
+var selectionLayer = null; // Global variable to store the highlight layer
 
 // Utility: show a Bootstrap-style non-blocking alert that auto-dismisses
 function showNonBlockingAlert(message, level) {
@@ -95,53 +96,75 @@ function show_raster_info(map, geoserver_config, layers, error) {
         prueba2: "Cómo están"
     }
 
-    map.on("click", function (e) {
-        var fetchPromises = [];
-        var popupContent = "<div><table>";
+    map.on("click", async function (e) {
+        // Remove existing highlight
+        if (selectionLayer) {
+            map.removeLayer(selectionLayer);
+            selectionLayer = null;
+        }
 
-        map_layers_list.forEach((layer) => {
-            if (map.hasLayer(layer.layer_object)) {  // Verificar si la capa está activa
-                var url = getFeatureInfoUrl(
-                    map,
-                    layer.layer_object,
-                    e.latlng,
-                    {
-                        "info_format": "application/json"
-                    }
-                );
+        // Sort layers by zIndex (highest first) to prioritize the top layer
+        var activeLayers = map_layers_list
+            .filter(layer => map.hasLayer(layer.layer_object))
+            .sort((a, b) => {
+                var ziA = a.layer_object.options.zIndex || 0;
+                var ziB = b.layer_object.options.zIndex || 0;
+                return ziB - ziA;
+            });
 
-                parsed_url = parse_url(url);
+        let foundFeature = false;
+        let popupContent = "<div><table>";
 
-                fetchPromises.push(
-                    (function (layer) {
-                        return fetch(parsed_url)
-                            .then(response => response.json())
-                            .then(data => {
-                                var feature = data.features[0];
-                                if (feature !== undefined) {
-                                    popupContent +=
-                                        "<tr><td>Custom ID</td><td class='popup-table-value'>" + layer.layer_data["custom_id"] + "</td></tr>" +
-                                        "<tr><td>Name</td><td class='popup-table-value'>" + layer.layer_data["name"] + "</td></tr>" +
-                                        "<tr><td>Geoserver workspace</td><td class='popup-table-value'>" + layer.layer_data["geoserver_workspace"] + "</td></tr>" +
-                                        "<tr><td>Geoserver service</td><td class='popup-table-value'>" + layer.layer_data["geoserver_service"] + "</td></tr>" +
-                                        "<tr><td>Geoserver format</td><td class='popup-table-value'>" + layer.layer_data["geoserver_format"] + "</td></tr>" +
-                                        "<tr><td>Geoserver transparent</td><td class='popup-table-value'>" + layer.layer_data["geoserver_transparent"] + "</td></tr>" +
-                                        "<tr><td>Información Adicional</td><td class='popup-table-value'><ol style='margin-top: 1px; margin-bottom: 1px; list-style-type: disc;'><li style='margin-left: 1px; margin-right: 1px; margin-top: 6px; margin-bottom: 6px;'>" + info_adicional.prueba1 + "</li></ol></td></tr>";
-                                }
-                            });
-                    })(layer)
-                );
+        for (const layer of activeLayers) {
+            var url = getFeatureInfoUrl(
+                map,
+                layer.layer_object,
+                e.latlng,
+                { "info_format": "application/json" }
+            );
+
+            try {
+                const response = await fetch(parse_url(url));
+                const data = await response.json();
+
+                if (data.features && data.features.length > 0) {
+                    var feature = data.features[0];
+                    var properties = feature.properties;
+                    var firstKey = Object.keys(properties)[0];
+                    var firstValue = properties[firstKey];
+
+                    popupContent +=
+                        "<tr><td>Nombre de la Capa</td><td class='popup-table-value'>" + layer.layer_data["name"] + "</td></tr>" +
+                        "<tr><td>" + firstKey + "</td><td class='popup-table-value'>" + firstValue + "</td></tr>";
+
+                    popupContent += "</table></div>";
+
+                    // Show highlight in red
+                    selectionLayer = L.geoJSON(data, {
+                        style: function () {
+                            return {
+                                color: "red",
+                                weight: 2,
+                                fillColor: "red",
+                                fillOpacity: 0.4
+                            };
+                        }
+                    }).addTo(map);
+
+                    L.popup()
+                        .setLatLng(e.latlng)
+                        .setContent(popupContent)
+                        .openOn(map);
+
+                    foundFeature = true;
+                    break; // Stop at the first (highest) layer that has a feature
+                }
+            } catch (err) {
+                console.warn("Error fetching feature info for layer:", layer.layer_data.name, err);
             }
-        });
+        }
 
-        Promise.all(fetchPromises).then(() => {
-            popupContent += "</table></div>";
-
-            L.popup()
-                .setLatLng(e.latlng)
-                .setContent(popupContent)
-                .openOn(map);
-        });
+        // No popup is shown if no feature was found (foundFeature remains false)
     });
 
     // Event delegation for the image clicks
