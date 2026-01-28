@@ -142,10 +142,12 @@ def process_uploaded_shapefiles(app, user_id):
     # Publish to GeoServer if any tables were processed
     if processed_tables:
         try:
-            # Get GeoServer configuration, allow env override for containerized deployments
-            geoserver_config_ = get_geoserver_config(db_session)
-            # Prefer GEOSERVER_PUBLIC_URL env var if provided; otherwise fall back to DB value
-            geoserver_url = os.getenv("GEOSERVER_PUBLIC_URL") or geoserver_config_[0].url
+            # Get GeoServer configuration for internal Docker communication
+            # Use GEOSERVER_HOST and GEOSERVER_PORT for backend-to-backend calls
+            # (GEOSERVER_PUBLIC_URL is for browser access only)
+            geoserver_host = os.getenv("GEOSERVER_HOST", "http://geoportal-geoserver")
+            geoserver_port = os.getenv("GEOSERVER_PORT", "8080")
+            geoserver_url = f"{geoserver_host}:{geoserver_port}/geoserver"
             # Normalize: remove trailing slash
             if geoserver_url.endswith('/'):
                 geoserver_url = geoserver_url[:-1]
