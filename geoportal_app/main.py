@@ -1,5 +1,7 @@
 import os, shutil, pdb
 import requests
+import json
+import geopandas as gpd
 from sqlalchemy import text
 import psycopg2
 from psycopg2 import OperationalError
@@ -464,6 +466,48 @@ def upload_files():
         flash('No valid shapefiles were found in the upload')
     
     return redirect(url_for("index_leaflet"))
+
+@app.route('/download_layer/<layer_name>')
+@login_required
+def download_layer(layer_name):
+    try:
+        # Validate layer_name to prevent SQL injection or path traversal
+        if not layer_name or not layer_name.isalnum() and not '_' in layer_name:
+             flash("Invalid layer name", "error")
+             return redirect(url_for("index_leaflet"))
+
+        # Setup DB connection
+        POSTGRES_DB_TYPE     = os.getenv("POSTGRES_DB_TYPE")
+        POSTGRES_DB_HOST     = os.getenv("POSTGRES_DB_HOST")
+        POSTGRES_DB_NAME     = os.getenv("POSTGRES_DB_NAME")
+        POSTGRES_DB_USER     = os.getenv("POSTGRES_DB_USER")
+        POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+        POSTGRES_DB_PORT     = os.getenv("POSTGRES_DB_PORT")
+        
+        db_url = f"{POSTGRES_DB_TYPE}://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
+        con = create_engine(db_url)
+        
+        # Check if table exists (in 'vectors' schema)
+        sql = f"SELECT * FROM vectors.{layer_name}"
+        
+        # Read PostGIS layer -> GeoDataFrame
+        gdf = gpd.read_postgis(sql, con, geom_col='geometry')
+        
+        # Drop internal columns if present
+        cols_to_drop = ['id', 'user_id', 'geoserver_workspace', 'geoserver_service', 'geoserver_format', 'geoserver_transparent']
+        for col in cols_to_drop:
+            if col in gdf.columns:
+                gdf = gdf.drop(columns=[col])
+                
+        # Return as JSON
+        response = jsonify(json.loads(gdf.to_json()))
+        response.headers["Content-Disposition"] = f"attachment; filename={layer_name}.json"
+        return response
+
+    except Exception as e:
+        print(f"Error downloading layer {layer_name}: {e}")
+        flash(f"Error downloading layer: {e}", "error")
+        return redirect(url_for("index_leaflet"))
 
 @app.after_request
 def add_security_headers(response):
