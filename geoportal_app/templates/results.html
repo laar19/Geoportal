@@ -1,5 +1,5 @@
 {% for layer in result %}
-<div class="info-layer">
+<div class="info-layer" data-layer-name="{{ layer.name }}">
     <div class="header-layer">
         <div class="left-section">
             <span class="name-ly toggle-ly">
@@ -10,11 +10,15 @@
                 data-name="{{ layer.name }}" title="Descargar GeoJSON" style="margin-left: 0.5rem; color: white;">
                 <i class="fas fa-download"></i>
             </a>
+            <button class="customize-layer-btn" data-layer="{{ layer.custom_id }}" title="Personalizar estilo">
+                <i class="fas fa-palette"></i>
+            </button>
         </div>
         <div class="image-to-layer" title="Preview">
-            <img id={{layer.name}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"]
-                + "/reflect?layers=" + ":" + layer.name}} width="30" height="30" alt="Imagen">
-            <div class="overlay-to-layer"><i id={{layer.name}}-layer-eye class="fas fa-eye"></i></div>
+            <img id="{{ layer.custom_id }}"
+                src="{{ geoserver_config['geoserver_url'] + '/' + geoserver_config['service'] + '/reflect?layers=' + ':' + layer.name }}"
+                width="30" height="30" alt="Imagen">
+            <div class="overlay-to-layer"><i id="{{ layer.custom_id }}-layer-eye" class="fas fa-eye"></i></div>
         </div>
     </div>
     <div class="contenido">
@@ -27,8 +31,9 @@
         </div>
         <div>
             <p>
-                <img id={{layer.name}} src={{geoserver_config["geoserver_url"] + "/" + geoserver_config["service"]
-                    + "/reflect?layers=" + ":" + layer.name}} width="100" height="100">
+                <img id="{{ layer.custom_id }}"
+                    src="{{ geoserver_config['geoserver_url'] + '/' + geoserver_config['service'] + '/reflect?layers=' + ':' + layer.name }}"
+                    width="100" height="100">
             </p>
         </div>
     </div>

@@ -52,6 +52,14 @@ function show_raster_info(map, geoserver_config, layers, error) {
     // Add a layer visibility tracker
     var layerVisibility = {};
 
+    // Initialize Layer Customizer
+    var layerCustomizer = null;
+    if (typeof LayerCustomizer !== 'undefined') {
+        layerCustomizer = new LayerCustomizer(map, geoserver_config);
+        layerCustomizer.init();
+        window.layerCustomizer = layerCustomizer; // Expose globally for debugging
+    }
+
     // Check if layers exist and is not null/undefined
     if (!layers || Object.keys(layers).length === 0) {
         console.log("No layers provided or layers object is empty");
@@ -89,7 +97,26 @@ function show_raster_info(map, geoserver_config, layers, error) {
 
         // Initialize all layers as visible
         layerVisibility[layers[key]["custom_id"]] = true;
+
+        // Register layer with customizer
+        if (layerCustomizer) {
+            layerCustomizer.registerWMSLayer(layers[key]["custom_id"], wmsLayer, layers[key]);
+        }
     }
+
+    // Event delegation for customize button clicks
+    $(document).on("click", ".customize-layer-btn", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var layerName = $(this).data("layer");
+        if (layerCustomizer && layerName) {
+            // Try to detect geometry type from last clicked feature or default to Polygon
+            var geometryType = window._lastGeometryType || 'Polygon';
+            var layerData = layers[layerName] || {};
+            layerCustomizer.selectLayer(layerName, layerData, geometryType);
+        }
+    });
 
     var info_adicional = {
         prueba1: "Hola todos",
@@ -133,6 +160,12 @@ function show_raster_info(map, geoserver_config, layers, error) {
                     var firstKey = Object.keys(properties)[0];
                     var firstValue = properties[firstKey];
 
+                    // Store geometry type for layer customizer
+                    if (feature.geometry && feature.geometry.type) {
+                        window._lastGeometryType = feature.geometry.type;
+                        window._lastClickedLayerName = layer.layer_data["name"];
+                    }
+
                     popupContent +=
                         "<tr><td>Nombre de la Capa</td><td class='popup-table-value'>" + layer.layer_data["name"] + "</td></tr>" +
                         "<tr><td>" + firstKey + "</td><td class='popup-table-value'>" + firstValue + "</td></tr>";
@@ -145,7 +178,7 @@ function show_raster_info(map, geoserver_config, layers, error) {
                             return {
                                 color: "red",
                                 weight: 2,
-                                fillColor: "red",
+                                fillColor: "lightblue",
                                 fillOpacity: 0.4
                             };
                         }
@@ -170,6 +203,15 @@ function show_raster_info(map, geoserver_config, layers, error) {
     // Event delegation for the image clicks
     $(document).on("click", ".image-to-layer img", function () {
         var customId = $(this).attr("id");
+
+        // Check for customized layer first
+        if (window.layerCustomizer && window.layerCustomizer.hasActiveOverlay(customId)) {
+            var isVisible = window.layerCustomizer.toggleLayerVisibility(customId);
+            layerVisibility[customId] = isVisible;
+            updateLayerUI(); // Refresh UI to match new state
+            return;
+        }
+
         var layer = map_layers_dict[customId];
         toggleLayerAndTrackState(customId + "-layer-eye", layer, map, "div_" + customId, layerVisibility);
     });
@@ -177,6 +219,15 @@ function show_raster_info(map, geoserver_config, layers, error) {
     // Event delegation for the eye icon clicks
     $(document).on("click", ".overlay-to-layer", function () {
         var customId = $(this).siblings("img").attr("id");
+
+        // Check for customized layer first
+        if (window.layerCustomizer && window.layerCustomizer.hasActiveOverlay(customId)) {
+            var isVisible = window.layerCustomizer.toggleLayerVisibility(customId);
+            layerVisibility[customId] = isVisible;
+            updateLayerUI(); // Refresh UI to match new state
+            return;
+        }
+
         var layer = map_layers_dict[customId];
         toggleLayerAndTrackState(customId + "-layereye", layer, map, "div_" + customId, layerVisibility);
     });

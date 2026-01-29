@@ -223,3 +223,259 @@
 .connection-indicators .dot.fail {
     background: #dc3545; /* red */
 }
+
+/* ====================================
+   Layer Customization Panel Styles
+   ==================================== */
+
+.layer-customization-panel {
+    background: #fff;
+    border-radius: 8px;
+    margin: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.customizer-header {
+    background: #0c275a;
+    color: #fff;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.customizer-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.customizer-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.customizer-close:hover {
+    opacity: 1;
+}
+
+.customizer-body {
+    padding: 15px;
+}
+
+.customizer-group {
+    margin-bottom: 15px;
+}
+
+.customizer-group:last-child {
+    margin-bottom: 0;
+}
+
+.customizer-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.customizer-group label i {
+    color: #0c275a;
+    width: 16px;
+    text-align: center;
+}
+
+.customizer-group label span {
+    margin-left: auto;
+    font-weight: 600;
+    color: #0c275a;
+    background: #e5e8f7;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Slider styling */
+.customizer-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e5e8f7;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.customizer-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #0c275a;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.customizer-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.customizer-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #0c275a;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Color picker row */
+.color-picker-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Color swatch grid */
+.color-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+}
+
+.color-swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 2px solid transparent;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+.color-swatch.selected {
+    border-color: #0c275a;
+    box-shadow: 0 0 0 2px #2493dd;
+}
+
+/* Hex input */
+.hex-input-group {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 10px;
+    height: 36px;
+}
+
+.hex-input-group span {
+    color: #666;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.hex-input {
+    border: none;
+    background: transparent;
+    padding: 8px 5px;
+    font-size: 14px;
+    font-family: monospace;
+    text-transform: uppercase;
+    width: 80px;
+    outline: none;
+}
+
+.hex-input:focus {
+    color: #0c275a;
+}
+
+/* Footer buttons */
+.customizer-footer {
+    display: flex;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+.customizer-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.customizer-btn-primary {
+    background: #0c275a;
+    color: #fff;
+}
+
+.customizer-btn-primary:hover {
+    background: #2493dd;
+}
+
+.customizer-btn-secondary {
+    background: #fff;
+    color: #0c275a;
+    border: 1px solid #0c275a;
+}
+
+.customizer-btn-secondary:hover {
+    background: #e5e8f7;
+}
+
+/* Customize button in layer header */
+.customize-layer-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 5px 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.customize-layer-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.customize-layer-btn i {
+    font-size: 14px;
+}
+
+/* Layer customization container in sidebar */
+#layer-customization-container {
+    margin-top: 10px;
+}
