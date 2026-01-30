@@ -1,16 +1,10 @@
 import os
-
 import geopandas as gpd
-
 from pathlib import Path
-
 from glob import glob
-
 from sqlalchemy       import create_engine, Column, MetaData, Table, text, insert
 from sqlalchemy.types import VARCHAR
-
 from dotenv import load_dotenv
-
 from app.models.vectors_table import *
 
 # Load environment variables
