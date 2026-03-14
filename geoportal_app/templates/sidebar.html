@@ -1,0 +1,131 @@
+<!-- SIDEBAR LEFT -->
+<div id="sidebar" class="sidebar collapsed">
+    <!-- Nav tabs -->
+    <div class="sidebar-tabs">
+        <ul role="tablist">
+            <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
+            <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
+            <li id="information"><a href="#informacion" role="tab"><i class="fa-solid fa-circle-info"
+                        style="color: #ffffff;"></i></a></li>
+            <!--
+                <li><a href="#orbita" role="tab"><i class="fa-solid fa-solar-panel"></i></a></li>
+                <li><a href="#escena" role="tab"><i class="fa-solid fa-fingerprint"></i></a></li>
+                <li><a href="#fecha" role="tab"><i class="fa-regular fa-calendar"></i></a></li>
+                <li><a href="#roll" role="tab"><i class="fa-solid fa-compass-drafting"></i></a></li>
+                <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
+                -->
+            <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i
+                        class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
+
+        </ul>
+        <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
+        <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
+            <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
+            <span id="gs-dot" class="dot {{ 'ok' if GEOSERVER_OK else 'fail' }}"></span>
+        </div>
+    </div>
+
+    <!-- About Us Modal -->
+    <div id="aboutm" class="modals">
+        <div class="modals-content">
+            <div class="modals-header">
+                <b>Acerca de Nosotros</b>
+                <span class="closes">&times;</span>
+            </div>
+            <hr>
+            <div class="modals-body">
+                <p class="texto"><b>What is Lorem Ipsum?</b></p>
+                <p class="texto">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
+                    Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer
+                    took a galley of type and scrambled it to make a type specimen book. It has survived not only
+                    five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                    It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+                    passages, and more recently with desktop publishing software like Aldus PageMaker including
+                    versions of Lorem Ipsum.</p>
+                <p class="texto"><b>Where does it come from?</b></p>
+                <p class="texto">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in
+                    a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard
+                    McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more
+                    obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the
+                    word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections
+                    1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by
+                    Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during
+                    the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a
+                    line in section 1.10.32.</p>
+                <p class="texto">The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for
+                    those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero
+                    are also reproduced in their exact original form, accompanied by English versions from the 1914
+                    translation by H. Rackham.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="sidebar-content">
+        <div class="sidebar-pane" id="satelite">
+            <h1 class="sidebar-header">Herramientas<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+            <br>
+            <!-- Tool Buttons -->
+            <div class="herramientas-buttons">
+                <button id="btn-medir-distancia" class="btn-herramienta">
+                    <i class="fa-solid fa-ruler"></i> Medir Distancia
+                </button>
+                <button id="btn-medir-area" class="btn-herramienta">
+                    <i class="fa-solid fa-draw-polygon"></i> Medir Área
+                </button>
+                <button id="btn-coordenadas" class="btn-herramienta">
+                    <i class="fa-solid fa-location-crosshairs"></i> Mostrar Coordenadas
+                </button>
+                <button id="btn-dibujo-libre" class="btn-herramienta">
+                    <i class="fa-solid fa-pencil"></i> Dibujo Libre
+                </button>
+                <button id="btn-vectorizacion" class="btn-herramienta">
+                    <i class="fa-solid fa-vector-square"></i> Vectorización
+                </button>
+            </div>
+            <!-- Container for dynamic tool controls -->
+            <div id="herramientas-controls"></div>
+        </div>
+
+
+        <div class="sidebar-pane" id="sensor">
+            <div class="upload-container">
+                <h2>&nbsp;&nbsp;Subir Shapefiles</h2>
+                <br>
+                <p>Seleccionar todos los componentes del Shapefile<strong>(.shp, .dbf, .shx, .prj files)</strong>
+                </p>
+
+
+                <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input class="file" type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory
+                        directory>
+                    <br>
+                    <button class="submit" type="submit">Subir y convertir a GeoJSON</button>
+                </form>
+            </div>
+        </div>
+        <div class="sidebar-pane" id="informacion">
+            <h1 class="sidebar-header">
+                Información
+                <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+            {% if layers != False %}
+
+            <div class="content-layers-info">
+                {{ pagination.info|safe }}
+                <div id="results-container">
+                    {% include "results.html" %}
+                </div>
+                <div id="pagination-container">
+                    {{ pagination.links|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Layer Customization Panel Container -->
+            <div id="layer-customization-container"></div>
+        </div>
+    </div>
+</div>

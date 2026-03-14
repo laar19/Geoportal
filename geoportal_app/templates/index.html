@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geoportal</title>
-    
+
     <!-- FUENTE -->
     <link rel="stylesheet" href="{{ url_for('static', filename='fonts/poppins.css') }}">
 
@@ -13,33 +14,43 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 
     <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- LIBRERIA DE BOTONES BOOTSTRAP -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- LIBERERIA DE BOTONES FONT-AWESOME -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Font Awesome JS -->
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+        integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+        crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+        integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+        crossorigin="anonymous"></script>
+    <!-- SORTABLE JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
     <!-- LEAFLET -->
-     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/> -->
-     
-     <!-- Make sure you put this AFTER Leaflet's CSS -->
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-     <!-- AREA SELECTION PLUGIN -->
-     <link rel="stylesheet" href="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.css" />
-     <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
+    <!-- AREA SELECTION PLUGIN -->
+    <link rel="stylesheet" href="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.css" />
+    <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"
+        integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <!-- BUSCADOR LEAFLET -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" /> -->
 
@@ -55,232 +66,88 @@
     <!-- CUSTOM SIDEBAR-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/message_flashing.css') }}">
+    <!-- HERRAMIENTAS TOOLS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/herramientas.css') }}">
 </head>
+
 <body>
-    
+
     <div id="alert-container">
-        {% with messages = get_flashed_messages(with_categories=true) %}  {% if messages %}
-                {% for category, message in messages %}  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <script>
-                        setTimeout(function() {
-                            const alertElements = document.querySelectorAll('.alert'); // Select all alerts
-                            alertElements.forEach(alertElement => {
-                                new bootstrap.Alert(alertElement).close();
-                            });
-                        }, 3000);
-                    </script>
-                {% endfor %}
-            {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+        {% for category, message in messages %} <div class="alert alert-{{ category }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <script>
+            setTimeout(function () {
+                const alertElements = document.querySelectorAll('.alert'); // Select all alerts
+                alertElements.forEach(alertElement => {
+                    new bootstrap.Alert(alertElement).close();
+                });
+            }, 3000);
+        </script>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
     </div>
-    
-    <!-- SIDEBAR LEFT -->
-    <div id="sidebar" class="sidebar collapsed">
-        <!-- Nav tabs -->
-        <div class="sidebar-tabs">
-            <ul role="tablist">
-                <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
-                <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
-                <li id="information"><a href="#informacion" role="tab"><i class="fa-solid fa-circle-info" style="color: #ffffff;"></i></a></li>
-                <!--
-                <li><a href="#orbita" role="tab"><i class="fa-solid fa-solar-panel"></i></a></li>
-                <li><a href="#escena" role="tab"><i class="fa-solid fa-fingerprint"></i></a></li>
-                <li><a href="#fecha" role="tab"><i class="fa-regular fa-calendar"></i></a></li>
-                <li><a href="#roll" role="tab"><i class="fa-solid fa-compass-drafting"></i></a></li>
-                <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
-                -->
-                <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
-                 
-            </ul>
-            <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
-            <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
-                <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
-                <span id="gs-dot" class="dot {{ 'ok' if GEOSERVER_OK else 'fail' }}"></span>
-            </div>
-        </div>
 
-        <!-- About Us Modal -->
-        <div id="aboutm" class="modals">
-            <div class="modals-content">
-                <div class="modals-header">
-                    <b>Acerca de Nosotros</b>
-                    <span class="closes">&times;</span>
-                </div>
-                <hr>
-                <div class="modals-body">  
-                    <p class="texto"><b>What is Lorem Ipsum?</b></p>
-                    <p class="texto">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-                    <p class="texto"><b>Where does it come from?</b></p>
-                    <p class="texto">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
-                    <p class="texto">The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab panes -->
-        <div class="sidebar-content">
-            <div class="sidebar-pane" id="satelite">
-                <h1 class="sidebar-header">Avanzado<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <h1 class="sidebar-header">Satélite<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <select id="select_satellite" name="select_satellite" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                    <option value="ALL">ALL</option>
-                    <option value="VRSS-1">VRSS-1</option>
-                    <option value="VRSS-2">VRSS-2</option>
-                </select>
-            <!--/div -->
-
-            <!-- div class="sidebar-pane" id="sensor" -->
-                <br>
-                <h1 class="sidebar-header">Sensor<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="sensor_pan" name="sensor_pan" value="PAN">
-                    <label class="form-check-label" for="sensor_pan">PAN</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="sensor_mss" name="sensor_mss" value="MSS">
-                    <label class="form-check-label" for="sensor_mss">MSS</label>
-                </div>
-            <!-- /div -->
-
-            <!-- /div -->
-
-            <!-- div class="sidebar-pane" id="orbita" -->
-                <br>
-                <br>
-                <h1 class="sidebar-header">Órbita<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <input id="orbit_" class="form-control form-control-sm" type="text" placeholder="Ingrese Orbita">
-            <!-- /div -->
-
-            <!-- div class="sidebar-pane" id="escena" -->
-                <br>
-                <h1 class="sidebar-header">Escena ID<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <input id="scene_" class="form-control form-control-sm" type="text" placeholder="Ingrese Scena ID">
-            <!-- /div -->
-
-            <!-- div class="sidebar-pane" id="fecha" -->
-                <br>
-                <h1 class="sidebar-header">Rango de Fecha<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Inicio</label>
-                    <input id="start_date_" type="date" class="form-control">
-                    <br>
-                    <label for="exampleInputEmail1" class="form-label">Fin</label>
-                    <input id="end_date_" type="date" class="form-control">
-                </div>
-            <!-- /div -->
-
-            <!-- div class="sidebar-pane" id="roll" -->
-                <br>
-                <h1 class="sidebar-header">Roll<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <label for="" class="form-label">Roll Max</label>
-                <input id="roll_angle_" type="range" min="0" max="35" step="1" class="form-range">
-                <p>Value: <output id="roll_angle_value"></output></p>
-            <!-- /div -->
-
-            <!-- div class="sidebar-pane" id="nubosidad" -->
-                <br>
-                <h1 class="sidebar-header">% Nubosidad<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-                <br>
-                <label for="" class="form-label">Maximum permitted</label>
-                <input id="cloud_percentage_" type="range" min="0" max="100" step="1" class="form-range">
-                <p>Value: <output id="cloud_percentage_value"></output></p>
-                <!-- button type="button" class="btn btn-primary">Enviar</button -->
-            </div>
-            <div class="sidebar-pane" id="sensor">
-                <div class="upload-container">
-                    <h2>&nbsp;&nbsp;Subir Shapefiles</h2>
-                    <br>
-                    <p>Seleccionar todos los componentes del Shapefile<strong>(.shp, .dbf, .shx, .prj files)</strong></p>
-
-                    
-                    <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input class="file" type="file" name="files[]" multiple accept=".shp,.dbf,.shx,.prj" webkitdirectory directory>
-                        <br>
-                        <button class="submit" type="submit">Subir y convertir a GeoJSON</button>
-                    </form>
-                </div>
-            </div>
-            <div class="sidebar-pane" id="informacion">
-                <h1 class="sidebar-header">
-                    Información
-                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-                </h1>
-                {% if layers != False %}
-
-                <div class="content-layers-info">
-                    {{ pagination.info|safe }}
-                    <div id="results-container">
-                        {% include "results.html" %} 
-                    </div>
-                    <div id="pagination-container">
-                        {{ pagination.links|safe }}
-                    </div>      
-                </div> 
-                {% endif %}               
-            </div>
-        </div>
-    </div>
+    {% include 'sidebar.html' %}
 
     <div id="map" class="sidebar-map"></div>
 
     <!-- Inject Leaflet config from backend -->
     <script>
-        window.LEAFLET_TILE_URL = {{ LEAFLET_TILE_URL|tojson }};
-        window.LEAFLET_ATTRIBUTION = {{ LEAFLET_ATTRIBUTION|tojson }};
-        window.LEAFLET_MIN_ZOOM = {{ LEAFLET_MIN_ZOOM|tojson }};
+        window.LEAFLET_TILE_URL = {{ LEAFLET_TILE_URL | tojson }};
+        window.LEAFLET_ATTRIBUTION = {{ LEAFLET_ATTRIBUTION | tojson }};
+        window.LEAFLET_MIN_ZOOM = {{ LEAFLET_MIN_ZOOM | tojson }};
         // Health flags
-        window.DB_OK = {{ DB_OK|tojson }};
-        window.GEOSERVER_OK = {{ GEOSERVER_OK|tojson }};
+        window.DB_OK = {{ DB_OK | tojson }};
+        window.GEOSERVER_OK = {{ GEOSERVER_OK | tojson }};
         // Additional base layers
-        window.LEAFLET_ESRI_URL = {{ LEAFLET_ESRI_URL|tojson }};
-        window.LEAFLET_ESRI_ATTRIBUTION = {{ LEAFLET_ESRI_ATTRIBUTION|tojson }};
-        window.LEAFLET_TERRAIN_URL = {{ LEAFLET_TERRAIN_URL|tojson }};
-        window.LEAFLET_TERRAIN_ATTRIBUTION = {{ LEAFLET_TERRAIN_ATTRIBUTION|tojson }};
-        window.LEAFLET_DARK_URL = {{ LEAFLET_DARK_URL|tojson }};
-        window.LEAFLET_DARK_ATTRIBUTION = {{ LEAFLET_DARK_ATTRIBUTION|tojson }};
-        window.LEAFLET_DARK_SUBDOMAINS = {{ LEAFLET_DARK_SUBDOMAINS|tojson }};
+        window.LEAFLET_ESRI_URL = {{ LEAFLET_ESRI_URL | tojson }};
+        window.LEAFLET_ESRI_ATTRIBUTION = {{ LEAFLET_ESRI_ATTRIBUTION | tojson }};
+        window.LEAFLET_TERRAIN_URL = {{ LEAFLET_TERRAIN_URL | tojson }};
+        window.LEAFLET_TERRAIN_ATTRIBUTION = {{ LEAFLET_TERRAIN_ATTRIBUTION | tojson }};
+        window.LEAFLET_DARK_URL = {{ LEAFLET_DARK_URL | tojson }};
+        window.LEAFLET_DARK_ATTRIBUTION = {{ LEAFLET_DARK_ATTRIBUTION | tojson }};
+        window.LEAFLET_DARK_SUBDOMAINS = {{ LEAFLET_DARK_SUBDOMAINS | tojson }};
     </script>
     <div>
         <form id="search" method="GET" action="/search">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" id="satellite"        name="satellite"        value="">
-            <input type="hidden" id="pan"              name="pan"              value="">
-            <input type="hidden" id="mss"              name="mss"              value="">
-            <input type="hidden" id="orbit"            name="orbit"            value="">
-            <input type="hidden" id="scene"            name="scene"            value="">
-            <input type="hidden" id="start_date"       name="start_date"       value="">
-            <input type="hidden" id="end_date"         name="end_date"         value="">
-            <input type="hidden" id="roll_angle"       name="roll_angle"       value="">
+            <input type="hidden" id="satellite" name="satellite" value="">
+            <input type="hidden" id="pan" name="pan" value="">
+            <input type="hidden" id="mss" name="mss" value="">
+            <input type="hidden" id="orbit" name="orbit" value="">
+            <input type="hidden" id="scene" name="scene" value="">
+            <input type="hidden" id="start_date" name="start_date" value="">
+            <input type="hidden" id="end_date" name="end_date" value="">
+            <input type="hidden" id="roll_angle" name="roll_angle" value="">
             <input type="hidden" id="cloud_percentage" name="cloud_percentage" value="">
-            <input type="hidden" id="coordinates"   name="coordinates"   value="">
-            <input type="hidden" id="zoom_level"    name="zoom_level"    value="">
-            <input type="hidden" id="center"        name="center"        value="">
+            <input type="hidden" id="coordinates" name="coordinates" value="">
+            <input type="hidden" id="zoom_level" name="zoom_level" value="">
+            <input type="hidden" id="center" name="center" value="">
             <input type="hidden" id="search_status" name="search_status" value="False">
         </form>
     </div>
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
     <!-- Popper.JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
 
     <!-- BOOTSTRAP -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 
     <script>
-        var map_config = {{ map_config|tojson }};
+        var map_config = {{ map_config| tojson }};
 
         $("#coordinates").val(map_config["coordinates"])
         $("#zoom_level").val(map_config["zoom_level"])
@@ -294,31 +161,34 @@
     <script src="{{ url_for('static', filename='js/leaflet/leaflet-sidebar.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/leaflet/L.cascadeButtons.js') }}"></script>
-    
+
     <script src="{{ url_for('static', filename='js/leaflet/draw_control.js') }}"></script>
-    
+
     <script src="{{ url_for('static', filename='js/leaflet/functions.js') }}"></script>
-    
+
+    <!-- LAYER CUSTOMIZER -->
+    <script src="{{ url_for('static', filename='js/leaflet/layer-customizer.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/leaflet/show_raster_info.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <!-- CUSTOM SIDEBAR -->
     <script src="{{ url_for('static', filename='js/leaflet/custom-sidebar.js') }}"></script>
-    
+
     <!-- BUSCADOR LEAFLET -->
     <!-- script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script -->
 
     <!-- MODAL -->
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-    
+
     <!-- ACTIVAR INF AL BUSCAR -->
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 
     <script>
-        var geoserver_config = {{ geoserver_config|tojson }};
-        var layers           = {{ layers|tojson }};
-        var error_           = {{ error_|tojson }};
+        var geoserver_config = {{ geoserver_config| tojson }};
+        var layers = {{ layers| tojson }};
+        var error_ = {{ error_| tojson }};
 
         // Helper to toggle the GS indicator dot
         function setGsDot(ok) {
@@ -327,11 +197,11 @@
                 if (!dot) return;
                 dot.classList.remove('ok', 'fail');
                 dot.classList.add(ok ? 'ok' : 'fail');
-            } catch(_) {}
+            } catch (_) { }
         }
 
         // After initial render, ping backend health and decide what to do
-        (function(){
+        (function () {
             // If backend already told us it's down explicitly, skip ping
             if (typeof window.GEOSERVER_OK !== 'undefined' && window.GEOSERVER_OK === false) {
                 setGsDot(false);
@@ -343,64 +213,72 @@
             // Otherwise, check health in the background
             try {
                 fetch('{{ url_for("health_geoserver", _external=True) }}', { credentials: 'same-origin' })
-                    .then(function(r){ return r.json(); })
-                    .then(function(data){
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
                         var ok = !!(data && data.ok);
                         if (ok) {
                             setGsDot(true);
-                            try { show_raster_info(map, geoserver_config, layers, error_); } catch(e) { console.warn('show_raster_info failed:', e); }
+                            try { show_raster_info(map, geoserver_config, layers, error_); } catch (e) { console.warn('show_raster_info failed:', e); }
                             return;
                         }
 
                         // Backend cannot reach GeoServer; try a browser-side fallback using public URL
                         try {
-                            var PUB = {{ GEOSERVER_PUBLIC_URL|tojson }};
-                            if (PUB && typeof PUB === 'string') {
-                                var base = PUB.replace(/\/$/, '');
-                                // Try both variants depending on whether PUB already contains /geoserver
-                                var candidates = [
-                                    base + '/wms?service=WMS&request=GetCapabilities',
-                                    base + '/geoserver/wms?service=WMS&request=GetCapabilities'
-                                ];
-                                var tried = 0, success = false;
-                                candidates.forEach(function(url){
-                                    fetch(url, { mode: 'no-cors' })
-                                        .then(function(){
-                                            if (!success) {
-                                                success = true;
-                                                setGsDot(true);
-                                                try { show_raster_info(map, geoserver_config, layers, error_); } catch(e) { console.warn('show_raster_info failed:', e); }
-                                            }
-                                        })
-                                        .catch(function(){
-                                            tried += 1;
-                                            if (tried >= candidates.length && !success) {
-                                                setGsDot(false);
-                                                if (typeof showNonBlockingAlert === 'function') {
-                                                    showNonBlockingAlert('GeoServer is unavailable from the server. If you can reach it in your browser, data requests may still fail until server connectivity is fixed.', 'warning');
-                                                }
-                                            }
-                                        });
-                                });
-                                return;
-                            }
-                        } catch(_) {}
-
-                        // Final fallback: mark as down
-                        setGsDot(false);
-                        if (typeof showNonBlockingAlert === 'function') {
-                            showNonBlockingAlert('GeoServer is unavailable. Layers could not be loaded.', 'warning');
-                        }
-                    })
-                    .catch(function(){
-                        setGsDot(false);
+                            var PUB = {{ GEOSERVER_PUBLIC_URL| tojson
+                        }};
+                if (PUB && typeof PUB === 'string') {
+                    var base = PUB.replace(/\/$/, '');
+                    // Try both variants depending on whether PUB already contains /geoserver
+                    var candidates = [
+                        base + '/wms?service=WMS&request=GetCapabilities',
+                        base + '/geoserver/wms?service=WMS&request=GetCapabilities'
+                    ];
+                    var tried = 0, success = false;
+                    candidates.forEach(function (url) {
+                        fetch(url, { mode: 'no-cors' })
+                            .then(function () {
+                                if (!success) {
+                                    success = true;
+                                    setGsDot(true);
+                                    try { show_raster_info(map, geoserver_config, layers, error_); } catch (e) { console.warn('show_raster_info failed:', e); }
+                                }
+                            })
+                            .catch(function () {
+                                tried += 1;
+                                if (tried >= candidates.length && !success) {
+                                    setGsDot(false);
+                                    if (typeof showNonBlockingAlert === 'function') {
+                                        showNonBlockingAlert('GeoServer is unavailable from the server. If you can reach it in your browser, data requests may still fail until server connectivity is fixed.', 'warning');
+                                    }
+                                }
+                            });
                     });
-            } catch(e) {
-                setGsDot(false);
+                    return;
+                }
+            } catch (_) { }
+
+            // Final fallback: mark as down
+            setGsDot(false);
+            if (typeof showNonBlockingAlert === 'function') {
+                showNonBlockingAlert('GeoServer is unavailable. Layers could not be loaded.', 'warning');
             }
-        })();
+        })
+            .catch(function () {
+                setGsDot(false);
+            });
+            } catch (e) {
+            setGsDot(false);
+        }
+        }) ();
     </script>
-    
+
     <script src="{{ url_for('static', filename='js/pagination-fix.js') }}"></script>
+
+    <!-- HERRAMIENTAS TOOLS -->
+    <script src="{{ url_for('static', filename='js/herramientas/leaflet.measure.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/herramientas/Control.Coordinates.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/herramientas/vector-creator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/herramientas/herramientas-tools.js') }}"></script>
 </body>
+
 </html>
