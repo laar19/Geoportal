@@ -58,10 +58,14 @@
 }
 
 .sidebar-tabs {
+  position: absolute !important;
   top: 0;
   bottom: 0;
+  right: 0 !important;
   height: 100%;
-  background-color: #040f1bb3; 
+  width: 40px;
+  background-color: #040f1bb3;
+  z-index: 10; /* Ensure icons are above white background */
 }
   
 .sidebar-left .sidebar-tabs {
@@ -86,12 +90,14 @@
   align-items: center;
 }
 
-/* Ensure icons are visually aligned to right edge */
+/* Ensure icons are visually aligned to right edge - PEGADOS A LA DERECHA */
 .sidebar-right .sidebar-tabs i,
 .sidebar-right .sidebar-tabs .fa,
 .sidebar-right .sidebar-tabs [class*="icon"] {
   margin-left: auto;
-  margin-right: 10px; /* Space from right edge */
+  margin-right: 0 !important; /* PEGADO al borde derecho */
+  position: relative;
+  right: 0;
 }
 
 .sidebar-tabs, .sidebar-tabs > ul {
@@ -153,7 +159,8 @@
   bottom: 0;
   background-color: rgba(255, 255, 255, 0.95); /* Original white background */
   overflow-x: hidden;
-  overflow-y: auto; 
+  overflow-y: auto;
+  z-index: 1; /* Lower than icons (z-index: 10) */
 }
 
 .sidebar-left .sidebar-content {
