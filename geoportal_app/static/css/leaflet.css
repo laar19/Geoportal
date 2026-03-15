@@ -131,7 +131,7 @@
 
 .leaflet-control {
 	position: relative;
-	z-index: 800;
+	z-index: 2500; /* Increased from 800 to be above sidebar (2000) */
 	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
 	pointer-events: auto;
 	}
