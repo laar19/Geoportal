@@ -2,7 +2,7 @@ var editableLayers = new L.FeatureGroup();
 map.addLayer(editableLayers);
 
 var options = {
-    position: 'topleft',
+    position: 'topright',
     draw: {
         marker: false,
         polyline: false,
@@ -45,6 +45,11 @@ var options = {
     }
     */
 };
+
+// Create zoom control FIRST (top of right side)
+L.control.zoom({position: 'topright'}).addTo(map);
+
+// Then create draw control
 var drawControl = new L.Control.Draw(options);
 map.addControl(drawControl);
 
@@ -88,7 +93,7 @@ map.on(L.Draw.Event.CREATED, function (e) {
 /*
 L.Control.Button = L.Control.extend({
     options: {
-        position: 'topleft'
+        position: 'topright'
     },
     onAdd: function (map) {
         var container   = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
@@ -113,7 +118,7 @@ control.addTo(map);
 new L.cascadeButtons([
     {icon: 'bi bi-geo-alt-fill', ignoreActiveState:true , command: () =>{console.log('test') }},
     {icon: 'bi bi-fullscreen', ignoreActiveState:true , command: () =>{console.log('test') }},
-], {position:'topleft', direction:'vertical'}).addTo(map);
+], {position:'topright', direction:'vertical'}).addTo(map);
 */
 
 new L.cascadeButtons([
@@ -187,7 +192,7 @@ new L.cascadeButtons([
             { icon: 'fbi bi-whatsapp', command: () => { console.log('hola') } },
         ]
     },
-], { position: 'topleft', direction: 'vertical' }).addTo(map);
+], { position: 'topright', direction: 'vertical' }).addTo(map);
 
 //L.Control.geocoder().addTo(map);
 
@@ -195,3 +200,22 @@ var sidebar1 = L.control.sidebar('sidebar', {position: 'right'}).addTo(map);
 
 //var sidebar2 = L.control.sidebar('sidebar1', {position: 'right'}).addTo(map);
 //var sidebar2 = L.control.sidebar('sidebar1').addTo(map);
+
+// Zoom control already created at the beginning (top of right side)
+// Remove default zoom control if it exists
+if (map.zoomControl) {
+    map.removeControl(map.zoomControl);
+}
+
+// Remove default scale control and recreate with right position  
+map.removeControl(document.querySelector('.leaflet-control-scale').control);
+L.control.scale({position: 'bottomright'}).addTo(map);
+
+// Move mouse position to bottom right (re-add with new position)
+L.control.mousePosition({position: 'bottomright'}).addTo(map);
+
+// Move layers control to top right
+L.control.layers(null, null, {position: 'topright'}).addTo(map);
+
+// Move attribution to bottom right  
+L.control.attribution({position: 'bottomright'}).addTo(map);
