@@ -17,11 +17,31 @@
             <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i
                         class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
 
+            <!-- Authentication elements -->
+            <li class="auth-element" id="auth-user-info" style="display: none;">
+                <a href="#" role="tab" style="cursor: default;">
+                    <i class="fa-solid fa-user" style="color: #4CAF50;"></i>
+                    <span class="auth-username" style="font-size: 0.8em; margin-left: 5px;"></span>
+                </a>
+            </li>
+            <li class="auth-element" id="auth-login-btn" style="display: none;">
+                <a href="{{ url_for('auth.login') }}" role="tab" title="Iniciar sesión">
+                    <i class="fa-solid fa-sign-in-alt" style="color: #ffffff;"></i>
+                </a>
+            </li>
+            <li class="auth-element" id="auth-logout-btn" style="display: none;">
+                <a href="{{ url_for('auth.logout') }}" role="tab" title="Cerrar sesión">
+                    <i class="fa-solid fa-sign-out-alt" style="color: #ff6b6b;"></i>
+                </a>
+            </li>
+
         </ul>
         <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
         <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
             <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
             <span id="gs-dot" class="dot {{ 'ok' if GEOSERVER_OK else 'fail' }}"></span>
+            <!-- Auth status indicator -->
+            <span id="auth-dot" class="dot" style="display: none;" title="Estado autenticación"></span>
         </div>
     </div>
 

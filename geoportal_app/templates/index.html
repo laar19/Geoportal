@@ -46,6 +46,10 @@
     <link rel="stylesheet" href="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.css" />
     <script src="https://unpkg.com/@bopen/leaflet-area-selection@0.6.1/dist/index.umd.js"></script>
 
+    <!-- LEAFLET CONTEXTMENU PLUGIN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.contextmenu/1.4.0/leaflet.contextmenu.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.contextmenu/1.4.0/leaflet.contextmenu.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"
         integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw=="
@@ -95,6 +99,9 @@
     {% include 'sidebar.html' %}
 
     <div id="map" class="sidebar-map"></div>
+
+    <!-- Hidden element to pass auth state from Flask to JavaScript -->
+    <div id="auth-enabled" data-enabled="{{ 'true' if ENABLE_KEYCLOAK_AUTH else 'false' }}" style="display: none;"></div>
 
     <!-- Inject Leaflet config from backend -->
     <script>
@@ -172,6 +179,12 @@
     <script src="{{ url_for('static', filename='js/leaflet/show_raster_info.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Authentication UI -->
+    <script src="{{ url_for('static', filename='js/auth-ui.js') }}"></script>
+
+    <!-- CONTEXT MENU -->
+    <script src="{{ url_for('static', filename='js/context-menu.js') }}"></script>
 
     <!-- CUSTOM SIDEBAR -->
     <script src="{{ url_for('static', filename='js/leaflet/custom-sidebar.js') }}"></script>

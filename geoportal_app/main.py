@@ -1,6 +1,7 @@
 import os, shutil, pdb
 import requests
 import json
+import datetime
 import geopandas as gpd
 from sqlalchemy import text
 import psycopg2
@@ -190,6 +191,10 @@ def index_leaflet():
     # Render immediately; do not block on GeoServer health
     DB_OK = check_db_connection()
     GEOSERVER_OK = None  # unknown at render time; will be checked client-side
+    
+    # Get auth status from login_keycloak module
+    from geoportal_app.login_keycloak import ENABLE_KEYCLOAK_AUTH
+    
     return render_template(
         "index.html",
         geoserver_config    = False,
@@ -211,7 +216,8 @@ def index_leaflet():
         LEAFLET_DARK_SUBDOMAINS    = LEAFLET_DARK_SUBDOMAINS,
         DB_OK = DB_OK,
         GEOSERVER_OK = GEOSERVER_OK,
-        GEOSERVER_PUBLIC_URL = os.getenv("GEOSERVER_PUBLIC_URL")
+        GEOSERVER_PUBLIC_URL = os.getenv("GEOSERVER_PUBLIC_URL"),
+        ENABLE_KEYCLOAK_AUTH = ENABLE_KEYCLOAK_AUTH
     )
 
 @app.route("/search", methods=["GET"])
@@ -508,6 +514,20 @@ def download_layer(layer_name):
         print(f"Error downloading layer {layer_name}: {e}")
         flash(f"Error downloading layer: {e}", "error")
         return redirect(url_for("index_leaflet"))
+
+@app.route('/api/auth/status')
+def auth_status():
+    """Return authentication status for frontend UI"""
+    from geoportal_app.login_keycloak import ENABLE_KEYCLOAK_AUTH
+    
+    status = {
+        'auth_enabled': ENABLE_KEYCLOAK_AUTH,
+        'logged_in': 'access_token' in session if ENABLE_KEYCLOAK_AUTH else False,
+        'username': session.get('userinfo', {}).get('preferred_username', '') if ENABLE_KEYCLOAK_AUTH else '',
+        'timestamp': datetime.datetime.now().isoformat()
+    }
+    
+    return jsonify(status)
 
 @app.after_request
 def add_security_headers(response):
