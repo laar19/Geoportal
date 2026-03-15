@@ -25,6 +25,49 @@ class AuthUI {
         
         // Update UI based on initial state
         this.updateUI();
+        
+        // Setup event listeners for dropdown menu
+        this.setupDropdownListeners();
+    }
+    
+    /**
+     * Setup event listeners for dropdown menu
+     */
+    setupDropdownListeners() {
+        // Toggle dropdown on user icon click
+        const userIcon = document.getElementById('user-icon');
+        if (userIcon) {
+            userIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleUserDropdown();
+            });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const userIconContainer = document.getElementById('user-icon-container');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userIconContainer && userDropdown && 
+                !userIconContainer.contains(e.target) && 
+                !userDropdown.contains(e.target)) {
+                userDropdown.style.display = 'none';
+            }
+        });
+    }
+    
+    /**
+     * Toggle user dropdown menu
+     */
+    toggleUserDropdown() {
+        const userDropdown = document.getElementById('user-dropdown');
+        if (userDropdown) {
+            if (userDropdown.style.display === 'block') {
+                userDropdown.style.display = 'none';
+            } else {
+                userDropdown.style.display = 'block';
+            }
+        }
     }
 
     /**
@@ -88,20 +131,20 @@ class AuthUI {
     updateUI() {
         console.log(`🔄 Updating auth UI: enabled=${this.authEnabled}, loggedIn=${this.userLoggedIn}, user=${this.userName}`);
         
-        // Get UI elements for NEW interface
-        const userIconContainer = document.getElementById('user-icon-container');
+        // Get UI elements - now they are <li> elements
+        const userSessionIconContainer = document.getElementById('user-session-icon-container');
         const loginIconContainer = document.getElementById('login-icon-container');
         const authDisabledContainer = document.getElementById('auth-disabled-container');
         const userDisplayName = document.getElementById('user-display-name');
         const userIcon = document.getElementById('user-icon');
         
-        if (!userIconContainer || !loginIconContainer || !authDisabledContainer) {
-            console.log('⚠️ New auth UI elements not found in DOM');
+        if (!userSessionIconContainer || !loginIconContainer || !authDisabledContainer) {
+            console.log('⚠️ Auth UI elements not found in DOM');
             return;
         }
         
         // Hide all containers first
-        userIconContainer.style.display = 'none';
+        userSessionIconContainer.style.display = 'none';
         loginIconContainer.style.display = 'none';
         authDisabledContainer.style.display = 'none';
         
@@ -112,7 +155,7 @@ class AuthUI {
             // Auth is enabled
             if (this.userLoggedIn) {
                 // User is logged in: show user icon with dropdown
-                userIconContainer.style.display = 'block';
+                userSessionIconContainer.style.display = 'block';
                 
                 // Update user display name
                 if (userDisplayName) {

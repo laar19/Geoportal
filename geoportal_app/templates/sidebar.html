@@ -3,6 +3,46 @@
     <!-- Nav tabs -->
     <div class="sidebar-tabs">
         <ul role="tablist">
+            <!-- User session icon - FIRST in the list (ABOVE satellite icon) -->
+            <li id="user-session-icon-container" class="user-session-icon-container" style="display: none;">
+                <!-- User icon with dropdown menu (logged in) -->
+                <div id="user-icon-container" class="user-icon-container" style="position: relative;">
+                    <a href="#" id="user-icon" class="user-icon" role="tab" title="Gestión de sesión" style="display: block; padding: 10px; color: #4CAF50; cursor: pointer;">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                    <div id="user-dropdown" class="user-dropdown" style="display: none; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: #2c3e50; border-radius: 5px; padding: 10px; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;">
+                        <div id="user-info" class="user-info" style="padding: 8px 12px; border-bottom: 1px solid #34495e; color: #ecf0f1; font-size: 0.9em;">
+                            <i class="fa-solid fa-user-circle" style="margin-right: 8px;"></i>
+                            <span id="user-display-name">Usuario</span>
+                        </div>
+                        <a href="#" id="user-profile-btn" class="dropdown-item" style="display: block; padding: 8px 12px; color: #ecf0f1; text-decoration: none; border-radius: 3px;">
+                            <i class="fa-solid fa-id-card" style="margin-right: 8px;"></i> Mi perfil
+                        </a>
+                        <a href="#" id="user-settings-btn" class="dropdown-item" style="display: block; padding: 8px 12px; color: #ecf0f1; text-decoration: none; border-radius: 3px;">
+                            <i class="fa-solid fa-cog" style="margin-right: 8px;"></i> Configuración
+                        </a>
+                        <a href="{{ url_for('auth.logout') }}" id="user-logout-btn" class="dropdown-item logout-item" style="display: block; padding: 8px 12px; color: #ff6b6b; text-decoration: none; border-radius: 3px;">
+                            <i class="fa-solid fa-sign-out-alt" style="margin-right: 8px;"></i> Cerrar sesión
+                        </a>
+                    </div>
+                </div>
+            </li>
+            
+            <!-- Login icon (not logged in) -->
+            <li id="login-icon-container" class="login-icon-container" style="display: none;">
+                <a href="{{ url_for('auth.login') }}" id="login-btn" class="login-btn" role="tab" title="Iniciar sesión" style="display: block; padding: 10px; color: #4CAF50; text-decoration: none;">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                </a>
+            </li>
+            
+            <!-- Disabled auth icon -->
+            <li id="auth-disabled-container" class="auth-disabled-container" style="display: none;">
+                <a href="#" role="tab" title="Autenticación deshabilitada" style="display: block; padding: 10px; color: #cccccc; cursor: default;">
+                    <i class="fa-solid fa-user-slash"></i>
+                </a>
+            </li>
+
+            <!-- Existing icons (satellite, camera, info, question) -->
             <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
             <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
             <li id="information"><a href="#informacion" role="tab"><i class="fa-solid fa-circle-info"
@@ -18,46 +58,6 @@
                         class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
 
         </ul>
-        <!-- User session management (bottom left corner - ABOVE connection indicators) -->
-        <div id="user-session-management" class="user-session-container">
-            <!-- User icon with dropdown menu -->
-            <div id="user-icon-container" class="user-icon-container" style="display: none;">
-                <div id="user-icon" class="user-icon" title="Gestión de sesión">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <div id="user-dropdown" class="user-dropdown">
-                    <div id="user-info" class="user-info">
-                        <i class="fa-solid fa-user-circle"></i>
-                        <span id="user-display-name">Usuario</span>
-                    </div>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" id="user-profile-btn" class="dropdown-item">
-                        <i class="fa-solid fa-id-card"></i> Mi perfil
-                    </a>
-                    <a href="#" id="user-settings-btn" class="dropdown-item">
-                        <i class="fa-solid fa-cog"></i> Configuración
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ url_for('auth.logout') }}" id="user-logout-btn" class="dropdown-item logout-item">
-                        <i class="fa-solid fa-sign-out-alt"></i> Cerrar sesión
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Login button (shown when not logged in) -->
-            <div id="login-icon-container" class="login-icon-container" style="display: none;">
-                <a href="{{ url_for('auth.login') }}" id="login-btn" class="login-btn" title="Iniciar sesión">
-                    <i class="fa-solid fa-sign-in-alt"></i>
-                </a>
-            </div>
-            
-            <!-- Disabled icon (shown when auth is disabled) -->
-            <div id="auth-disabled-container" class="auth-disabled-container" style="display: none;">
-                <div class="auth-disabled-icon" title="Autenticación deshabilitada">
-                    <i class="fa-solid fa-user-slash"></i>
-                </div>
-            </div>
-        </div>
         
         <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
         <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
