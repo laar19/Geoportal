@@ -151,7 +151,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background-color: rgba(12, 39, 90, 0.95); /* Changed from white to dark blue to match sidebar */
+  background-color: rgba(255, 255, 255, 0.95); /* Original white background */
   overflow-x: hidden;
   overflow-y: auto; 
 }
@@ -175,7 +175,20 @@
   left: 0;
   right: 0;
   box-sizing: border-box;
-  padding: 10px 20px; 
+  padding: 10px 20px;
+  position: relative; /* Create new stacking context */
+  z-index: 1; /* Ensure it's above sidebar-content background */
+}
+
+.sidebar-header {
+  position: relative; /* Create new stacking context */
+  z-index: 2; /* Ensure headers are above everything */
+}
+
+/* Ensure content inside sidebar-pane is visible */
+.sidebar-pane * {
+  position: relative;
+  z-index: 3;
 }
 
 .sidebar-pane.active {
