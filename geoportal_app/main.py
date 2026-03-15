@@ -193,7 +193,7 @@ def index_leaflet():
     GEOSERVER_OK = None  # unknown at render time; will be checked client-side
     
     # Get auth status from login_keycloak module
-    from geoportal_app.login_keycloak import ENABLE_KEYCLOAK_AUTH
+    from login_keycloak import ENABLE_KEYCLOAK_AUTH
     
     return render_template(
         "index.html",
@@ -518,7 +518,8 @@ def download_layer(layer_name):
 @app.route('/api/auth/status')
 def auth_status():
     """Return authentication status for frontend UI"""
-    from geoportal_app.login_keycloak import ENABLE_KEYCLOAK_AUTH
+    # Import locally to avoid circular imports
+    from login_keycloak import ENABLE_KEYCLOAK_AUTH
     
     status = {
         'auth_enabled': ENABLE_KEYCLOAK_AUTH,
