@@ -10,6 +10,52 @@
 .sidebar.collapsed {
   width: 40px; 
 }
+
+/* Mobile responsive (max-width: 767px) */
+@media (max-width: 767px) {
+  .sidebar {
+    top: 5px;
+    bottom: 5px;
+    width: 300px !important; /* Reduced width for mobile */
+    max-width: 85vw; /* Maximum 85% of viewport width */
+  }
+  
+  .sidebar.collapsed {
+    width: 35px !important; /* Slightly smaller collapsed width */
+  }
+  
+  /* Adjust map margin for mobile */
+  .sidebar-right ~ .sidebar-map {
+    margin-right: 35px !important;
+  }
+  
+  /* Adjust control positions for mobile */
+  .sidebar-right ~ .sidebar-map .leaflet-right {
+    right: 310px !important; /* Adjusted for mobile sidebar width */
+  }
+  
+  .sidebar-right.collapsed ~ .sidebar-map .leaflet-right {
+    right: 40px !important; /* Adjusted for collapsed sidebar */
+  }
+  
+  /* Compact leaflet controls for mobile */
+  .leaflet-control {
+    transform: scale(0.9); /* Slightly smaller controls */
+    transform-origin: top right;
+  }
+  
+  .leaflet-control-zoom {
+    margin-top: 5px !important;
+  }
+  
+  .leaflet-draw {
+    margin-top: 5px !important;
+  }
+  
+  .leaflet-control-cascadeButtons {
+    margin-top: 5px !important;
+  }
+}
  
 @media (min-width: 768px) {
   .sidebar {
