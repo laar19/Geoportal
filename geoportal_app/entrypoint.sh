@@ -138,5 +138,21 @@ echo -e "${BLUE}📝 Logs will appear below...${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo ""
 
-# Start the Flask application
-exec python main.py
+# Start the Flask application with Gunicorn
+echo -e "${YELLOW}🚀 Starting Gunicorn server with ${workers:-auto} workers...${NC}"
+echo -e "${YELLOW}   Config: gunicorn.conf.py${NC}"
+echo -e "${YELLOW}   App: main:app${NC}"
+echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+echo ""
+
+# Calculate workers if not set
+if [ -z "$GUNICORN_WORKERS" ]; then
+    CPU_COUNT=$(nproc 2>/dev/null || echo 1)
+    GUNICORN_WORKERS=$((CPU_COUNT * 2 + 1))
+    echo -e "${BLUE}📊 Auto-detected $CPU_COUNT CPU cores, using $GUNICORN_WORKERS workers${NC}"
+fi
+
+export GUNICORN_WORKERS
+
+# Start Gunicorn
+exec gunicorn --config gunicorn.conf.py main:app

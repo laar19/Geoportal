@@ -287,11 +287,8 @@ pip install --upgrade pip
 log_info "Instalando dependencias desde requirements.txt..."
 pip install -r "$REPO_DIR/requirements.txt"
 
-# Instalar Gunicorn si no está en requirements
-if ! pip list | grep -q gunicorn; then
-    log_info "Instalando Gunicorn..."
-    pip install gunicorn
-fi
+# Gunicorn ya está en requirements.txt, se instalará automáticamente
+log_info "Gunicorn se instalará desde requirements.txt"
 
 log_success "Dependencias Python instaladas"
 
