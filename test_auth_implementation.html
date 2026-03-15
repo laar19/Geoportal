@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Implementación Auth Geoportal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            background-color: #f8f9fa;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #2196F3;
+        }
+        button.danger {
+            background-color: #f44336;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .endpoint {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Prueba Implementación Issues #3, #4, #6</h1>
+        <p><strong>Geoportal - Sistema de Autenticación y Menú Contextual</strong></p>
+        
+        <div class="section">
+            <h2>📋 Resumen de Implementación</h2>
+            <ul>
+                <li><strong>Issue #3:</strong> Botón "Cerrar sesión" en sidebar ✅</li>
+                <li><strong>Issue #4:</strong> Menú contextual con opciones condicionales + botón cerrar sesión ✅</li>
+                <li><strong>Issue #6:</strong> Interfaz auth UI + variable control <code>ENABLE_KEYCLOAK_AUTH</code> ✅</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 Prueba Endpoint API</h2>
+            <div class="endpoint">GET http://localhost:8874/api/auth/status</div>
+            <button onclick="testAuthEndpoint()">Probar Endpoint</button>
+            <div id="endpoint-result"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🎯 Prueba Interfaz Web</h2>
+            <p>Abre la interfaz principal para probar:</p>
+            <button onclick="window.open('http://localhost:8874/', '_blank')">Abrir Geoportal</button>
+            <p>En la interfaz, verifica:</p>
+            <ol>
+                <li>✅ Elementos auth en sidebar (iconos usuario/login/logout)</li>
+                <li>✅ Menú contextual (click derecho en el mapa)</li>
+                <li>✅ Botón "Cerrar sesión" en sidebar y menú contextual</li>
+                <li>✅ Indicador de estado auth (dot verde/rojo)</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h2>⚙️ Variable de Control</h2>
+            <p>La variable <code>ENABLE_KEYCLOAK_AUTH</code> controla el sistema:</p>
+            <ul>
+                <li><code>ENABLE_KEYCLOAK_AUTH=true</code>: Sistema auth habilitado</li>
+                <li><code>ENABLE_KEYCLOAK_AUTH=false</code>: Sistema auth deshabilitado (testing rápido)</li>
+            </ul>
+            <p>Actualmente configurada en: <strong id="auth-status">Cargando...</strong></p>
+        </div>
+        
+        <div class="section">
+            <h2>📁 Archivos Implementados</h2>
+            <ul>
+                <li><code>geoportal_app/static/js/auth-ui.js</code> - Gestión frontend auth</li>
+                <li><code>geoportal_app/static/js/context-menu.js</code> - Menú contextual Leaflet</li>
+                <li><code>geoportal_app/templates/sidebar.html</code> - Elementos UI auth</li>
+                <li><code>geoportal_app/main.py</code> - Endpoint <code>/api/auth/status</code></li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🚀 Comandos Docker</h2>
+            <div class="endpoint">
+                # Verificar servicios<br>
+                docker compose ps<br><br>
+                # Rebuildear aplicación<br>
+                docker compose build web<br><br>
+                # Reiniciar aplicación<br>
+                docker compose restart web<br><br>
+                # Ver logs<br>
+                docker logs geoportal_app --tail 20
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function testAuthEndpoint() {
+            const resultDiv = document.getElementById('endpoint-result');
+            resultDiv.innerHTML = '<div class="test-result info">Probando endpoint...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8874/api/auth/status');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        ✅ Endpoint funcionando correctamente
+                    </div>
+                    <pre style="background:#f8f9fa;padding:10px;border-radius:5px;">${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                // Actualizar estado de variable
+                document.getElementById('auth-status').innerHTML = 
+                    data.auth_enabled ? '<span style="color:green">true (auth habilitado)</span>' : 
+                    '<span style="color:orange">false (auth deshabilitado - modo testing)</span>';
+                    
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">
+                        ❌ Error al probar endpoint: ${error.message}
+                    </div>
+                    <p>Verifica que el contenedor esté corriendo: <code>docker compose ps</code></p>
+                `;
+            }
+        }
+        
+        // Probar automáticamente al cargar
+        window.onload = testAuthEndpoint;
+    </script>
+</body>
+</html>
