@@ -10,9 +10,11 @@
 - Geoserver
 - Distributed under the GNU Affero General Public License (AGPLv3)
 
-## Deployment with Docker (recommended)
+## Deployment Options
 
-Follow these three steps to run the full stack: GeoServer, PostGIS, and the Geoportal web app.
+### Option 1: Docker Compose (Recommended for Development)
+
+Follow these three steps to run the full stack: GeoServer, PostGIS, and the Geoportal web app using Docker containers.
 
 ### 1) Configure GeoServer env variables and run the containers
 
@@ -89,6 +91,53 @@ docker compose -f geoportal_app/docker-compose.yml --env-file geoportal_app/.env
 - App URL: http://localhost:8874
 
 > Note: If you changed any ports in the `.env` files, make sure they are consistent across `geoserver/`, `postgis/`, and `geoportal_app/`.
+
+### Option 2: Manual Deployment (For Production/QA Environments)
+
+For environments where Docker containers are not used (e.g., QA, production servers), manual deployment scripts are available.
+
+#### A) Deploy GeoServer Manually
+
+```bash
+# Navigate to geoserver directory
+cd geoserver
+
+# Make script executable and run
+chmod +x deploy_geoserver.sh
+sudo ./deploy_geoserver.sh
+```
+
+**Requirements:** Java 17+, root/sudo access  
+**Documentation:** See [geoserver/README.md](geoserver/README.md) for detailed instructions
+
+#### B) Deploy Flask Application Manually
+
+```bash
+# From repository root
+chmod +x deploy_app.sh
+sudo ./deploy_app.sh
+```
+
+**Requirements:** Python 3.10.12 (installed via pyenv), root/sudo access  
+**Features:**
+- Installs system dependencies
+- Sets up pyenv + Python 3.10.12
+- Creates virtual environment
+- Installs Python dependencies
+- Configures Gunicorn + Systemd service
+- Sets up logging and configuration
+
+**Configuration:** Edit `/etc/geoportal/environment.conf` with your PostgreSQL and GeoServer credentials before starting the service.
+
+#### Manual Deployment Notes:
+1. **PostgreSQL must be installed and configured separately** (remote or local)
+2. **GeoServer must be running** before starting the Flask app
+3. **Firewall rules** may need to be configured for ports 8874 (app) and 8080 (GeoServer)
+4. **Environment variables** must be configured in respective `.env` files
+
+For complete documentation, see:
+- [geoserver/README.md](geoserver/README.md) - GeoServer manual deployment
+- Script headers for detailed usage instructions
 
 ## Sample data (optional)
 
