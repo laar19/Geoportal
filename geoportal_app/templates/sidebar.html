@@ -17,31 +17,52 @@
             <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i
                         class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
 
-            <!-- Authentication elements -->
-            <li class="auth-element" id="auth-user-info" style="display: none;">
-                <a href="#" role="tab" style="cursor: default;">
-                    <i class="fa-solid fa-user" style="color: #4CAF50;"></i>
-                    <span class="auth-username" style="font-size: 0.8em; margin-left: 5px;"></span>
-                </a>
-            </li>
-            <li class="auth-element" id="auth-login-btn" style="display: none;">
-                <a href="{{ url_for('auth.login') }}" role="tab" title="Iniciar sesión">
-                    <i class="fa-solid fa-sign-in-alt" style="color: #ffffff;"></i>
-                </a>
-            </li>
-            <li class="auth-element" id="auth-logout-btn" style="display: none;">
-                <a href="{{ url_for('auth.logout') }}" role="tab" title="Cerrar sesión">
-                    <i class="fa-solid fa-sign-out-alt" style="color: #ff6b6b;"></i>
-                </a>
-            </li>
-
         </ul>
+        <!-- User session management (bottom left corner - ABOVE connection indicators) -->
+        <div id="user-session-management" class="user-session-container">
+            <!-- User icon with dropdown menu -->
+            <div id="user-icon-container" class="user-icon-container" style="display: none;">
+                <div id="user-icon" class="user-icon" title="Gestión de sesión">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div id="user-dropdown" class="user-dropdown">
+                    <div id="user-info" class="user-info">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span id="user-display-name">Usuario</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" id="user-profile-btn" class="dropdown-item">
+                        <i class="fa-solid fa-id-card"></i> Mi perfil
+                    </a>
+                    <a href="#" id="user-settings-btn" class="dropdown-item">
+                        <i class="fa-solid fa-cog"></i> Configuración
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ url_for('auth.logout') }}" id="user-logout-btn" class="dropdown-item logout-item">
+                        <i class="fa-solid fa-sign-out-alt"></i> Cerrar sesión
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Login button (shown when not logged in) -->
+            <div id="login-icon-container" class="login-icon-container" style="display: none;">
+                <a href="{{ url_for('auth.login') }}" id="login-btn" class="login-btn" title="Iniciar sesión">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                </a>
+            </div>
+            
+            <!-- Disabled icon (shown when auth is disabled) -->
+            <div id="auth-disabled-container" class="auth-disabled-container" style="display: none;">
+                <div class="auth-disabled-icon" title="Autenticación deshabilitada">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+            </div>
+        </div>
+        
         <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
         <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
             <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
             <span id="gs-dot" class="dot {{ 'ok' if GEOSERVER_OK else 'fail' }}"></span>
-            <!-- Auth status indicator -->
-            <span id="auth-dot" class="dot" style="display: none;" title="Estado autenticación"></span>
         </div>
     </div>
 

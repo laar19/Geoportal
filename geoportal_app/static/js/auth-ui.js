@@ -88,51 +88,44 @@ class AuthUI {
     updateUI() {
         console.log(`🔄 Updating auth UI: enabled=${this.authEnabled}, loggedIn=${this.userLoggedIn}, user=${this.userName}`);
         
-        // Get UI elements
-        const userInfo = document.getElementById('auth-user-info');
-        const loginBtn = document.getElementById('auth-login-btn');
-        const logoutBtn = document.getElementById('auth-logout-btn');
-        const authDot = document.getElementById('auth-dot');
+        // Get UI elements for NEW interface
+        const userIconContainer = document.getElementById('user-icon-container');
+        const loginIconContainer = document.getElementById('login-icon-container');
+        const authDisabledContainer = document.getElementById('auth-disabled-container');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userIcon = document.getElementById('user-icon');
         
-        if (!userInfo || !loginBtn || !logoutBtn || !authDot) {
-            console.log('⚠️ Auth UI elements not found in DOM');
+        if (!userIconContainer || !loginIconContainer || !authDisabledContainer) {
+            console.log('⚠️ New auth UI elements not found in DOM');
             return;
         }
         
+        // Hide all containers first
+        userIconContainer.style.display = 'none';
+        loginIconContainer.style.display = 'none';
+        authDisabledContainer.style.display = 'none';
+        
         if (!this.authEnabled) {
-            // Auth disabled: hide all auth elements
-            userInfo.style.display = 'none';
-            loginBtn.style.display = 'none';
-            logoutBtn.style.display = 'none';
-            authDot.style.display = 'none';
+            // Auth disabled: show disabled icon
+            authDisabledContainer.style.display = 'block';
         } else {
-            // Auth is enabled, show appropriate elements
-            authDot.style.display = 'inline-block';
-            
+            // Auth is enabled
             if (this.userLoggedIn) {
-                // User is logged in
-                userInfo.style.display = 'block';
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'block';
+                // User is logged in: show user icon with dropdown
+                userIconContainer.style.display = 'block';
                 
-                // Update username
-                const usernameSpan = userInfo.querySelector('.auth-username');
-                if (usernameSpan) {
-                    usernameSpan.textContent = this.userName || 'Usuario';
+                // Update user display name
+                if (userDisplayName) {
+                    userDisplayName.textContent = this.userName || 'Usuario';
                 }
                 
-                // Set auth dot to green
-                authDot.className = 'dot ok';
-                authDot.title = 'Autenticado';
+                // Add logged-in class for styling
+                if (userIcon) {
+                    userIcon.classList.add('logged-in');
+                }
             } else {
-                // User is not logged in
-                userInfo.style.display = 'none';
-                loginBtn.style.display = 'block';
-                logoutBtn.style.display = 'none';
-                
-                // Set auth dot to red
-                authDot.className = 'dot fail';
-                authDot.title = 'No autenticado';
+                // User is not logged in: show login button
+                loginIconContainer.style.display = 'block';
             }
         }
         
@@ -162,13 +155,13 @@ class AuthUI {
     }
 
     /**
-     * Simulate login (for testing without Keycloak)
+     * Login user (to be called by Keycloak or other auth system)
      */
-    simulateLogin(username = 'Usuario de prueba') {
+    login(username = 'Usuario') {
         this.userLoggedIn = true;
         this.userName = username;
         localStorage.setItem('username', username);
-        localStorage.setItem('access_token', 'simulated_token');
+        localStorage.setItem('access_token', 'authenticated');
         this.updateUI();
         
         // Show notification
@@ -176,9 +169,9 @@ class AuthUI {
     }
 
     /**
-     * Simulate logout
+     * Logout user
      */
-    simulateLogout() {
+    logout() {
         this.userLoggedIn = false;
         this.userName = '';
         localStorage.removeItem('username');
@@ -298,52 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .auth-notification.fade-out {
             opacity: 0;
         }
-        
-        /* Auth elements in sidebar */
-        .auth-element a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .auth-username {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 80px;
-        }
     `;
     document.head.appendChild(style);
-    
-    // Add debug controls if in development mode
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        this.addDebugControls();
-    }
 });
-
-/**
- * Add debug controls for testing auth without Keycloak
- */
-function addDebugControls() {
-    const debugDiv = document.createElement('div');
-    debugDiv.id = 'auth-debug-controls';
-    debugDiv.style.cssText = `
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        padding: 10px;
-        border-radius: 5px;
-        font-size: 12px;
-        z-index: 9999;
-    `;
-    
-    debugDiv.innerHTML = `
-        <strong>🔐 Auth Debug</strong><br>
-        <button onclick="window.geoportalAuthUI.simulateLogin('Test User')">Simular Login</button>
-        <button onclick="window.geoportalAuthUI.simulateLogout()">Simular Logout</button>
-        <button onclick="console.log(window.geoportalAuthUI.getAuthState())">Estado</button>
-    `;
-    
-    document.body.appendChild(debugDiv);
-}
