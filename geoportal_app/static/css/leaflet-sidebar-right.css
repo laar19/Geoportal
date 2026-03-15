@@ -11,6 +11,33 @@
   width: 40px; 
 }
 
+/* Match sidebar1 behavior from left sidebar */
+@media (min-width: 768px) {
+  .sidebar {
+    top: 10px;
+    bottom: 10px;
+    transition: width 500ms; 
+  } 
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar {
+    width: 305px; 
+  } 
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sidebar {
+    width: 390px; 
+  } 
+}
+
+@media (min-width: 1200px) {
+  .sidebar {
+    width: 460px; 
+  } 
+}
+
 /* Mobile responsive (max-width: 767px) */
 @media (max-width: 767px) {
   .sidebar {
@@ -97,11 +124,8 @@
   right: 0; 
 }
 
-@media (min-width: 768px) {
-  .sidebar-right {
-    right: 10px; 
-  } 
-}
+/* REMOVED: right: 10px for consistency with left sidebar behavior */
+/* Sidebar should be flush with right edge when expanded */
 
 .sidebar-tabs {
   top: 0;
@@ -175,7 +199,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(12, 39, 90, 0.95); /* Changed from white to dark blue to match sidebar */
   overflow-x: hidden;
   overflow-y: auto;
 }
