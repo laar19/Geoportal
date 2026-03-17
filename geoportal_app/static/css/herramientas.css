@@ -14,7 +14,7 @@
   gap: 8px;
   width: 100%;
   padding: 10px 15px;
-  background: #007bff;
+  background: #0c275a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -25,12 +25,12 @@
 }
 
 .btn-herramienta:hover {
-  background: #0056b3;
+  background: #1a3c7c;
   transform: translateX(3px);
 }
 
 .btn-herramienta:active {
-  background: #004085;
+  background: #061633;
 }
 
 .btn-herramienta i {
@@ -43,7 +43,7 @@
 }
 
 .btn-herramienta.btn-primary {
-  background: #007bff;
+  background: #0c275a;
 }
 
 .btn-herramienta.btn-secondary {
@@ -258,7 +258,7 @@
   min-width: 80px;
   padding: 8px 10px;
   font-size: 12px;
-  background: #007bff;
+  background: #0c275a;
   color: white;
   border: none;
   border-radius: 4px;

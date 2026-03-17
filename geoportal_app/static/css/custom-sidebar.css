@@ -9,15 +9,49 @@
 .sidebar.collapsed{
     width: 44px;
 }
-.sidebar-tabs > li, .sidebar-tabs > ul > li{
+/* Icon background circular styling */
+.sidebar-tabs > li, .sidebar-tabs > ul > li {
     font-size: 16pt;
-    width: 40px;
-    height: 80px;
-    padding: 15px 5px 5px 5px;
+    width: 44px !important;
+    height: 60px !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background-color: transparent !important;
 }
+
+.sidebar-tabs > li > a, .sidebar-tabs > ul > li > a {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50% !important;
+    width: 38px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    line-height: normal !important;
+    transition: background-color 0.3s ease !important;
+}
+
+.sidebar-tabs > li > a:hover, .sidebar-tabs > ul > li > a:hover {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
 .sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
-    color: #fff;
-    background-color: #2493ddc9;
+    background-color: transparent !important;
+}
+
+.sidebar-tabs > li.active > a, .sidebar-tabs > ul > li.active > a {
+    background-color: #2493ddc9 !important;
+    color: #ffffff !important;
+}
+
+/* Fix connection indicators overlapping */
+.connection-indicators.in-sidebar {
+    bottom: 4px !important;
 }
 .sidebar-left .sidebar-content {
     left: 42px;
@@ -478,4 +512,15 @@
 /* Layer customization container in sidebar */
 #layer-customization-container {
     margin-top: 10px;
+}
+/* Fix overlap between user icon and connection dots */
+.sidebar-tabs > ul + ul {
+    position: absolute !important;
+    bottom: 35px !important; /* Leave space for connection dots */
+    width: 100%;
+}
+.sidebar-tabs > ul + ul > li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }

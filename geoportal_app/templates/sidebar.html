@@ -3,9 +3,9 @@
     <!-- Nav tabs -->
     <div class="sidebar-tabs">
         <ul role="tablist">
-            <li><a href="#satelite" role="tab"><i class="fa-solid fa-satellite"></i></a></li>
-            <li><a href="#sensor" role="tab"><i class="fa-solid fa-camera"></i></a></li>
-            <li id="information"><a href="#informacion" role="tab"><i class="fa-solid fa-circle-info"
+            <li><a href="#satelite" role="tab" title="Imágenes Satelitales"><i class="fa-solid fa-satellite"></i></a></li>
+            <li><a href="#sensor" role="tab" title="Gestión de Capas y Sensores"><i class="fa-solid fa-camera"></i></a></li>
+            <li id="information"><a href="#informacion" role="tab" title="Información y Metadatos"><i class="fa-solid fa-circle-info"
                         style="color: #ffffff;"></i></a></li>
             <!--
                 <li><a href="#orbita" role="tab"><i class="fa-solid fa-solar-panel"></i></a></li>
@@ -14,10 +14,15 @@
                 <li><a href="#roll" role="tab"><i class="fa-solid fa-compass-drafting"></i></a></li>
                 <li><a href="#nubosidad" role="tab"><i class="fa-solid fa-cloud-sun"></i></a></li>
                 -->
-            <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;"><i
+            <li class="abajo" id=""><a id="about" role="tab" style="cursor: pointer;" title="Acerca de"><i
                         class="fa-solid fa-circle-question" style="color: #ffffff;"></i></a></li>
 
         </ul>
+        
+        <ul role="tablist">
+            <li class="abajo"><a id="user-options" role="tab" style="cursor: pointer;" title="Opciones de usuario"><i class="fa-solid fa-user"></i></a></li>
+        </ul>
+
         <!-- Connection indicators fixed to the bottom of sidebar-tabs -->
         <div id="conn-indicators" class="connection-indicators in-sidebar" aria-label="Connectivity status">
             <span id="db-dot" class="dot {{ 'ok' if DB_OK else 'fail' }}"></span>
