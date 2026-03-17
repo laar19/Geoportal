@@ -1,4 +1,4 @@
-.sidebar1 {
+.sidebar {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -7,12 +7,12 @@
   z-index: 2000; 
 }
 
-.sidebar1.collapsed {
-  width: 40px; 
+.sidebar.collapsed {
+  width: 50px; 
 }
  
 @media (min-width: 768px) {
-  .sidebar1 {
+  .sidebar {
     top: 10px;
     bottom: 10px;
     transition: width 500ms; 
@@ -20,19 +20,19 @@
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-  .sidebar1 {
+  .sidebar {
     width: 305px; 
   } 
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  .sidebar1 {
+  .sidebar {
     width: 390px; 
   } 
 }
   
 @media (min-width: 1200px) {
-  .sidebar1 {
+  .sidebar {
     width: 460px; 
   } 
 }
@@ -74,7 +74,7 @@
 
 .sidebar-tabs, .sidebar-tabs > ul {
   position: absolute;
-  width: 40px;
+  width: 50px;
   margin: 0;
   padding: 0;
   list-style-type: none; 
@@ -135,16 +135,16 @@
 }
 
 .sidebar-left .sidebar-content {
-  left: 40px;
+  left: 50px;
   right: 0; 
 }
 
 .sidebar-right .sidebar-content {
   left: 0;
-  right: 40px; 
+  right: 50px; 
 }
 
-.sidebar1.collapsed > .sidebar-content {
+.sidebar.collapsed > .sidebar-content {
   overflow-y: hidden; 
 }
 
@@ -189,13 +189,13 @@
 }
   
 .sidebar-right .sidebar-header {
-  padding-left: 40px; 
+  padding-left: 50px; 
 }
 
 .sidebar-close {
   position: absolute;
   top: 0;
-  width: 40px;
+  width: 50px;
   height: 40px;
   text-align: center;
   cursor: pointer; 
@@ -210,7 +210,7 @@
 }
 
 .sidebar-left ~ .sidebar-map {
-  margin-left: 40px; 
+  margin-left: 50px; 
 }
 
 @media (min-width: 768px) {
@@ -229,20 +229,20 @@
   } 
 }
 
-.sidebar1 {
+.sidebar {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65); 
 }
 
-.sidebar1.leaflet-touch {
+.sidebar.leaflet-touch {
   box-shadow: none;
   border-right: 2px solid rgba(0, 0, 0, 0.2); 
 }
 
 @media (min-width: 768px) {
-  .sidebar1 {
+  .sidebar {
     border-radius: 4px; 
   }
-  .sidebar1.leaflet-touch {
+  .sidebar.leaflet-touch {
     border: 2px solid rgba(0, 0, 0, 0.2); 
   } 
 }
