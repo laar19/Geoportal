@@ -15,3 +15,22 @@ document.addEventListener('click', function(event) {
     }
 });
 */
+$(document).ready(function() {
+    // Universal Basemap Toggle logic (LandViewer style)
+    $('#basemap-toggle').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (typeof map !== 'undefined' && typeof baseOSM !== 'undefined' && typeof baseEsri !== 'undefined') {
+            if (map.hasLayer(baseOSM)) {
+                map.removeLayer(baseOSM);
+                baseEsri.addTo(map);
+                $(this).find('i').removeClass('fa-layer-group').addClass('fa-globe');
+            } else {
+                map.removeLayer(baseEsri);
+                baseOSM.addTo(map);
+                $(this).find('i').removeClass('fa-globe').addClass('fa-layer-group');
+            }
+        }
+    });
+});

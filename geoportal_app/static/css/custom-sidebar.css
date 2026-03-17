@@ -103,3 +103,73 @@
 #layer-customization-container {
     margin-top: 10px;
 }
+
+
+
+/* =========================================
+   FIXES: Gaps, ALL Controls, and Spacing
+   ========================================= */
+
+@media (min-width: 768px) {
+    .sidebar {
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Separation for Zoom and other controls on the left */
+    .sidebar-left.collapsed ~ .sidebar-map .leaflet-left {
+        left: 60px !important; /* Sidebar 50px + 10px gap */
+    }
+}
+
+/* Ensure ALL Leaflet buttons (Zoom, Draw, Measure, Area) match the theme */
+.leaflet-bar, 
+.leaflet-control-zoom, 
+.leaflet-draw-toolbar, 
+.leaflet-control-measure,
+.leaflet-control-area-selection {
+    border: none !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+}
+
+.leaflet-bar a, 
+.leaflet-draw-toolbar a, 
+.leaflet-control-measure-toggle,
+.leaflet-control-area-selection a {
+    color: #ffffff !important;
+    background-color: #0c275a !important; /* Navy Blue background */
+    border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+.leaflet-bar a:hover, 
+.leaflet-draw-toolbar a:hover,
+.leaflet-control-area-selection a:hover {
+    background-color: #1a3c7c !important; /* Slightly lighter on hover */
+    color: #ffffff !important;
+}
+
+/* 2. Fix spacing: Ensure same gap when sidebar is open or closed */
+@media (min-width: 768px) {
+    /* When collapsed */
+    .sidebar-left.collapsed ~ .sidebar-map .leaflet-left {
+        left: 65px !important; /* 52px + 13px */
+    }
+    
+    /* When expanded */
+    .sidebar-left ~ .sidebar-map .leaflet-left {
+        transition: left 500ms;
+    }
+    
+    /* Leaflet-sidebar-v2 adds padding to .leaflet-left when open via JS/CSS. 
+       We need to override the expanded position to match the relative gap. */
+    .sidebar-left:not(.collapsed) ~ .sidebar-map .leaflet-left {
+        left: 475px !important; /* Sidebar width (460px) + 15px gap */
+    }
+}
+
+/* General alignment */
+.leaflet-left {
+    margin-left: 0 !important;
+}
